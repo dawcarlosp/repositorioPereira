@@ -58,8 +58,8 @@ public class AuthController {
                             .build());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(
-                    Map.of("email", userEntity.getEmail(),
-                            "username", userEntity.getUsername())
+                    Map.of("email", userEntity.getEmail()
+                            )
             );
 
         } catch (DataIntegrityViolationException e) {
