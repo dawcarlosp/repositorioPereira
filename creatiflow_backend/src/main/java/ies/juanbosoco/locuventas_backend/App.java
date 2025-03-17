@@ -1,13 +1,13 @@
-package ies.juanbosoco.creatiflow_backend;
+package ies.juanbosoco.locuventas_backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class CreatiflowBackendApplication {
+public class App {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CreatiflowBackendApplication.class, args);
+		SpringApplication.run(App.class, args);
 	}
 
 }

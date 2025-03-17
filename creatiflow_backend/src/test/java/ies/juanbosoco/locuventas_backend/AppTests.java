@@ -1,10 +1,10 @@
-package ies.juanbosoco.creatiflow_backend;
+package ies.juanbosoco.locuventas_backend;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CreatiflowBackendApplicationTests {
+class AppTests {
 
 	@Test
 	void contextLoads() {
