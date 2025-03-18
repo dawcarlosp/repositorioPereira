@@ -5,6 +5,7 @@ import ies.juanbosoco.locuventas_backend.DTO.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
+import ies.juanbosoco.locuventas_backend.services.FotoVendedorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,9 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -35,11 +35,15 @@ public class AuthController {
     private JwtTokenProvider tokenProvider;
     @Autowired
     private AuthenticationManager authenticationManager;
-
+    @Autowired
+    private FotoVendedorService fotoVendedorService;
     @PostMapping("/auth/register")
-    public ResponseEntity<Map<String, String>> save(@Valid @RequestBody UserRegisterDTO userDTO, BindingResult result) {
+    public ResponseEntity<Map<String, String>> save(
+            @Valid @RequestPart("user") UserRegisterDTO userDTO,  // El DTO que contiene los datos del usuario
+            @RequestPart("foto") MultipartFile foto,  // El archivo (foto) enviado como parte de la solicitud multipart, BindingResult result) {
+            BindingResult result){
+        // Validar errores de validación de los parámetros (por ejemplo, nombre, email, password)
         if (result.hasErrors()) {
-            // Capturar errores específicos de cada campo
             Map<String, String> errors = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
                 errors.put(error.getField(), error.getDefaultMessage());
@@ -48,25 +52,36 @@ public class AuthController {
         }
 
         try {
+            // Validar y guardar la foto
+            fotoVendedorService.validarArchivo(foto);  // Validamos la foto con el servicio
+            String fotoNombre = fotoVendedorService.generarNombreUnico(foto);  // Generamos un nombre único para la foto
+            fotoVendedorService.guardarImagen(foto, fotoNombre);  // Guardamos la foto en el sistema de archivos
+
+            // Guardar el usuario en la base de datos
             Vendedor userEntity = this.userRepository.save(
                     Vendedor.builder()
                             .password(passwordEncoder.encode(userDTO.getPassword()))
                             .email(userDTO.getEmail())
                             .authorities(List.of("ROLE_USER", "ROLE_ADMIN"))
-                            .foto(userDTO.getFoto())
+                            .foto(fotoNombre)  // Guardamos el nombre de la foto (la ruta o nombre único generado)
                             .nombre(userDTO.getNombre())
                             .build());
 
+            // Respuesta exitosa
             return ResponseEntity.status(HttpStatus.CREATED).body(
-                    Map.of("email", userEntity.getEmail()
-                            )
+                    Map.of("email", userEntity.getEmail())
             );
 
         } catch (DataIntegrityViolationException e) {
-            // Controlar errores de duplicidad en email o username
+            // Manejo de errores por duplicidad de email
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", "Email ya utilizado"));
+        } catch (IllegalArgumentException e) {
+            // Manejo de errores de validación de la foto (por ejemplo, tamaño o tipo incorrecto)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            // Manejo de otros errores generales
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }

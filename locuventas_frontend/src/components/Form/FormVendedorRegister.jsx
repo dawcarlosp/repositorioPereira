@@ -56,6 +56,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
           size={100}
           className="border-2 border-purple-500 rounded-full text-purple-500 hover:border-orange-400 hover:text-orange-400 hover:border-3 cursor-pointer hover:scale-105"
         />
+        <input type="file" />
         <fieldset className="flex flex-col  items-center justify-center">
           <label htmlFor="nombre">¿Cómo te llamas?</label>
           <input
