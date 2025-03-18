@@ -1,11 +1,9 @@
 import { useState } from "react";
 import './App.css'
-import FormVendedorLogin from './components/Form/FormVendedorLogin';
-import FormVendedorRegister from './components/Form/FormVendedorRegister';
+import FormVendedorLogin from './components/vendedor/Form/FormVendedorLogin';
+import FormVendedorRegister from './components/vendedor/Form/FormVendedorRegister';
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-
-
   return (
     <>
     <div className='flex flex-col items-center'>

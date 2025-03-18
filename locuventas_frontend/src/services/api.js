@@ -1,21 +1,38 @@
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const apiRequest = async (endpoint, data) => {
+export const apiRequest = async (endpoint, data, options = {}) => {
+    const { method = "POST", isFormData = false } = options;
+
+    // Ajustar las opciones dependiendo de si es FormData o JSON
+    const requestOptions = {
+        method,
+        body: isFormData ? data : JSON.stringify(data), // Si es FormData, pasa directamente, si no, stringify el JSON
+        headers: isFormData 
+            ? {} // No necesita Content-Type para FormData
+            : { "Content-Type": "application/json" }, // Si es JSON, setea el Content-Type como application/json
+    };
+
     try {
-        const response = await fetch(`${apiUrl}/${endpoint}`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(data),
-        });
+        // Realiza la solicitud con los ajustes configurados
+        const response = await fetch(`${apiUrl}/${endpoint}`, requestOptions);
+        const text = await response.text();
 
-        const result = await response.json();
-        if (!response.ok) throw new Error(result.message || "Error en la solicitud");
+        let result = {};
+        try {
+            if (text) result = JSON.parse(text);
+        } catch (parseError) {
+            result = { message: text }; // Si no se puede parsear, devuelve el mensaje directamente
+            console.warn("No se pudo parsear como JSON:", parseError);
+        }
 
-        return result; // Devuelve la respuesta en caso de éxito
+        // Si la respuesta no es correcta, lanzar error
+        if (!response.ok) {
+            throw new Error(result.error || result.message || "Error en la solicitud");
+        }
+
+        return result; // Devuelve el resultado exitoso
     } catch (error) {
-        console.error("Error en la API:", error.message);
-        throw error; // Lanza el error para manejarlo en cada formulario
+        console.error("Error en la API:", error.message); // Error de solicitud
+        throw error; // Lanza el error
     }
 };
