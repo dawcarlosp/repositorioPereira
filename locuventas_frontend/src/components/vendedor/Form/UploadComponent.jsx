@@ -24,7 +24,7 @@ const UploadComponent = ({ setFile }) => {
       <input
         type="file"
         ref={fileInputRef}
-        
+        hidden
         onChange={handleFileChange}
       />
     </div>

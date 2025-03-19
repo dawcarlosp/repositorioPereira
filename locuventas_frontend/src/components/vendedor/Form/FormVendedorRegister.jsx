@@ -20,29 +20,32 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
 
     const formData = new FormData();
 
-    // Crear el objeto user y agregarlo como un JSON stringificado
     const userDTO = { nombre, email, password };
-    formData.append("user", JSON.stringify(userDTO));
+    const userBlob = new Blob([JSON.stringify(userDTO)], {
+      type: "application/json",
+    });
+    formData.append("user", userBlob);
 
     // Si hay foto, agregarla al FormData
     if (foto) {
-        formData.append("foto", foto);
+      formData.append("foto", foto);
     }
 
     try {
-        // Hacemos la solicitud con FormData
-        const result = await apiRequest("auth/register", formData, { isFormData: true });
-        console.log("Registro exitoso:", result);
-        setIsOpen(false);
+      // Hacemos la solicitud con FormData
+      const result = await apiRequest("auth/register", formData, {
+        isFormData: true,
+      });
+      console.log("Registro exitoso:", result);
+      setIsOpen(false);
     } catch (err) {
-        console.error("Error en el registro:", err);
-        setError(err.message);
+      console.error("Error en el registro:", err);
+      setError(err.message);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
-};
+  };
 
-  
   useEffect(() => {
     if (isOpen) {
       dialogRef.current?.showModal(); // Muestra el modal
