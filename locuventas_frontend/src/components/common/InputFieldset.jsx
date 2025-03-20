@@ -9,7 +9,6 @@ function InputFieldset({ label, type = "text", id, value, onChange, placeholder 
         id={id}
         value={value}
         onChange={onChange}
-        required
         className="border-b rounded-xl w-80 py-2 text-center"
         placeholder={placeholder}
       />

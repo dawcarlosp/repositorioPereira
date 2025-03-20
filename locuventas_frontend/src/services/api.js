@@ -16,19 +16,19 @@ export const apiRequest = async (endpoint, data, options = {}) => {
 
         let result;
         try {
-            result = text ? JSON.parse(text) : {}; // Intenta parsear JSON, si no, devuelve texto
+            result = text ? JSON.parse(text) : {}; // Intenta parsear JSON
         } catch {
-            result = text || {}; // Si el texto no es JSON, usa el texto crudo
+            result = text || {}; // Si no es JSON válido, usa el texto crudo
             console.warn("No se pudo parsear como JSON");
         }
 
         if (!response.ok) {
-            throw new Error(result.error || result.message || "Error en la solicitud");
+            throw result; // Lanza el objeto completo de error para manejarlo después
         }
 
         return result;
     } catch (error) {
-        console.error("Error en la API:", error.message);
+        console.error("Error en la API:", error);
         throw error;
     }
 };

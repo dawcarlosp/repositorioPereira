@@ -26,7 +26,7 @@ function FormVendedorLogin({ setIsOpen }) {
 };
 
   return (
-    <form onSubmit={handleLogin} className="flex flex-col items-center justify-center border p-10 rounded-xl mt-5">
+    <form onSubmit={handleLogin} className="flex flex-col items-center justify-center border p-10 rounded-xl mt-5 group">
         <h2 className="text-4xl">Iniciar sesión</h2>
         <UserRound size={100} className="border-2 border-purple-500 rounded-full text-purple-500"/>
               {/* Usamos el nuevo componente InputFieldset */}
