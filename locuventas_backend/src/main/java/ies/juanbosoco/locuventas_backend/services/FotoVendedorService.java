@@ -83,14 +83,15 @@ public class FotoVendedorService {
             throw new RuntimeException("Error al crear el directorio de subidas: " + UPLOADS_DIRECTORY, e);
         }
 
-        Path rutaArchivo = directorioPath.resolve(nuevoNombreFoto);
+        Path ruta = Paths.get(UPLOADS_DIRECTORY + File.separator + nuevoNombreFoto);
+
 
         // Guardar la imagen redimensionada
         try {
             byte[] contenido = archivo.getBytes();
             byte[] contenidoRedimensionado = imageService.resizeImage(contenido, 1000); // Redimensionamos a un tamaño específico
-            Files.write(rutaArchivo, contenidoRedimensionado);
-            logger.info("Imagen guardada exitosamente en: " + rutaArchivo.toString());
+            Files.write(ruta, contenidoRedimensionado);
+            logger.info("Imagen guardada exitosamente en: " + ruta.toString());
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar el archivo: " + archivo.getOriginalFilename(), e);
         }

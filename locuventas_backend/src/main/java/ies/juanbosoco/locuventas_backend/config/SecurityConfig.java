@@ -51,6 +51,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2
+                        .requestMatchers("/uploads/imagesVendedores/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

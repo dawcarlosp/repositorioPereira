@@ -34,11 +34,10 @@ const UploadComponent = ({ setFile }) => {
       ) : (
         <UserRound
           size={100}
-          className="border-2 border-purple-500 rounded-full text-purple-500 hover:border-orange-400 hover:text-orange-400 hover:border-3 cursor-pointer hover:scale-105"
+          className="border-2 border-purple-500 rounded-full text-purple-500 group-hover:text-orange-400  group-hover:border-orange-400 hover:border-purple-500 hover:text-purple-500 hover:border-3 cursor-pointer hover:scale-105"
           onClick={handleClick}
         />
       )}
-
       <input
         type="file"
         ref={fileInputRef}

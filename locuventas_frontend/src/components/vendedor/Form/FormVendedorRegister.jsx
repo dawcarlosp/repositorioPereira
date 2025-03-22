@@ -66,14 +66,14 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <dialog ref={dialogRef} className="flex flex-col items-center border rounded-xl mx-auto">
+    <dialog ref={dialogRef} className="flex flex-col items-center border rounded-xl mx-auto shadow-xl bg-white/30 backdrop-blur-lg">
       <button
         className="border bg-purple-500 text-white hover:bg-orange-400 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
         onClick={() => setIsOpen(false)}
       >
         <X size={20} />
       </button>
-      <form onSubmit={handleRegister} className="flex flex-col items-center p-10">
+      <form onSubmit={handleRegister} className="flex flex-col items-center p-10 group">
         <h2 className="text-1xl text-center">
           Regístrate y sacale el máximo provecho a la app
         </h2>
