@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,6 +24,15 @@ public class Venta {
     @CreationTimestamp
     private LocalDateTime createdAt;
     @ManyToOne
-    @JoinColumn(name = "vendedor_id")
+    @JoinColumn(name = "vendedor_id", nullable = false)
     private Vendedor vendedor;
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    private List<VentaProducto> productos = new ArrayList<>();
+
+    public void calcularTotal() {
+        this.total = productos.stream()
+                .mapToDouble(VentaProducto::getSubtotal)
+                .sum();
+    }
 }

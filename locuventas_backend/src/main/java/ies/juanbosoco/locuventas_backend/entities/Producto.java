@@ -1,9 +1,6 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -11,6 +8,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.UuidGenerator;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,4 +33,13 @@ public class Producto {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
+    private List<VentaProducto> productos = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "pais_id")
+    private Pais pais;
+
+    @ManyToMany(mappedBy = "productos")
+    private Set<Categoria> categorias = new HashSet<>();
 }
