@@ -66,7 +66,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <dialog ref={dialogRef} className="flex flex-col items-center border rounded-xl mx-auto shadow-xl bg-white/30 backdrop-blur-lg">
+    <dialog ref={dialogRef} className="flex flex-col items-center border rounded-xl mx-auto shadow-xl bg-white/30 backdrop-blur-lg ">
       <button
         className="border bg-purple-500 text-white hover:bg-orange-400 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
         onClick={() => setIsOpen(false)}
@@ -81,7 +81,6 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         <UploadComponent setFile={setFoto} />
         
         <InputFieldset
-          label="¿Cómo te llamas?"
           type="text"
           id="nombre"
           value={nombre}
@@ -91,7 +90,6 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         <Error>{errors.nombre}</Error>
 
         <InputFieldset
-          label="Email"
           type="email"
           id="email"
           value={email}
@@ -101,7 +99,6 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         <Error>{errors.email}</Error>
 
         <InputFieldset
-          label="Contraseña"
           type="password"
           id="password"
           value={password}
