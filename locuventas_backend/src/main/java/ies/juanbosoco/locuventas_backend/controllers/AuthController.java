@@ -41,7 +41,10 @@ public class AuthController {
     public ResponseEntity<Map<String, String>> save(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,  // El DTO que contiene los datos del usuario
             @RequestPart("foto") MultipartFile foto,  // El archivo (foto) enviado como parte de la solicitud multipart, BindingResult result) {
-            BindingResult result){
+            BindingResult result){ if (foto.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(Map.of("error", "La foto no puede estar vacía"));
+    }
         // Validar errores de validación de los parámetros (por ejemplo, nombre, email, password)
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();

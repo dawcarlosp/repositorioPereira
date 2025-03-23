@@ -4,7 +4,7 @@ import { apiRequest } from "../../../services/api";
 import Boton from "../../common/Boton";
 import InputFieldset from "../../common/InputFieldset";
 import UploadComponent from "./UploadComponent";
-import Error from "../../common/Error"; // Importamos el componente Error
+import Error from "../../common/Error";
 
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);
@@ -15,6 +15,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
+  const [isClosing, setIsClosing] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -40,8 +41,8 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       });
 
       console.log("Registro exitoso:", result);
-      
-      // 🔹 Limpiar formulario al éxito
+
+      // Limpiar formulario al éxito
       setFoto(null);
       setNombre("");
       setEmail("");
@@ -49,10 +50,18 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       setIsOpen(false);
     } catch (err) {
       setErrors(err); // Actualiza el estado con los errores recibidos
-        setError(err.message || "Error en el registro");
+      setError(err.message || "Error en el registro");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleClose = () => {
+    setIsClosing(true); // Activa la animación de cierre
+    setTimeout(() => {
+      setIsOpen(false); // Cierra el diálogo después de la animación
+      setIsClosing(false); // Restablece el estado
+    }, 300); // Duración de la animación (300ms)
   };
 
   useEffect(() => {
@@ -66,10 +75,19 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <dialog ref={dialogRef} className="flex flex-col items-center border rounded-xl mx-auto shadow-xl bg-white/30 backdrop-blur-lg ">
+    <dialog
+      ref={dialogRef}
+      className={`
+        flex flex-col items-center border rounded-xl mx-auto shadow-xl
+        bg-white/30 backdrop-blur-lg mt-2
+        transform transition-all duration-500 ease-out
+        ${isClosing ? "opacity-0 translate-y-[-20px]" : ""}
+        ${isOpen && !isClosing ? "translate-y-0" : "translate-y-[-100vh]"}
+      `}
+    >
       <button
-        className="border bg-purple-500 text-white hover:bg-orange-400 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
-        onClick={() => setIsOpen(false)}
+        className="border bg-orange-400 text-white hover:bg-purple-500 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
+        onClick={handleClose}
       >
         <X size={20} />
       </button>
@@ -79,7 +97,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         </h2>
 
         <UploadComponent setFile={setFoto} />
-        
+        <Error>{errors.error}</Error>
         <InputFieldset
           type="text"
           id="nombre"
@@ -107,7 +125,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         />
         <Error>{errors.password}</Error>
 
-        {error && <p className="text-red-500">{error}</p>}
+        {error && <p className="text-orange-600">{error}</p>}
 
         <Boton>{loading ? "Registrando..." : "Registrarse"}</Boton>
       </form>

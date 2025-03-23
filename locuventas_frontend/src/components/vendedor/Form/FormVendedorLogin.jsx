@@ -37,7 +37,7 @@ function FormVendedorLogin({ setIsOpen }) {
   return (
     <form onSubmit={handleLogin} className="flex flex-col items-center justify-center border p-10 rounded-xl mt-5 shadow-xl">
         <h2 className="text-4xl">Iniciar sesión</h2>
-        <UserRound size={100} className="border-2 border-purple-500 rounded-full text-purple-500"/>
+        <UserRound size={100} className="border-2 border-orange-400 rounded-full text-orange-400 my-2"/>
               {/* Usamos el nuevo componente InputFieldset */}
       <InputFieldset 
         label="Email"
@@ -55,7 +55,7 @@ function FormVendedorLogin({ setIsOpen }) {
         onChange={(e) => setPassword(e.target.value)}
         placeholder={"Contraseña"}
       />
-        {error && <p className="text-orange-400">{error}</p>}
+        {error && <p className="text-orange-600">{error}</p>}
           {/* Usamos el componente Boton aquí */}
           <Boton disabled={loading}>
         {loading ? "Cargando..." : "Iniciar Sesión"}

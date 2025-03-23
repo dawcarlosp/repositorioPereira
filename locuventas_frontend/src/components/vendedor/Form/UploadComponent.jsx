@@ -28,13 +28,13 @@ const UploadComponent = ({ setFile }) => {
         <img
           src={preview}
           alt="Preview"
-          className="w-24 h-24 object-cover border-2 border-purple-500 rounded-full cursor-pointer hover:scale-105"
+          className="w-24 h-24 object-cover border-2 border-orange-400 rounded-full cursor-pointer hover:scale-105"
           onClick={handleClick}
         />
       ) : (
         <UserRound
           size={100}
-          className="border-2 border-purple-500 rounded-full text-purple-500 group-hover:text-orange-400  group-hover:border-orange-400 hover:border-purple-500 hover:text-purple-500 hover:border-3 cursor-pointer hover:scale-105"
+          className="border-2 border-orange-400 rounded-full text-orange-400 group-hover:text-orange-500  group-hover:border-orange-500 hover:border-purple-500 hover:text-purple-500 hover:border-3 cursor-pointer hover:scale-105 my-2"
           onClick={handleClick}
         />
       )}

@@ -1,11 +1,12 @@
-import React from 'react';
-
+import React, { useState } from 'react';
+import { Eye, EyeOff } from "lucide-react";
 function InputFieldset({type = "text", id, value, onChange, placeholder, required = false, }) {
+  const [showPassword, setShowPassword] = useState(false);
   return (
     <label className="relative block w-80 border border-gray-300 rounded-xl shadow-md 
     focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500 transition-all mb-2">
     <input
-      type={type}
+      type={type === "password" && showPassword ? "text" : type}
       id={id}
       value={value}
       onChange={onChange}
@@ -24,6 +25,15 @@ function InputFieldset({type = "text", id, value, onChange, placeholder, require
     >
       {placeholder}
     </span>
+    {type === "password" && (
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-purple-500"
+        >
+          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+        </button>
+      )}
   </label>
   );
 }

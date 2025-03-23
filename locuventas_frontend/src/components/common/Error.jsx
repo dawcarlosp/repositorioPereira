@@ -3,7 +3,7 @@ function Error({ children, className = "", onClick }) {
   
     return (
       <span
-        className={`text-orange-500 text-sm mt-1 block animate-fadeIn ${className}`}
+        className={`text-orange-600 bg-white p-2 mb-2 rounded-xs text-sm mt-1 block animate-fadeIn ${className}`}
         onClick={onClick}
       >
         {children}
