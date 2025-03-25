@@ -28,7 +28,7 @@ class AppTests {
 		vendedor.setFoto("foto.jpg");
 
 		// Guardar el vendedor en la base de datos
-		vendedorRepository.save(vendedor);
+		//vendedorRepository.save(vendedor);
 
 		// Crear una venta asociada al vendedor
 		Venta venta = new Venta();
