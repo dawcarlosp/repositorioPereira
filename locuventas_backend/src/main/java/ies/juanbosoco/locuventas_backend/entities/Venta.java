@@ -27,6 +27,13 @@ public class Venta {
     @JoinColumn(name = "vendedor_id", nullable = false)
     private Vendedor vendedor;
 
+    private Double montoPagado = 0.0;
+    @Enumerated(EnumType.STRING)
+    private EstadoPago estadoPago = EstadoPago.PENDIENTE;
+    public enum EstadoPago{
+        PENDIENTE ,PARCIAL, PAGADO
+    }
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<VentaProducto> productos = new ArrayList<>();
 
