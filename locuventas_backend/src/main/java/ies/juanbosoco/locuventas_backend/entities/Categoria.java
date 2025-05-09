@@ -1,6 +1,7 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
@@ -20,6 +21,8 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @NotBlank(message = "Debe proporcionar un nombre")
+    @Column(unique = true)
     private String nombre;
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp

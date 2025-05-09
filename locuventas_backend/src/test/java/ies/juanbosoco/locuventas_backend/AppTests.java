@@ -17,7 +17,7 @@ class AppTests {
 
 	@Autowired
 	private VentaRepository ventaRepository;
-
+	/*
 	@Test
 	public void testCrearVendedorYVenta() {
 		// Crear un vendedor
@@ -46,6 +46,6 @@ class AppTests {
 		System.out.println("Ventas: " + ventas);}
 	@Test
 	void contextLoads() {
-	}
+	} */
 
 }

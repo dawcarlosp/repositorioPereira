@@ -1,4 +1,5 @@
 package ies.juanbosoco.locuventas_backend.errors;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -47,5 +48,12 @@ public class GlobalHandlerException {
     public ResponseEntity<Map<String, String>> handleMissingPart(MissingServletRequestPartException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(Map.of("error", "Por políticas de la empresa, la foto es obligatoria"));
+    }
+    //Para manejar excepciones que se produzcan en sql, en nuestro caso es para manejar el error del unique del nombre de categoria
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("error", "El nombre de la categoría ya existe. Debe ser único.");
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 }

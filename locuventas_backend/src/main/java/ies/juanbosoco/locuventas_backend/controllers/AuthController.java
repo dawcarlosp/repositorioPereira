@@ -65,7 +65,7 @@ public class AuthController {
                     Vendedor.builder()
                             .password(passwordEncoder.encode(userDTO.getPassword()))
                             .email(userDTO.getEmail())
-                            .authorities(List.of("ROLE_USER", "ROLE_ADMIN"))
+                            .authorities(List.of("ROLE_USER"))
                             .foto(fotoNombre)  // Guardamos el nombre de la foto (la ruta o nombre único generado)
                             .nombre(userDTO.getNombre())
                             .build());

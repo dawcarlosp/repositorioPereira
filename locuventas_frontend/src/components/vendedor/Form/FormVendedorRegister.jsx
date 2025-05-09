@@ -78,7 +78,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
     <dialog
       ref={dialogRef}
       className={`
-        flex flex-col items-center border rounded-xl mx-auto shadow-xl
+        flex flex-col items-center rounded-xl mx-auto shadow-2xl
         bg-white/30 backdrop-blur-lg mt-2
         transform transition-all duration-500 ease-out
         ${isClosing ? "opacity-0 translate-y-[-20px]" : ""}
@@ -93,7 +93,6 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       </button>
       <form onSubmit={handleRegister} className="flex flex-col items-center p-10 group">
         <h2 className="text-1xl text-center">
-          Regístrate y sacale el máximo provecho a la app
         </h2>
 
         <UploadComponent setFile={setFoto} />
@@ -125,7 +124,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         />
         <Error>{errors.password}</Error>
 
-        {error && <p className="text-orange-600">{error}</p>}
+        {error && <Error>{error}</Error>}
 
         <Boton>{loading ? "Registrando..." : "Registrarse"}</Boton>
       </form>
