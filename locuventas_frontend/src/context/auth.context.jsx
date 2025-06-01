@@ -1,16 +1,3 @@
-// Ejemplo guardando en context API
-import { createContext, useContext, useState } from "react";
+import { createContext } from "react";
 
-const AuthContext = createContext();
-
-export const AuthProvider = ({ children }) => {
-    const [token, setToken] = useState(null);
-
-    return (
-        <AuthContext.Provider value={{ token, setToken }}>
-            {children}
-        </AuthContext.Provider>
-    );
-};
-
-export const useAuth = () => useContext(AuthContext);
+export const AuthContext = createContext();

@@ -34,7 +34,7 @@ public class Producto {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private List<VentaProducto> productos = new ArrayList<>();
+    private List<VentaProducto> ventaproductos = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "pais_id")

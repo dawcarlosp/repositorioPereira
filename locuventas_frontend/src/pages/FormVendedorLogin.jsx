@@ -1,5 +1,5 @@
 import { apiRequest } from "../services/api";
-import { useAuth } from "../context/auth.context"; // Asegúrate de importar desde la ubicación correcta
+import { useAuth } from "../context/useAuth"; // Asegúrate de importar desde la ubicación correcta
 import Boton from "../components/common/Boton";
 import InputFieldset from "../components/common/InputFieldset";
 import Enlace from "../components/common/Enlace"; 

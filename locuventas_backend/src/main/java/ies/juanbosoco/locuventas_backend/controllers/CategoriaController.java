@@ -26,7 +26,7 @@ public class CategoriaController {
     /* Crear una nueva categoria */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> storeMesa(@RequestBody @Valid Categoria categoria, BindingResult result){
+    public ResponseEntity<?> storeProducto(@RequestBody @Valid Categoria categoria, BindingResult result){
         if(result.hasErrors()){   Map<String, String> errors = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
                 errors.put(error.getField(), error.getDefaultMessage());

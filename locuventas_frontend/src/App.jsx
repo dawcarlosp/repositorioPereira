@@ -4,6 +4,7 @@ import "./App.css";
 import FormVendedorLogin from "./pages/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
 import FormVendedorRegister from "./components/vendedor/Form/FormVendedorRegister";
+import PrivateRoute from "./components/common/PrivateRoute"; // ✅ IMPORTANTE
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -16,8 +17,18 @@ function App() {
             path="/"
             element={<FormVendedorLogin setIsOpen={setIsOpen} />}
           />
-          <Route path="/dashboard" element={<Dashboard />} />
+
+          {/* ✅ Ruta protegida con PrivateRoute */}
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <Dashboard />
+              </PrivateRoute>
+            }
+          />
         </Routes>
+
         <FormVendedorRegister isOpen={isOpen} setIsOpen={setIsOpen} />
       </div>
     </BrowserRouter>

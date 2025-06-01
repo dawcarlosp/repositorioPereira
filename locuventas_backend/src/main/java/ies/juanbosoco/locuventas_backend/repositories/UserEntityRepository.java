@@ -11,4 +11,6 @@ public interface UserEntityRepository extends JpaRepository<Vendedor, String>{
     Optional<Vendedor> findByEmail(String email);
     @Query("SELECT COUNT(v) > 0 FROM Vendedor v WHERE 'ROLE_ADMIN' MEMBER OF v.authorities")
     boolean existsAdmin();
+    @Query("SELECT COUNT(v) > 0 FROM Vendedor v WHERE 'ROLE_VENDEDOR' MEMBER OF v.authorities")
+    boolean existsVendedor();
 }
