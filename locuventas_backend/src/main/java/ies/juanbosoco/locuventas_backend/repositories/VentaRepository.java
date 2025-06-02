@@ -7,4 +7,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
+     @Query("SELECT v FROM Venta v WHERE " +
+           "(:estado IS NULL OR v.estadoPago = :estado) AND " +
+           "(:cancelada IS NULL OR v.cancelada = :cancelada)")
+    Page<Venta> findByEstadoAndCancelada(@Param("estado") Venta.EstadoPago estado,
+                                         @Param("cancelada") Boolean cancelada,
+                                         Pageable pageable);
 }

@@ -16,15 +16,16 @@ import java.util.List;
 @Builder
 @Table(name = "ventas")
 public class Venta {
-      @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private BigDecimal total;
 
+    private boolean cancelada = false;
+
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
     private List<Pago> pagos = new ArrayList<>();
-
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -53,24 +54,38 @@ public class Venta {
     }
 
     public void calcularMontoPagado() {
-    this.montoPagado = pagos.stream()
-        .map(Pago::getMonto)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
-}
-
-public void actualizarEstadoPago() {
-    if (montoPagado.compareTo(BigDecimal.ZERO) == 0) {
-        this.estadoPago = EstadoPago.PENDIENTE;
-    } else if (montoPagado.compareTo(total) < 0) {
-        this.estadoPago = EstadoPago.PARCIAL;
-    } else {
-        this.estadoPago = EstadoPago.PAGADO;
+        this.montoPagado = pagos.stream()
+                .map(Pago::getMonto)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
-}
-public void actualizarTotalesYEstado() {
-    calcularTotal();
-    calcularMontoPagado();
-    actualizarEstadoPago();
-}
 
+    public void actualizarEstadoPago() {
+        if (cancelada) {
+            this.estadoPago = EstadoPago.PENDIENTE; // o define un estado especial si lo deseas
+            return;
+        }
+
+        if (montoPagado.compareTo(BigDecimal.ZERO) == 0) {
+            this.estadoPago = EstadoPago.PENDIENTE;
+        } else if (montoPagado.compareTo(total) < 0) {
+            this.estadoPago = EstadoPago.PARCIAL;
+        } else {
+            this.estadoPago = EstadoPago.PAGADO;
+        }
+    }
+
+    public void actualizarTotalesYEstado() {
+        calcularTotal();
+        calcularMontoPagado();
+        actualizarEstadoPago();
+    }
+
+    public BigDecimal getSaldoPendiente() {
+        return this.total.subtract(this.montoPagado);
+    }
+
+    public void cancelar() {
+        this.cancelada = true;
+        this.estadoPago = EstadoPago.PENDIENTE; 
+    }
 }

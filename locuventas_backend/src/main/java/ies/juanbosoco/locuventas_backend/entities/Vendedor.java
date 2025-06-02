@@ -25,7 +25,6 @@ import java.util.Collection;
 @Getter
 @Setter
 @Builder
-@Entity
 @Table(name = "vendedores")
 public class Vendedor implements UserDetails{
      @Id
