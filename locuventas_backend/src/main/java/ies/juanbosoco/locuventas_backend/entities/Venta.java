@@ -26,7 +26,9 @@ public class Venta {
 
     private boolean cancelada;
 
-    private LocalDate createdAt;
+    @Column(name = "created_at", updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
     @ManyToOne
     @JoinColumn(name = "vendedor_id")

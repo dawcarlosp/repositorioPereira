@@ -21,7 +21,7 @@ public class JwtTokenProvider {
         SecretKey key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
         return Jwts.builder()
-                .subject(user.getId())
+                .subject(String.valueOf(user.getId()))
                 .claim("email", user.getEmail())
                 .claim("username", user.getUsername())
                 .claim("foto","default.jpg")

@@ -2,10 +2,14 @@ import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
+import AvatarUsuario from "../components/common/AvatarUsuario"; // Ajusta la ruta según tu estructura
+import { useAuth } from "../context/useAuth"; // También importa el hook de autenticación
+
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
-
+  const { nombre, foto } = useAuth();
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
   }, []);
@@ -30,6 +34,8 @@ export default function Header() {
           <Link to="/" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Gestión</Link>
           <Link to="/dashboard" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Vendedores</Link>
           <Link to="/contacto" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Cerrar Sesión</Link>
+          {/* Avatar del usuario */}
+        {foto && nombre && <AvatarUsuario foto={foto} nombre={nombre} />}
         </nav>
 
         {/* HAMBURGER */}
