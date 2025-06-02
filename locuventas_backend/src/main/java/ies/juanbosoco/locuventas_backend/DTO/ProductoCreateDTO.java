@@ -6,19 +6,21 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Data
 public class ProductoCreateDTO {
-    @NotBlank
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor que 0")
-    private double precio;
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = false, message = "El precio debe ser mayor a 0")
+    private BigDecimal precio;
 
     @NotNull(message = "El país es obligatorio")
     private Long paisId;
 
-    @NotEmpty(message = "Debe incluir al menos una categoría")
+    @NotEmpty(message = "Debes seleccionar al menos una categoría")
     private List<Long> categoriaIds;
 }

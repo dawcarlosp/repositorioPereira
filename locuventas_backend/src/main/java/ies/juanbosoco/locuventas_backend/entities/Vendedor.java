@@ -19,46 +19,62 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
-@NoArgsConstructor
-@AllArgsConstructor
+import java.util.stream.Collectors;
+
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @Table(name = "vendedores")
-public class Vendedor implements UserDetails{
-    @Id
-    @UuidGenerator // Genera un UUID automáticamente
-    private String id;
+public class Vendedor implements UserDetails {
 
-    @Email(message = "El email no tiene el formato válido")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @Column(unique = true)
+    @jakarta.validation.constraints.Email(message = "El email no tiene el formato válido")
     private String email;
+
     private String password;
     private String foto;
-    //@Length(min = 3, message = "{cliente.nombre.longitud}")
     private String nombre;
-    @Column(name = "created_at", updatable = false)
+
     @CreationTimestamp
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
-    @Column(name = "updated_at")
+
     @UpdateTimestamp
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-    //Relaciones
-    //@JsonIgnore
+
+    // ✅ Relación con ventas
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private List<Venta> ventas = new ArrayList<>();
 
-    @Builder.Default    //Para que Lombok con el patrón builder cree el ArrayList
-    @ElementCollection(fetch = FetchType.EAGER) // Indica que está lista se almacena en una tabla separada, pero sin una relación
+    // ✅ Autoridades
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
+    @Builder.Default
     private List<String> authorities = new ArrayList<>();
 
+    // ✅ Relación con países preferidos
+    @ManyToMany
+    @JoinTable(
+            name = "vendedor_paises",
+            joinColumns = @JoinColumn(name = "vendedor_id"),
+            inverseJoinColumns = @JoinColumn(name = "pais_id")
+    )
+    private List<Pais> paisesPreferidos = new ArrayList<>();
+
+    // 🔐 Métodos de UserDetails
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.authorities.stream()
-                .map(authority -> new SimpleGrantedAuthority(authority))
-                .toList();
+        return authorities.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -90,5 +106,4 @@ public class Vendedor implements UserDetails{
     public boolean isEnabled() {
         return true;
     }
-
 }

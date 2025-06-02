@@ -1,19 +1,23 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 import ies.juanbosoco.locuventas_backend.DTO.LoginRequestDTO;
 import ies.juanbosoco.locuventas_backend.DTO.LoginResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.PaisResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
+import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
-import ies.juanbosoco.locuventas_backend.services.FotoVendedorService;
+import ies.juanbosoco.locuventas_backend.services.FotoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -36,7 +40,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private FotoVendedorService fotoVendedorService;
+    private FotoService fotoVendedorService;
     @PostMapping("/auth/register")
     public ResponseEntity<Map<String, String>> save(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,  // El DTO que contiene los datos del usuario
@@ -114,5 +118,24 @@ public class AuthController {
                     )
             );
         }
+    }
+
+    @GetMapping("/mis-paises")
+    @PreAuthorize("hasAnyRole('VENDEDOR', 'ADMIN')")
+    public ResponseEntity<List<PaisResponseDTO>> obtenerMisPaises(@AuthenticationPrincipal Vendedor vendedor) {
+        List<PaisResponseDTO> paises = vendedor.getPaisesPreferidos().stream()
+                .map(this::mapToDTO)
+                .toList();
+
+        return ResponseEntity.ok(paises);
+    }
+
+    private PaisResponseDTO mapToDTO(Pais pais) {
+        return new PaisResponseDTO(
+                pais.getId(),
+                pais.getNombre(),
+                pais.getCodigo(),
+                pais.getEnlaceFoto()
+        );
     }
 }

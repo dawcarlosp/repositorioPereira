@@ -20,15 +20,13 @@ import java.util.List;
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private Long id;
+
         private String nombre;
+
         private String codigo;
+
         private String enlaceFoto;
-        @Column(name = "created_at", updatable = false)
-        @CreationTimestamp
-        private LocalDateTime createdAt;
-        @Column(name = "updated_at")
-        @UpdateTimestamp
-        private LocalDateTime updatedAt;
-        @OneToMany(mappedBy = "pais", cascade = CascadeType.ALL)
-        private List<Producto> productos = new ArrayList<>();
+
+        @OneToMany(mappedBy = "pais")
+        private List<Producto> productos;
     }

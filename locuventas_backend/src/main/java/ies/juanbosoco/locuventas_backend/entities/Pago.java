@@ -3,6 +3,7 @@ package ies.juanbosoco.locuventas_backend.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -16,9 +17,12 @@ public class Pago {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "venta_id", nullable = false)
-    private Venta venta;
-    private Double monto;
+
+    private BigDecimal monto;
+
     private LocalDate fechaPago;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "venta_id")
+    private Venta venta;
 }
