@@ -22,24 +22,16 @@ import java.util.Set;
 @Table(name = "productos")
 public class Producto {
     @Id
-    @UuidGenerator
-    private String id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nombre;
-    private double precio;
-    @Column(name = "created_at", updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
 
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private List<VentaProducto> ventaproductos = new ArrayList<>();
+    private BigDecimal precio;
 
-    @ManyToOne
-    @JoinColumn(name = "pais_id")
-    private Pais pais;
-
-    @ManyToMany(mappedBy = "productos")
-    private Set<Categoria> categorias = new HashSet<>();
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoCategoria> categorias = new ArrayList<>();
+    
+    @OneToMany(mappedBy = "producto", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<VentaProducto> ventas = new ArrayList<>();
 }

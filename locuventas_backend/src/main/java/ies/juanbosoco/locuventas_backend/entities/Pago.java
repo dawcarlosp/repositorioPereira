@@ -19,6 +19,6 @@ public class Pago {
     @ManyToOne
     @JoinColumn(name = "venta_id", nullable = false)
     private Venta venta;
-    private Double monto;
+    private BigDecimal monto;
     private LocalDate fechaPago;
 }

@@ -25,11 +25,12 @@ import java.util.Collection;
 @Getter
 @Setter
 @Builder
+@Entity
 @Table(name = "vendedores")
 public class Vendedor implements UserDetails{
-    @Id
-    @UuidGenerator // Genera un UUID automáticamente
-    private String id;
+     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Email(message = "El email no tiene el formato válido")
     @Column(unique = true)
@@ -45,7 +46,7 @@ public class Vendedor implements UserDetails{
     @UpdateTimestamp
     private LocalDateTime updatedAt;
     //Relaciones
-    //@JsonIgnore
+    @JsonIgnore
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private List<Venta> ventas = new ArrayList<>();
 
@@ -62,6 +63,7 @@ public class Vendedor implements UserDetails{
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return this.password;
     }

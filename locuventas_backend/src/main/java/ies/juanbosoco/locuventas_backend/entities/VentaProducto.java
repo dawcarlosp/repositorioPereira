@@ -24,7 +24,14 @@ public class VentaProducto {
     private Producto producto;
 
     private int cantidad;
-    private double subtotal;
 
+    private BigDecimal subtotal;
 
+    public void recalcularSubtotal() {
+    if (producto != null && producto.getPrecio() != null) {
+        this.subtotal = producto.getPrecio().multiply(BigDecimal.valueOf(cantidad));
+    } else {
+        this.subtotal = BigDecimal.ZERO;
+    }
+}
 }

@@ -16,22 +16,31 @@ import java.util.List;
 @Builder
 @Table(name = "ventas")
 public class Venta {
-    @Id
+      @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double total;
+
+    private BigDecimal total;
+
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    private List<Pago> pagos = new ArrayList<>();
+
+
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
+
     @ManyToOne
     @JoinColumn(name = "vendedor_id", nullable = false)
     private Vendedor vendedor;
 
-    private Double montoPagado = 0.0;
+    private BigDecimal montoPagado = BigDecimal.ZERO;
+
     @Enumerated(EnumType.STRING)
     private EstadoPago estadoPago = EstadoPago.PENDIENTE;
-    public enum EstadoPago{
-        PENDIENTE ,PARCIAL, PAGADO
+
+    public enum EstadoPago {
+        PENDIENTE, PARCIAL, PAGADO
     }
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
@@ -39,7 +48,29 @@ public class Venta {
 
     public void calcularTotal() {
         this.total = productos.stream()
-                .mapToDouble(VentaProducto::getSubtotal)
-                .sum();
+                .map(VentaProducto::getSubtotal)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    public void calcularMontoPagado() {
+    this.montoPagado = pagos.stream()
+        .map(Pago::getMonto)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+}
+
+public void actualizarEstadoPago() {
+    if (montoPagado.compareTo(BigDecimal.ZERO) == 0) {
+        this.estadoPago = EstadoPago.PENDIENTE;
+    } else if (montoPagado.compareTo(total) < 0) {
+        this.estadoPago = EstadoPago.PARCIAL;
+    } else {
+        this.estadoPago = EstadoPago.PAGADO;
+    }
+}
+public void actualizarTotalesYEstado() {
+    calcularTotal();
+    calcularMontoPagado();
+    actualizarEstadoPago();
+}
+
 }

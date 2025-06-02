@@ -21,21 +21,7 @@ public class Categoria {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank(message = "Debe proporcionar un nombre")
-    @Column(unique = true)
     private String nombre;
-    @Column(name = "created_at", updatable = false)
-    @CreationTimestamp
-    private LocalDateTime createdAt;
-    @Column(name = "updated_at")
-    @UpdateTimestamp
-    private LocalDateTime updatedAt;
-
-    @ManyToMany
-    @JoinTable(
-            name = "categoria_producto",
-            joinColumns = @JoinColumn(name = "categoria_id"),
-            inverseJoinColumns = @JoinColumn(name = "producto_id")
-    )
-    private Set<Producto> productos = new HashSet<>();
+    @OneToMany(mappedBy = "categoria", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ProductoCategoria> productos = new ArrayList<>();
 }
