@@ -56,4 +56,11 @@ public class GlobalHandlerException {
         error.put("error", "El nombre de la categoría ya existe. Debe ser único.");
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(VentaNoEncontradaException.class)
+    public ResponseEntity<Map<String, String>> handleVentaNoEncontrada(VentaNoEncontradaException ex) {
+    return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(Map.of("error", ex.getMessage()));
+}
+
 }
