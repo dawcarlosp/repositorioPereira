@@ -115,4 +115,25 @@ public class AuthController {
             );
         }
     }
+
+@GetMapping("/mis-paises")
+@PreAuthorize("hasAnyRole('VENDEDOR', 'ADMIN')")
+public ResponseEntity<List<PaisResponseDTO>> obtenerMisPaises(@AuthenticationPrincipal Vendedor vendedor) {
+    List<PaisResponseDTO> paises = vendedor.getPaisesPreferidos().stream()
+            .map(this::mapToDTO)
+            .toList();
+
+    return ResponseEntity.ok(paises);
+}
+
+private PaisResponseDTO mapToDTO(Pais pais) {
+    return new PaisResponseDTO(
+            pais.getId(),
+            pais.getNombre(),
+            pais.getCodigo(),
+            pais.getEnlaceFoto()
+    );
+}
+
+
 }

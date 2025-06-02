@@ -49,6 +49,17 @@ public class Vendedor implements UserDetails{
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private List<Venta> ventas = new ArrayList<>();
 
+    //Es para las preferencias de usuario, para que no se muestren todos los países
+    @ManyToMany
+    @JoinTable(
+    name = "vendedor_paises",
+    joinColumns = @JoinColumn(name = "vendedor_id"),
+    inverseJoinColumns = @JoinColumn(name = "pais_id")
+    )
+    @JsonIgnore
+    private List<Pais> paisesPreferidos = new ArrayList<>();
+
+
     @Builder.Default    //Para que Lombok con el patrón builder cree el ArrayList
     @ElementCollection(fetch = FetchType.EAGER) // Indica que está lista se almacena en una tabla separada, pero sin una relación
     @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))

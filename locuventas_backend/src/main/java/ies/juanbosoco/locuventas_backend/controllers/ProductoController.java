@@ -97,4 +97,31 @@ public class ProductoController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+    @GetMapping("/categoria/{id}")
+    @PreAuthorize("hasAnyRole('VENDEDOR', 'ADMIN')")
+    public ResponseEntity<List<Producto>> getProductosPorCategoria(@PathVariable Long id) {
+    List<Producto> productos = productoRepository.findByCategorias_Categoria_Id(id);
+
+    if (productos.isEmpty()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
+    }
+
+    return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/pais/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
+    public ResponseEntity<List<Producto>> productosPorPais(@PathVariable Long id) {
+    List<Producto> productos = productoRepository.findByPais_Id(id);
+    return ResponseEntity.ok(productos);
+    }
+
+    @GetMapping("/buscar")
+    @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
+    public ResponseEntity<List<Producto>> buscarPorNombre(@RequestParam String nombre) {
+    List<Producto> resultados = productoRepository.findByNombreContainingIgnoreCase(nombre);
+    return ResponseEntity.ok(resultados);
+}
+
+
 }
