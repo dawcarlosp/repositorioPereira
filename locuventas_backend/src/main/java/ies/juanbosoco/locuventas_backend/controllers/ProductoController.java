@@ -30,7 +30,7 @@ public class ProductoController {
     private PaisRepository paisRepository;
     @Autowired
     private CategoriaRepository categoriaRepository;
-
+    //Prueba de que el repositorio vuelve a funcionar o no
     /* Crear un nuevo producto */
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
