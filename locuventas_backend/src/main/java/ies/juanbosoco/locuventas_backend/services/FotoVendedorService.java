@@ -15,9 +15,9 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class FotoVendedorService {
+public class fotoService {
 
-    private static final Logger logger = LoggerFactory.getLogger(FotoVendedorService.class);
+    private static final Logger logger = LoggerFactory.getLogger(fotoService.class);
     private static final List<String> TIPOS_PERMITIDOS = List.of("image/jpeg", "image/png", "image/gif", "image/avif", "image/webp", "image/jpg");
     private static final long MAX_FILE_SIZE = 10_000_000;  // 10 MB
     private static final String UPLOADS_DIRECTORY = "uploads/imagesVendedores/";

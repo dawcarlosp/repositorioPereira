@@ -28,10 +28,12 @@ public class Producto {
     private String nombre;
 
     private BigDecimal precio;
+    
+    private String foto;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoCategoria> categorias = new ArrayList<>();
-    
+
     @OneToMany(mappedBy = "producto", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<VentaProducto> ventas = new ArrayList<>();
 }

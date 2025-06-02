@@ -26,37 +26,75 @@ public class ProductoController {
     private PaisRepository paisRepository;
     @Autowired
     private CategoriaRepository categoriaRepository;
-
+    @Autowired
+    private FotoService fotoProductoService;
     /* Crear un nuevo producto */
+    
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> storeProducto(@RequestBody @Valid ProductoCreateDTO producto, BindingResult result){
-         if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
+    public ResponseEntity<?> crearProductoConFoto(
+            @Valid @RequestPart("producto") ProductoCreateDTO dto,
+            @RequestPart("foto") MultipartFile foto,
+            BindingResult result) {
+
+        if (foto.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "La foto no puede estar vacía"));
+        }
+
+        if (result.hasErrors()) {
+            Map<String, String> errores = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
+                errores.put(error.getField(), error.getDefaultMessage());
             }
-            return ResponseEntity.badRequest().body(errors);
+            return ResponseEntity.badRequest().body(errores);
         }
 
         Optional<Pais> paisOptional = paisRepository.findById(dto.getPaisId());
         if (paisOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("paisId", "País no encontrado"));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("paisId", "País no encontrado"));
         }
 
         List<Categoria> categorias = categoriaRepository.findAllById(dto.getCategoriaIds());
         if (categorias.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("categoriaIds", "No se encontraron categorías válidas"));
+            return ResponseEntity.badRequest()
+                    .body(Map.of("categoriaIds", "No se encontraron categorías válidas"));
         }
 
-        Producto producto = Producto.builder()
-                .nombre(dto.getNombre())
-                .precio(dto.getPrecio())
-                .pais(paisOptional.get())
-                .categorias(new HashSet<>(categorias))
-                .build();
+        try {
+            // Guardar la imagen
+            fotoProductoService.validarArchivo(foto);
+            String fotoNombre = fotoProductoService.generarNombreUnico(foto);
+            fotoProductoService.guardarImagen(foto, fotoNombre);
 
-        Producto nuevoProducto = productoRepository.save(producto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(nuevoProducto);
+            // Construir producto base
+            Producto producto = Producto.builder()
+                    .nombre(dto.getNombre())
+                    .precio(dto.getPrecio())
+                    .pais(paisOptional.get())
+                    .foto(fotoNombre)
+                    .build();
+
+            // Asociar categorías
+            List<ProductoCategoria> relaciones = categorias.stream()
+                    .map(cat -> ProductoCategoria.builder()
+                            .producto(producto)
+                            .categoria(cat)
+                            .id(new ProductoCategoriaId()) // se usa @MapsId
+                            .build())
+                    .toList();
+
+            producto.setCategorias(relaciones);
+
+            Producto guardado = productoRepository.save(producto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(guardado);
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", e.getMessage()));
+        }
     }
 }

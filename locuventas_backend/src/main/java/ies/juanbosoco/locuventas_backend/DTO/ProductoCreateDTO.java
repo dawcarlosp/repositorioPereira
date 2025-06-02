@@ -10,11 +10,11 @@ import java.util.List;
 
 @Data
 public class ProductoCreateDTO {
-    @NotBlank
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
     @DecimalMin(value = "0.01", message = "El precio debe ser mayor que 0")
-    private double precio;
+    private BigDecimal precio;
 
     @NotNull(message = "El país es obligatorio")
     private Long paisId;

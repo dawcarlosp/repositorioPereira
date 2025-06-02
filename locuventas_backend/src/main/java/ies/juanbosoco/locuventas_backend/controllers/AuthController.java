@@ -36,7 +36,7 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
     @Autowired
-    private FotoVendedorService fotoVendedorService;
+    private FotoService fotoVendedorService;
     @PostMapping("/auth/register")
     public ResponseEntity<Map<String, String>> save(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,  // El DTO que contiene los datos del usuario
