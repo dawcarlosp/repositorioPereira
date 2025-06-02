@@ -1,14 +1,13 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/useAuth"; // ajustá si tu hook está en otro archivo
+import { useAuth } from "../../context/useAuth";
 
-const PrivateRoute = ({ children }) => {
-  const { token } = useAuth();
+export default function PrivateRoute({ children }) {
+  const { auth } = useAuth();
+  const token = auth?.token;
 
   if (!token) {
     return <Navigate to="/" replace />;
   }
 
   return children;
-};
-
-export default PrivateRoute;
+}

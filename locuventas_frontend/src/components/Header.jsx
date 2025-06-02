@@ -5,11 +5,26 @@ import { Link } from "react-router-dom";
 import AvatarUsuario from "../components/common/AvatarUsuario"; // Ajusta la ruta según tu estructura
 import { useAuth } from "../context/useAuth"; // También importa el hook de autenticación
 
+import { useNavigate } from "react-router-dom";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
-  const { nombre, foto } = useAuth();
+
+  const { auth, setAuth } = useAuth(); // << CORREGIDO
+  const { nombre, foto } = auth || {}; // Evita error si auth es null
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    setAuth({
+      token: null,
+      nombre: null,
+      foto: null,
+      email: null,
+    });
+    navigate("/"); // redirige al login
+  };
+
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
   }, []);
@@ -31,11 +46,27 @@ export default function Header() {
 
         {/* DESKTOP NAV */}
         <nav className="hidden md:flex gap-6">
-          <Link to="/" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Gestión</Link>
-          <Link to="/dashboard" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Vendedores</Link>
-          <Link to="/contacto" className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl">Cerrar Sesión</Link>
+          <Link
+            to="/"
+            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl flex flex-col items-center justify-center "
+          >
+            Gestión
+          </Link>
+          <Link
+            to="/dashboard"
+            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl flex flex-col items-center justify-center "
+          >
+            Vendedores
+          </Link>
+          <button
+            onClick={handleLogout}
+            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl"
+          >
+            Cerrar Sesión
+          </button>
+
           {/* Avatar del usuario */}
-        {foto && nombre && <AvatarUsuario foto={foto} nombre={nombre} />}
+          {foto && nombre && <AvatarUsuario foto={foto} nombre={nombre} />}
         </nav>
 
         {/* HAMBURGER */}
@@ -50,7 +81,9 @@ export default function Header() {
       {/* MOBILE NAV */}
       <div
         className={`md:hidden mx-4 mt-[2px] rounded-b-2xl bg-gray-900/95 px-6 py-5 space-y-4 text-center shadow-lg border-t border-white/10 transform transition-all duration-500 ease-in-out origin-top overflow-hidden ${
-          menuOpen ? "scale-y-100 opacity-100 max-h-96" : "scale-y-0 opacity-0 max-h-0"
+          menuOpen
+            ? "scale-y-100 opacity-100 max-h-96"
+            : "scale-y-0 opacity-0 max-h-0"
         }`}
       >
         <Link
@@ -71,15 +104,14 @@ export default function Header() {
         >
           Dashboard
         </Link>
-        <Link
-          to="/contacto"
-          onClick={() => setMenuOpen(false)}
-          className={`block text-white text-lg hover:text-orange-400 font-semibold transition duration-300 delay-300 ${
+        <button
+          onClick={ handleLogout}
+          className={`block w-full text-white text-lg hover:text-orange-400 font-semibold transition duration-300 delay-300 ${
             menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
           }`}
         >
           Cerrar sesión
-        </Link>
+        </button>
       </div>
     </header>
   );

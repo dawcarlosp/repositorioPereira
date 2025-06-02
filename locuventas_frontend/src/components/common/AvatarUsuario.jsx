@@ -6,7 +6,7 @@ export default function AvatarUsuario({ foto, nombre }) {
 
   // Si tu backend tiene un dominio/base, usa VITE_API_URL:
   const baseUrl = import.meta.env.VITE_API_URL || "";
-  const url = `${baseUrl}/uploads/imagesVendedores/${foto}`;
+  const url = `${baseUrl}/imagenes/vendedores/${foto}`;
 
   return (
     <div className="flex items-center gap-3">
@@ -14,7 +14,7 @@ export default function AvatarUsuario({ foto, nombre }) {
         src={imgError || !foto ? defaultAvatar : url}
         alt={`Foto de ${nombre || "usuario"}`}
         onError={() => setImgError(true)}
-        className="w-10 h-10 rounded-full border-2 border-white shadow-md object-cover"
+        className="w-15 h-15 rounded-full border-2 border-white shadow-md object-cover"
       />
       {nombre && (
         <span className="hidden md:inline text-white font-semibold">{nombre}</span>
