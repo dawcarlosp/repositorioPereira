@@ -105,5 +105,10 @@ public class Vendedor implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }// Acceso directo a la lista original (sin mapear a GrantedAuthority)
+    @JsonIgnore
+    public List<String> getAuthoritiesRaw() {
+        return this.authorities;
     }
+
 }

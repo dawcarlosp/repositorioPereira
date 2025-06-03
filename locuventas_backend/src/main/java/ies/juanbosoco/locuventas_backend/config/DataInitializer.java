@@ -2,6 +2,7 @@ package ies.juanbosoco.locuventas_backend.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
@@ -36,7 +37,7 @@ public class DataInitializer implements CommandLineRunner {
                     .email("admin@locutorio.com")
                     .password(passwordEncoder.encode("admin123"))
                     .nombre("Administrador")
-                    .authorities(List.of("ROLE_ADMIN"))
+                    .authorities(List.of(Roles.ADMIN, Roles.USER, Roles.VENDEDOR))
                     .foto("default.jpg")
                     .build();
             vendedorRepository.save(admin);
@@ -50,7 +51,7 @@ public class DataInitializer implements CommandLineRunner {
                     .email("vendedor@locutorio.com")
                     .password(passwordEncoder.encode("vendedor123"))
                     .nombre("Vendedor")
-                    .authorities(List.of("ROLE_VENDEDOR"))
+                    .authorities(List.of(Roles.VENDEDOR, Roles.USER))
                     .foto("default.jpg")
                     .build();
             vendedorRepository.save(vendedor);

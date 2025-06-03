@@ -1,6 +1,8 @@
 package ies.juanbosoco.locuventas_backend.DTO;
 import lombok.*;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -10,4 +12,5 @@ public class LoginResponseDTO {
     private String token;
     private String nombre;
     private String foto;
+    private List<String> roles;
 }

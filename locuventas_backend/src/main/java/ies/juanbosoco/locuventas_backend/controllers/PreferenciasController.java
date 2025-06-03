@@ -30,7 +30,7 @@ public class PreferenciasController {
     // ✅ Obtener países preferidos de un vendedor
     @GetMapping("/{id}/preferencias-paises")
     @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
-    public ResponseEntity<List<Pais>> obtenerPaisesPreferidos(@PathVariable String id) {
+    public ResponseEntity<List<Pais>> obtenerPaisesPreferidos(@PathVariable Long id) {
         Vendedor vendedor = vendedorRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Vendedor no encontrado"));
 
@@ -41,7 +41,7 @@ public class PreferenciasController {
     @PatchMapping("/{id}/preferencias-paises")
     @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
     public ResponseEntity<?> actualizarPaisesPreferidos(
-            @PathVariable String id,
+            @PathVariable Long id,
             @RequestBody @Valid PreferenciasPaisRequest request) {
 
         Vendedor vendedor = vendedorRepository.findById(id)

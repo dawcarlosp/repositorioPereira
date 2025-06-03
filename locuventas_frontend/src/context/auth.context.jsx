@@ -1,3 +1,4 @@
+// src/context/auth.context.js
 import { createContext } from "react";
 
 export const AuthContext = createContext({
@@ -5,5 +6,7 @@ export const AuthContext = createContext({
   nombre: null,
   foto: null,
   email: null,
+  roles: [],   
   setAuth: () => {},
+  logout: () => {},
 });

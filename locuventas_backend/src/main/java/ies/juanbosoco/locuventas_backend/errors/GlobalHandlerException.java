@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
+import org.springframework.security.access.AccessDeniedException;
+
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,6 +63,17 @@ public class GlobalHandlerException {
     public ResponseEntity<Map<String, String>> handleVentaNoEncontrada(VentaNoEncontradaException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(Map.of("error", ex.getMessage()));
+    }
+
+    /**
+     * Captura cualquier AccessDeniedException (403 Forbidden) y devuelve un JSON con mensaje personalizado.
+     */
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDenied(AccessDeniedException ex) {
+        // Aquí devolvemos 403 y un body con nuestra propia clave "error"
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(Map.of("error", "No tienes permiso para realizar esta acción"));
     }
 
 }

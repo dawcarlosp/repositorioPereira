@@ -4,6 +4,7 @@ import ies.juanbosoco.locuventas_backend.DTO.LoginResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.PaisResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
+import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
@@ -24,10 +25,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 public class AuthController {
@@ -69,7 +67,7 @@ public class AuthController {
                     Vendedor.builder()
                             .password(passwordEncoder.encode(userDTO.getPassword()))
                             .email(userDTO.getEmail())
-                            .authorities(List.of("ROLE_USER"))
+                            .authorities(List.of(Roles.USER))
                             .foto(fotoNombre)  // Guardamos el nombre de la foto (la ruta o nombre único generado)
                             .nombre(userDTO.getNombre())
                             .build());
@@ -97,22 +95,30 @@ public class AuthController {
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDTO) {
         try {
-            UsernamePasswordAuthenticationToken userPassAuthToken =
+            UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
 
-            Authentication auth = authenticationManager.authenticate(userPassAuthToken);
+            Authentication auth = authenticationManager.authenticate(authToken);
             Vendedor user = (Vendedor) auth.getPrincipal();
 
-            String token = this.tokenProvider.generateToken(auth);
+            // Generar el token
+            String token = tokenProvider.generateToken(auth);
 
-            return ResponseEntity.ok(
-                    new LoginResponseDTO(
-                            user.getUsername(),   // email
-                            token,
-                            user.getNombre(),     // nombre
-                            user.getFoto()        // nombre del archivo de la foto
-                    )
+            // Extraer roles en forma de List<String>
+            List<String> roles = user.getAuthorities().stream()
+                    .map(granted -> granted.getAuthority())
+                    .toList();
+
+            // Construir respuesta con roles incluidos
+            LoginResponseDTO responseDTO = new LoginResponseDTO(
+                    user.getUsername(),  // email
+                    token,
+                    user.getNombre(),    // nombre
+                    user.getFoto(),      // foto
+                    roles                // lista de roles
             );
+
+            return ResponseEntity.ok(responseDTO);
 
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
@@ -124,6 +130,7 @@ public class AuthController {
             );
         }
     }
+
 
     @GetMapping("/mis-paises")
     @PreAuthorize("hasAnyRole('VENDEDOR', 'ADMIN')")
@@ -143,4 +150,39 @@ public class AuthController {
                 pais.getEnlaceFoto()
         );
     }
+    @PutMapping("/usuarios/{id}/asignar-rol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> asignarRolVendedor(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Vendedor currentUser  // obtenemos el usuario logeado
+    ) {
+        // 1. Si el admin intenta asignarse a sí mismo, devolvemos 403 FORBIDDEN
+        if (currentUser.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "No puedes asignarte el rol a ti mismo"));
+        }
+
+        // 2. Buscamos al usuario destino
+        Optional<Vendedor> optional = userRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado"));
+        }
+
+        Vendedor user = optional.get();
+
+        // 3. Evitamos duplicar el rol
+        if (user.getAuthoritiesRaw().contains(Roles.VENDEDOR)) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "El usuario ya tiene el rol de VENDEDOR"));
+        }
+
+        // 4. Asignamos el rol y guardamos
+        user.getAuthoritiesRaw().add(Roles.VENDEDOR);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR asignado correctamente"));
+    }
+
+
 }
