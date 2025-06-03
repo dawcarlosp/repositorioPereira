@@ -46,6 +46,7 @@ function FormVendedorLogin({ setIsOpen }) {
       className="flex flex-col items-center justify-center p-10 rounded-xl mt-5 shadow-2xl bg-gray-900"
     >
       <h2 className="text-4xl text-white">Iniciar sesión</h2>
+
       <UserRound
         size={100}
         className="border-2 border-orange-400 rounded-full text-orange-400 my-2"

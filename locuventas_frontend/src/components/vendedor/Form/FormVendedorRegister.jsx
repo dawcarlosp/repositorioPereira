@@ -5,6 +5,8 @@ import Boton from "../../common/Boton";
 import InputFieldset from "../../common/InputFieldset";
 import UploadComponent from "./UploadComponent";
 import Error from "../../common/Error";
+import { toast } from "react-toastify";
+
 
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);
@@ -15,7 +17,9 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [errors, setErrors] = useState({});
+  
   const [isClosing, setIsClosing] = useState(false);
+
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -41,6 +45,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       });
 
       console.log("Registro exitoso:", result);
+      toast.success("¡Registro exitoso!");
 
       // Limpiar formulario al éxito
       setFoto(null);
@@ -75,60 +80,65 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`
+    <>
+     
+      <dialog
+        ref={dialogRef}
+        className={`
         flex flex-col items-center rounded-xl mx-auto shadow-2xl
         bg-white/30 backdrop-blur-lg mt-2
         transform transition-all duration-500 ease-out
         ${isClosing ? "opacity-0 translate-y-[-20px]" : ""}
         ${isOpen && !isClosing ? "translate-y-0" : "translate-y-[-100vh]"}
       `}
-    >
-      <button
-        className="border bg-orange-400 text-white hover:bg-purple-500 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
-        onClick={handleClose}
       >
-        <X size={20} />
-      </button>
-      <form onSubmit={handleRegister} className="flex flex-col items-center p-10 group">
-        <h2 className="text-1xl text-center">
-        </h2>
+        <button
+          className="border bg-orange-400 text-white hover:bg-purple-500 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
+          onClick={handleClose}
+        >
+          <X size={20} />
+        </button>
+        <form
+          onSubmit={handleRegister}
+          className="flex flex-col items-center p-10 group"
+        >
+          <h2 className="text-1xl text-center"></h2>
 
-        <UploadComponent setFile={setFoto} />
-        <Error>{errors.error}</Error>
-        <InputFieldset
-          type="text"
-          id="nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Dinos cómo te llamas"
-        />
-        <Error>{errors.nombre}</Error>
+          <UploadComponent setFile={setFoto} />
+          <Error>{errors.error}</Error>
+          <InputFieldset
+            type="text"
+            id="nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            placeholder="Dinos cómo te llamas"
+          />
+          <Error>{errors.nombre}</Error>
 
-        <InputFieldset
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Correo electrónico"
-        />
-        <Error>{errors.email}</Error>
+          <InputFieldset
+            type="email"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="Correo electrónico"
+          />
+          <Error>{errors.email}</Error>
 
-        <InputFieldset
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Contraseña"
-        />
-        <Error>{errors.password}</Error>
+          <InputFieldset
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="Contraseña"
+          />
+          <Error>{errors.password}</Error>
 
-        {error && <Error>{error}</Error>}
+          {error && <Error>{error}</Error>}
 
-        <Boton>{loading ? "Registrando..." : "Registrarse"}</Boton>
-      </form>
-    </dialog>
+          <Boton>{loading ? "Registrando..." : "Registrarse"}</Boton>
+        </form>
+      </dialog>
+    </>
   );
 }
 

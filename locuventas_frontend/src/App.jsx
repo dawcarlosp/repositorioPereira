@@ -1,10 +1,14 @@
+import React from 'react';
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import FormVendedorLogin from "./pages/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
 import FormVendedorRegister from "./components/vendedor/Form/FormVendedorRegister";
-import PrivateRoute from "./components/common/PrivateRoute"; // ✅ IMPORTANTE
+import PrivateRoute from "./components/common/PrivateRoute"; // Protección de rutas
+//Componente para mostrar mensajes personalizados
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,7 +22,7 @@ function App() {
             element={<FormVendedorLogin setIsOpen={setIsOpen} />}
           />
 
-          {/* ✅ Ruta protegida con PrivateRoute */}
+          {/* Ruta protegida con PrivateRoute */}
           <Route
             path="/dashboard"
             element={
@@ -30,6 +34,16 @@ function App() {
         </Routes>
 
         <FormVendedorRegister isOpen={isOpen} setIsOpen={setIsOpen} />
+        {/*Configuración de alertas*/}
+        <ToastContainer
+          position="top-right"
+          autoClose={3000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          pauseOnHover
+          draggable
+        />
       </div>
     </BrowserRouter>
   );
