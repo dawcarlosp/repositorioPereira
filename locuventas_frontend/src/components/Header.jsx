@@ -1,33 +1,36 @@
 import { useState, useEffect } from "react";
 import { Menu, X } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import AvatarUsuario from "../components/common/AvatarUsuario";
+import { useAuth } from "../context/useAuth";
 
-import AvatarUsuario from "../components/common/AvatarUsuario"; // Ajusta la ruta según tu estructura
-import { useAuth } from "../context/useAuth"; // También importa el hook de autenticación
-
-import { useNavigate } from "react-router-dom";
+import ModalConfirmacion from "../components/common/ModalConfirmacion";
+import BotonClaro from "../components/common/BotonClaro";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
-  const { auth, setAuth } = useAuth(); // << CORREGIDO
-  const { nombre, foto } = auth || {}; // Evita error si auth es null
+  const { auth, setAuth } = useAuth();
+  const { nombre, foto, email } = auth || {};
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    setAuth({
-      token: null,
-      nombre: null,
-      foto: null,
-      email: null,
-    });
-    navigate("/"); // redirige al login
+  const handleLogoutConfirmado = () => {
+    setAuth({ token: null, nombre: null, foto: null, email: null });
+    navigate("/");
   };
 
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
   }, []);
+
+  const neonButtonClass = `
+    px-4 py-2 text-white font-semibold rounded-xl bg-zinc-900
+    ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
+    hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]
+    transition-all duration-300
+  `;
 
   return (
     <header
@@ -36,7 +39,7 @@ export default function Header() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between rounded-b-2xl shadow-lg backdrop-blur-md bg-gradient-to-r from-blue-500 via-white to-purple-500/90 border-b border-white/20">
-        {/* LOGO / NOMBRE */}
+        {/* Logo */}
         <Link
           to="/"
           className="text-2xl font-extrabold text-white tracking-wide hover:scale-105 transition-transform duration-200 drop-shadow-sm bg-zinc-900 p-2 rounded-xl"
@@ -44,32 +47,18 @@ export default function Header() {
           Locu<span className="text-orange-400">Ventas</span>
         </Link>
 
-        {/* DESKTOP NAV */}
-        <nav className="hidden md:flex gap-6">
-          <Link
-            to="/"
-            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl flex flex-col items-center justify-center "
-          >
+        {/* Navegación escritorio */}
+        <nav className="hidden md:flex gap-6 items-center">
+          <Link to="/" className={neonButtonClass}>
             Gestión
           </Link>
-          <Link
-            to="/dashboard"
-            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl flex flex-col items-center justify-center "
-          >
+          <Link to="/dashboard" className={neonButtonClass}>
             Vendedores
           </Link>
-          <button
-            onClick={handleLogout}
-            className="text-white hover:text-orange-400 font-medium bg-zinc-900 p-2 rounded-xl"
-          >
-            Cerrar Sesión
-          </button>
-
-          {/* Avatar del usuario */}
-          {foto && nombre && <AvatarUsuario foto={foto} nombre={nombre} />}
+          <AvatarUsuario foto={foto} nombre={nombre} email={email} />
         </nav>
 
-        {/* HAMBURGER */}
+        {/* Botón menú móvil */}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           className="md:hidden text-white hover:scale-110 transition-transform cursor-pointer"
@@ -78,41 +67,50 @@ export default function Header() {
         </button>
       </div>
 
-      {/* MOBILE NAV */}
+      {/* Navegación móvil */}
       <div
-        className={`md:hidden mx-4 mt-[2px] rounded-b-2xl bg-gray-900/95 px-6 py-5 space-y-4 text-center shadow-lg border-t border-white/10 transform transition-all duration-500 ease-in-out origin-top overflow-hidden ${
-          menuOpen
-            ? "scale-y-100 opacity-100 max-h-96"
-            : "scale-y-0 opacity-0 max-h-0"
-        }`}
+        className={`md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 px-6 py-6 text-center shadow-lg border-t border-white/10 
+          transform transition-all duration-500 ease-in-out origin-top overflow-hidden
+          ${
+            menuOpen
+              ? "scale-y-100 opacity-100 max-h-96 space-y-4"
+              : "scale-y-0 opacity-0 max-h-0"
+          }`}
       >
-        <Link
-          to="/"
-          onClick={() => setMenuOpen(false)}
-          className={`block text-white text-lg hover:text-orange-400 font-semibold transition duration-300 delay-100 ${
-            menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-          }`}
-        >
-          Inicio
-        </Link>
-        <Link
-          to="/dashboard"
-          onClick={() => setMenuOpen(false)}
-          className={`block text-white text-lg hover:text-orange-400 font-semibold transition duration-300 delay-200 ${
-            menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-          }`}
-        >
-          Dashboard
-        </Link>
-        <button
-          onClick={ handleLogout}
-          className={`block w-full text-white text-lg hover:text-orange-400 font-semibold transition duration-300 delay-300 ${
-            menuOpen ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-          }`}
-        >
-          Cerrar sesión
-        </button>
+        <div className="flex flex-col gap-4">
+          <Link
+            to="/"
+            onClick={() => setMenuOpen(false)}
+            className={neonButtonClass}
+          >
+            Inicio
+          </Link>
+          <Link
+            to="/dashboard"
+            onClick={() => setMenuOpen(false)}
+            className={neonButtonClass}
+          >
+            Dashboard
+          </Link>
+          <BotonClaro
+            onClick={() => {
+              setMenuOpen(false);
+              setMostrarConfirmacion(true);
+            }}
+          >
+            Cerrar sesión
+          </BotonClaro>
+        </div>
       </div>
+
+      {/* Modal de confirmación */}
+      {mostrarConfirmacion && (
+        <ModalConfirmacion
+          mensaje="¿Estás seguro de cerrar sesión?"
+          onConfirmar={handleLogoutConfirmado}
+          onCancelar={() => setMostrarConfirmacion(false)}
+        />
+      )}
     </header>
   );
 }
