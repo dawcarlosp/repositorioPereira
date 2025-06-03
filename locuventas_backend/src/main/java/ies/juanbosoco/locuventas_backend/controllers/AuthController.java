@@ -19,6 +19,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -150,39 +152,71 @@ public class AuthController {
                 pais.getEnlaceFoto()
         );
     }
+
+
+    /**
+     * Asigna el rol ROLE_VENDEDOR a un usuario ajeno al ADMIN que invoca.
+     * Solo puede accederlo ADMIN.
+     */
     @PutMapping("/usuarios/{id}/asignar-rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> asignarRolVendedor(
-            @PathVariable Long id,
-            @AuthenticationPrincipal Vendedor currentUser  // obtenemos el usuario logeado
-    ) {
-        // 1. Si el admin intenta asignarse a sí mismo, devolvemos 403 FORBIDDEN
-        if (currentUser.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "No puedes asignarte el rol a ti mismo"));
+    public ResponseEntity<?> asignarRolVendedor(@PathVariable Long id) {
+        // 1) Recuperamos el Authentication del contexto (el filtro JWT ya lo habrá llenado)
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            // Si no hay Authentication, devolvemos 401
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 2. Buscamos al usuario destino
+        // 2) Extraemos el username/email del principal.
+        // Puede venir como String (username) o como UserDetails.
+        String emailAdmin;
+        Object principalObj = auth.getPrincipal();
+        if (principalObj instanceof UserDetails) {
+            emailAdmin = ((UserDetails) principalObj).getUsername();
+        } else if (principalObj instanceof String) {
+            emailAdmin = (String) principalObj;
+        } else {
+            // Si no es ninguno de los dos, devolvemos 401
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Debes iniciar sesión como admin."));
+        }
+
+        // 3) Buscamos en BD al administrador real
+        Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Administrador no encontrado."));
+        }
+
+        // 4) Evitamos que el ADMIN se asigne el rol a sí mismo → 403 Forbidden
+        if (currentUser.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "No puedes asignarte el rol a ti mismo."));
+        }
+
+        // 5) Buscamos al usuario destino (el que recibimos en la URL)
         Optional<Vendedor> optional = userRepository.findById(id);
         if (optional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado"));
+                    .body(Map.of("error", "Usuario no encontrado."));
         }
-
         Vendedor user = optional.get();
 
-        // 3. Evitamos duplicar el rol
-        if (user.getAuthoritiesRaw().contains(Roles.VENDEDOR)) {
+        // 6) Si ese usuario ya tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
+        boolean yaEsVendedor = user.getAuthorities().stream()
+                .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
+        if (yaEsVendedor) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "El usuario ya tiene el rol de VENDEDOR"));
+                    .body(Map.of("error", "El usuario ya tiene el rol de VENDEDOR."));
         }
 
-        // 4. Asignamos el rol y guardamos
+        // 7) Asignamos el rol y guardamos
         user.getAuthoritiesRaw().add(Roles.VENDEDOR);
         userRepository.save(user);
 
-        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR asignado correctamente"));
+        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR asignado correctamente."));
     }
-
 
 }
