@@ -11,14 +11,11 @@ import AvatarUsuario from "./common/AvatarUsuario";
 import GestionDropdown from "./common/GestionDropdown";
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [showHeader, setShowHeader] = useState(false);
-
-  // Controlamos dos dropdowns distintos:
-  const [isGestionOpen, setIsGestionOpen] = useState(false);
-  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
-
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);             // ¿Está abierto el menú móvil completo?
+  const [showHeader, setShowHeader] = useState(false);         // Para animar la cabecera al aparecer
+  const [isGestionOpen, setIsGestionOpen] = useState(false);   // ¿Sub‐dropdown “Gestión” abierto?
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);     // ¿Dropdown “Mi cuenta” abierto?
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false); // Modal de cerrar sesión
 
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
@@ -27,16 +24,19 @@ export default function Header() {
   const { nombre, foto, email, roles = [] } = auth || {};
   const esAdmin = roles.includes("ROLE_ADMIN");
 
+  // Animación inicial de la cabecera
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
   }, []);
 
-  // Cerrar dropdowns al hacer clic fuera
+  // Si se hace clic fuera de *cualquier* dropdown, cerramos todo
   useEffect(() => {
     function handleClickOutside(e) {
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         setIsGestionOpen(false);
         setIsAvatarOpen(false);
+        // *NO* cerrar menuOpen aquí: si estoy en móvil y quiero dejar el menú abierto, 
+        // puedo tocar dentro del nav para cerrar solo sub‐desplegables.
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -64,13 +64,14 @@ export default function Header() {
         ${showHeader ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}
       `}
     >
+      {/* ====== CABECERA PRINCIPAL ====== */}
       <div className="
         max-w-7xl mx-auto px-6 py-4 flex items-center justify-between
         rounded-b-2xl shadow-lg backdrop-blur-md
         bg-gradient-to-r from-blue-500 via-white to-purple-500/90
         border-b border-white/20
       ">
-        {/* Logo */}
+        {/* --- LOGO --- */}
         <Link
           to="/"
           className="
@@ -82,41 +83,43 @@ export default function Header() {
           Locu<span className="text-orange-400">Ventas</span>
         </Link>
 
-        {/** Si el usuario es ADMIN, mostramos el nav de escritorio; si no, no */}
+        {/* --- NAVEGACIÓN ESCRITORIO (solo admin) --- */}
         {esAdmin && (
           <nav className="hidden md:flex gap-6 items-center relative">
-            {/** Botón Gestión */}
+            {/* BOTÓN “Gestión” */}
             <button
               onClick={() => {
-                setIsGestionOpen((prev) => !prev);
+                setIsGestionOpen(prev => !prev);
                 setIsAvatarOpen(false);
+                setMenuOpen(false); // Si en móvil abrí gestión, al cambiar de vista se cierra menú principal
               }}
               className={neonButtonClass}
             >
               Gestión
             </button>
 
-            {/** Dropdown de Gestión */}
+            {/* SUB‐DROPDOWN “Gestión” */}
             <GestionDropdown isOpen={isGestionOpen} />
 
-            {/** AvatarUsuario */}
+            {/* AVATAR “Mi cuenta” */}
             <AvatarUsuario
               foto={foto}
               nombre={nombre}
               email={email}
               isOpen={isAvatarOpen}
               onToggleDropdown={() => {
-                setIsAvatarOpen((prev) => !prev);
+                setIsAvatarOpen(prev => !prev);
                 setIsGestionOpen(false);
+                setMenuOpen(false);
               }}
             />
           </nav>
         )}
 
-        {/** Botón menú móvil */}
+        {/* --- BOTÓN MENÚ MÓVIL --- */}
         <button
           onClick={() => {
-            setMenuOpen((prev) => !prev);
+            setMenuOpen(prev => !prev);
             setIsGestionOpen(false);
             setIsAvatarOpen(false);
           }}
@@ -126,57 +129,65 @@ export default function Header() {
         </button>
       </div>
 
-      {/** Menú móvil (solo para ADMIN) */}
+      {/* ====== MENÚ MÓVIL ====== */}
+      {/** 
+       * Cuando `menuOpen` = true, mostramos el bloque entero. 
+       * Dentro, habrá botones que abren “Gestión” o “Mi cuenta” 
+       * sin cerrar por completo el menú principal hasta que el usuario lo toque de nuevo.
+       **/}
       <div
         className={`
           md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 px-6 py-6 text-center shadow-lg
           border-t border-white/10 transform transition-all duration-500 ease-in-out origin-top overflow-hidden
-          ${menuOpen ? "scale-y-100 opacity-100 max-h-96 space-y-4" : "scale-y-0 opacity-0 max-h-0"}
+          ${menuOpen ? "scale-y-100 opacity-100 max-h-96" : "scale-y-0 opacity-0 max-h-0"}
         `}
       >
         <div className="flex flex-col gap-4">
+          {/* --- BOTÓN “Gestión” --- */}
           <button
             onClick={() => {
-              setIsGestionOpen((prev) => !prev);
+              setIsGestionOpen(prev => !prev);
               setIsAvatarOpen(false);
-              setMenuOpen(false);
+              // *NO* cerramos `menuOpen` aquí. Queremos que el menú principal siga visible.
             }}
             className={neonButtonClass}
           >
             Gestión
           </button>
 
+          {/* Si `isGestionOpen` = true mostramos las opciones */}
           {isGestionOpen && (
-            <div className="space-y-2 px-2">
-              <Link to="/vendedores" className="block">
+            <div className="space-y-2 px-2 mt-1">
+              <Link to="/vendedores" onClick={() => setMenuOpen(false)}>
                 <BotonClaro>Vendedores</BotonClaro>
               </Link>
-              <Link to="/categorias" className="block">
+              <Link to="/categorias" onClick={() => setMenuOpen(false)}>
                 <BotonClaro>Categorías</BotonClaro>
               </Link>
-              <Link to="/productos" className="block">
+              <Link to="/productos" onClick={() => setMenuOpen(false)}>
                 <BotonClaro>Productos</BotonClaro>
               </Link>
             </div>
           )}
 
+          {/* --- BOTÓN “Mi cuenta (Cerrar sesión)” --- */}
           <button
             onClick={() => {
-              setIsAvatarOpen((prev) => !prev);
+              setIsAvatarOpen(prev => !prev);
               setIsGestionOpen(false);
-              setMenuOpen(false);
             }}
             className={neonButtonClass}
           >
             Mi cuenta
           </button>
 
+          {/* Si `isAvatarOpen` = true mostramos la mini‐info y botón de cerrar sesión */}
           {isAvatarOpen && (
-            <div className="space-y-2 px-2 mt-2">
+            <div className="space-y-2 px-2 mt-1">
               <p className="text-sm text-gray-400">
                 Usuario: <span className="text-white font-medium">{nombre}</span>
               </p>
-              <p className="text-sm text-gray-400">
+              <p className="text-sm text-gray-400 mb-1">
                 Correo: <span className="text-white font-medium">{email}</span>
               </p>
               <BotonClaro onClick={() => setMostrarConfirmacion(true)}>
@@ -187,7 +198,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/** Modal de Confirmación (para cerrar sesión) */}
+      {/* ====== MODAL DE CONFIRMACIÓN (CERRAR SESIÓN) ====== */}
       {mostrarConfirmacion && (
         <ModalConfirmacion
           mensaje="¿Estás seguro de cerrar sesión?"
