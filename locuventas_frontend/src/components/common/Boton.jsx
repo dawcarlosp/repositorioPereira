@@ -1,7 +1,10 @@
+// src/components/common/Boton.jsx
+import React from "react";
+
 function Boton({ children, disabled, onClick }) {
   const baseStyle = `
     w-full max-w-xs px-4 py-2 font-semibold rounded-xl transition-all duration-300 
-    text-white bg-zinc-900 tracking-wide
+    text-white bg-zinc-900 tracking-wide cursor-pointer
   `;
 
   const enabledStyle = `
@@ -12,11 +15,11 @@ function Boton({ children, disabled, onClick }) {
   `;
 
   const disabledStyle = `
-    opacity-60 cursor-not-allowed ring-2 ring-orange-300 shadow-none
+    opacity-60 cursor-not-allowed ring-2 ring-orange-300 shadow-none 
   `;
 
   return (
-    <button
+    <button 
       onClick={onClick}
       disabled={disabled}
       className={`${baseStyle} ${disabled ? disabledStyle : enabledStyle}`}

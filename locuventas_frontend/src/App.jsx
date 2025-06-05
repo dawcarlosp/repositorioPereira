@@ -34,6 +34,14 @@ function App() {
                 </PrivateRoute>
               }
             />
+            <Route
+              path="/vendedores"
+              element={
+                <PrivateRoute>
+                  <Dashboard />
+                </PrivateRoute>
+              }
+            />
           </Routes>
 
           <FormVendedorRegister isOpen={isOpen} setIsOpen={setIsOpen} />

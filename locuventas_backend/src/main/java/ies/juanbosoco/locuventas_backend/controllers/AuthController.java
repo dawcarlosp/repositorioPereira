@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class AuthController {
@@ -219,4 +220,98 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR asignado correctamente."));
     }
 
+    /**
+     * Elimina el rol ROLE_VENDEDOR de un usuario que ya lo tenía.
+     * Solo puede accederlo ADMIN.
+     */
+    @PutMapping("/usuarios/{id}/quitar-rol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> quitarRolVendedor(@PathVariable Long id) {
+        // 1) Obtenemos el Authentication del contexto
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Debes iniciar sesión como admin."));
+        }
+
+        // 2) Extraemos el email/username del principal
+        String emailAdmin;
+        Object principalObj = auth.getPrincipal();
+        if (principalObj instanceof UserDetails) {
+            emailAdmin = ((UserDetails) principalObj).getUsername();
+        } else if (principalObj instanceof String) {
+            emailAdmin = (String) principalObj;
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Debes iniciar sesión como admin."));
+        }
+
+        // 3) Buscamos en BD al administrador real
+        Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Administrador no encontrado."));
+        }
+
+        // 4) Evitamos que el ADMIN se quite a sí mismo → 403 Forbidden
+        if (currentUser.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body(Map.of("error", "No puedes quitarte el rol a ti mismo."));
+        }
+
+        // 5) Buscamos al usuario destino
+        Optional<Vendedor> optional = userRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado."));
+        }
+        Vendedor user = optional.get();
+
+        // 6) Si ese usuario NO tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
+        boolean tieneRolVendedor = user.getAuthorities().stream()
+                .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
+        if (!tieneRolVendedor) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", "El usuario no tiene el rol de VENDEDOR."));
+        }
+
+        // 7) Quitamos el rol y guardamos
+        user.getAuthoritiesRaw().remove(Roles.VENDEDOR);
+        userRepository.save(user);
+
+        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR eliminado correctamente."));
+    }
+
+    /**
+     * Devuelve todos los usuarios que NO tienen ni ROLE_VENDEDOR ni ROLE_ADMIN.
+     * Es decir, aquellos cuya única autoridad es ROLE_USER.
+     * Solo puede accederlo ADMIN.
+     */
+    @GetMapping("/usuarios/sinrol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> listarUsuariosSoloUser() {
+        // 1) (Opcional) podrías obtener el Authentication y comprobar si es null,
+        //    pero @PreAuthorize ya garantiza que el que entra tiene ROLE_ADMIN.
+        //    Si quieres, puedes replicar la misma verificación que en los otros métodos:
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Debes iniciar sesión como admin."));
+        }
+
+        // 2) Obtiene todos los usuarios de la BD y filtra los que NO tienen ROLE_VENDEDOR ni ROLE_ADMIN
+        List<Vendedor> usuariosSoloUser = userRepository.findAll().stream()
+                .filter(u ->
+                        u.getAuthorities().stream()
+                                .noneMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR)
+                                        || gr.getAuthority().equals(Roles.ADMIN))
+                )
+                .collect(Collectors.toList());
+
+        // 3) Si quieres, podrías comprobar que la lista no venga vacía,
+        //    pero normalmente devolvemos 200 con lista vacía si no hay coincidencias
+        return ResponseEntity.ok(usuariosSoloUser);
+    }
+
 }
+

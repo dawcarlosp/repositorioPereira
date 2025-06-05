@@ -28,7 +28,7 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         initAdminAndVendedor();
-        initPaises();
+        //initPaises();
     }
 
     private void initAdminAndVendedor() {
@@ -58,7 +58,7 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("✔ Vendedor creado por defecto.");
         }
     }
-
+/*
     private void initPaises() throws Exception {
         if (paisRepository.count() > 0) {
             System.out.println("ℹ Paises ya existen en la base de datos.");
@@ -90,4 +90,5 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("✔ Se han insertado " + contador + " países.");
     }
+ */
 }
