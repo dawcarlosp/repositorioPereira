@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
-import { apiRequest } from "../../services/api";
-import defaultAvatar from "../../assets/default-avatar.png";
-import BotonClaro from "./BotonClaro";
-import Boton from "./Boton";
-import { useAuth } from "../../context/useAuth";
+import { apiRequest } from "../services/api";
+import defaultAvatar from "../assets/default-avatar.png";
+import BotonClaro from "../components/common/BotonClaro";
+import Boton from "../components/common/Boton";
+import ModalConfirmacion from "../components/common/ModalConfirmacion";
+import { useAuth } from "../context/useAuth";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
-export default function PendientesList({ onClose, onConfirmacion }) {
+export default function VendedoresPendientes() {
   const { auth } = useAuth();
   const [pendientes, setPendientes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  // Modal de confirmación global
+  const [modal, setModal] = useState({
+    open: false,
+    mensaje: "",
+    confirmText: "",
+    onConfirmar: null,
+  });
 
   useEffect(() => {
     const fetchPendientes = async () => {
@@ -32,8 +41,10 @@ export default function PendientesList({ onClose, onConfirmacion }) {
     fetchPendientes();
   }, [auth.token]);
 
+  // Aprobar usuario: abre modal de confirmación
   const handleAprobar = (usuario) => {
-    onConfirmacion({
+    setModal({
+      open: true,
       mensaje: `¿Seguro que quieres aprobar a ${usuario.nombre}?`,
       confirmText: "Aprobar",
       onConfirmar: async () => {
@@ -43,8 +54,10 @@ export default function PendientesList({ onClose, onConfirmacion }) {
     });
   };
 
+  // Eliminar usuario: abre modal de confirmación
   const handleDenegar = (usuario) => {
-    onConfirmacion({
+    setModal({
+      open: true,
       mensaje: `¿Seguro que quieres eliminar a ${usuario.nombre}? Esta acción no se puede deshacer.`,
       confirmText: "Eliminar",
       onConfirmar: async () => {
@@ -54,45 +67,29 @@ export default function PendientesList({ onClose, onConfirmacion }) {
     });
   };
 
+  // Confirma acción y cierra modal
+  const confirmarYcerrar = async () => {
+    if (modal.onConfirmar) await modal.onConfirmar();
+    setModal({ open: false, mensaje: "", confirmText: "", onConfirmar: null });
+  };
+
   return (
-    <div
-      className="
-        relative w-full max-w-[420px] mx-auto bg-zinc-900/90 
-        backdrop-blur-md shadow-xl 
-        rounded-xl pt-3 pb-4 animate-fade-in
-        max-h-[90vh]
-        overflow-y-auto
-        overflow-x-hidden
-        sm:w-[420px]
-      "
-      style={{ scrollbarGutter: "stable" }}
-    >
+    <main className="max-w-2xl mx-auto px-4 py-10">
+      <h1 className="text-2xl font-bold text-white mb-8 text-center">
+        Pendientes de aprobar
+      </h1>
+
       <div
         className="
-          absolute -top-2 right-24
-          w-5 h-5
-          bg-zinc-900/90
-          rotate-45
-          shadow-lg
-          border-t border-l border-zinc-700
-          z-20
+          bg-zinc-900/90 backdrop-blur-md shadow-xl rounded-xl p-6
+          max-h-[75vh] overflow-y-auto overflow-x-hidden
         "
-      />
-      <div className="flex justify-between items-center px-3 sm:px-8 py-3 border-b border-zinc-700">
-        <h4 className="text-white font-semibold text-lg">Pendientes de aprobar</h4>
-        <button
-          onClick={onClose}
-          className="text-gray-400 hover:text-white transition text-2xl"
-          aria-label="Cerrar panel"
-        >
-          ✕
-        </button>
-      </div>
-      <div className="px-2 sm:px-6 py-4">
+        style={{ scrollbarGutter: "stable" }}
+      >
         {loading && <p className="text-gray-300 py-8 text-center">Cargando pendientes…</p>}
 
         {error && (
-          <p className="text-red-400 py-4">
+          <p className="text-red-400 py-4 text-center">
             Error al cargar: <span className="font-medium">{JSON.stringify(error)}</span>
           </p>
         )}
@@ -112,19 +109,13 @@ export default function PendientesList({ onClose, onConfirmacion }) {
                 <li
                   key={usuario.id}
                   className="flex items-center justify-between bg-zinc-800/60
-                    backdrop-blur-sm rounded-xl px-2 sm:px-5 py-4
-                    space-x-3 sm:space-x-6
+                    backdrop-blur-sm rounded-xl px-5 py-4 space-x-6
                   "
                 >
-                  <div className="flex items-center space-x-3 sm:space-x-4 min-w-0 flex-1">
+                  <div className="flex items-center space-x-4 min-w-0 flex-1">
                     <div
                       tabIndex={0}
-                      className="
-                        transition-transform duration-200 ease-in-out
-                        hover:scale-150 hover:z-10
-                        focus:scale-150 focus:z-10
-                        outline-none
-                      "
+                      className="transition-transform duration-200 ease-in-out hover:scale-150 hover:z-10 focus:scale-150 focus:z-10 outline-none"
                     >
                       <img
                         src={fotoUrl}
@@ -140,7 +131,7 @@ export default function PendientesList({ onClose, onConfirmacion }) {
                       <span className="text-gray-400 text-sm break-all">
                         {usuario.email}
                       </span>
-                      {/* FECHA tipo Instagram */}
+                      {/* AÑADE AQUÍ la fecha tipo Instagram */}
                       <span className="text-gray-500 text-xs mt-1">
                         {formatDistanceToNow(new Date(usuario.createdAt), {
                           addSuffix: true,
@@ -149,16 +140,16 @@ export default function PendientesList({ onClose, onConfirmacion }) {
                       </span>
                     </div>
                   </div>
-                  <div className="flex flex-col space-y-2 ml-2 sm:ml-4 min-w-[90px]">
+                  <div className="flex flex-col space-y-2 ml-4 min-w-[90px]">
                     <BotonClaro
                       onClick={() => handleAprobar(usuario)}
-                      className="text-sm sm:text-base px-2 py-2 sm:px-4 sm:py-1 rounded-lg whitespace-nowrap"
+                      className="text-sm px-4 py-1 rounded-lg whitespace-nowrap"
                     >
                       Aprobar
                     </BotonClaro>
                     <Boton
                       onClick={() => handleDenegar(usuario)}
-                      className="text-sm sm:text-base px-2 py-2 sm:px-4 sm:py-1 rounded-lg whitespace-nowrap"
+                      className="text-sm px-4 py-1 rounded-lg whitespace-nowrap"
                     >
                       Denegar
                     </Boton>
@@ -169,6 +160,18 @@ export default function PendientesList({ onClose, onConfirmacion }) {
           </ul>
         )}
       </div>
-    </div>
+
+      {/* Modal de confirmación */}
+      {modal.open && (
+        <ModalConfirmacion
+          mensaje={modal.mensaje}
+          confirmText={modal.confirmText}
+          onConfirmar={confirmarYcerrar}
+          onCancelar={() =>
+            setModal({ open: false, mensaje: "", confirmText: "", onConfirmar: null })
+          }
+        />
+      )}
+    </main>
   );
 }

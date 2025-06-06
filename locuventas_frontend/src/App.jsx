@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
+import VendedoresPendientes from "./pages/VendedoresPendientes";
 
 import FormVendedorLogin from "./pages/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
@@ -39,6 +40,14 @@ function App() {
               element={
                 <PrivateRoute>
                   <Dashboard />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/vendedores/pendientes"
+              element={
+                <PrivateRoute>
+                  <VendedoresPendientes />
                 </PrivateRoute>
               }
             />

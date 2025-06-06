@@ -19,6 +19,9 @@ export default function Header() {
   const [isAvatarOpen, setIsAvatarOpen] = useState(false);
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
 
+  // Submenú Vendedores móvil
+  const [isVendedoresMobileOpen, setIsVendedoresMobileOpen] = useState(false);
+
   // MODAL GLOBAL para confirmación (Aprobar/Eliminar usuarios)
   const [showModal, setShowModal] = useState(false);
   const [modalConfig, setModalConfig] = useState({
@@ -31,7 +34,7 @@ export default function Header() {
   const navigate = useNavigate();
   const headerRef = useRef(null);
 
-  // Ref para el botón “Vendedores” dentro de GestionDropdown (si necesitas posicionar)
+  // Ref para el botón “Vendedores” dentro de GestionDropdown
   const vendedoresLinkRef = useRef(null);
 
   const { nombre, foto, email, roles = [] } = auth || {};
@@ -48,6 +51,7 @@ export default function Header() {
         setIsVendedoresOpen(false);
         setIsPendientesOpen(false);
         setIsAvatarOpen(false);
+        setIsVendedoresMobileOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -179,6 +183,7 @@ export default function Header() {
             setIsVendedoresOpen(false);
             setIsPendientesOpen(false);
             setIsAvatarOpen(false);
+            setIsVendedoresMobileOpen(false);
           }}
           className="md:hidden text-white hover:scale-110 transition-transform cursor-pointer"
         >
@@ -196,42 +201,70 @@ export default function Header() {
       >
         <div className="flex flex-col gap-4">
           {/* BOTÓN “Gestión” en móvil */}
-          <button
+          <Boton
+            className="w-full"
             onClick={() => {
               setIsGestionOpen((prev) => !prev);
               setIsAvatarOpen(false);
+              setIsVendedoresMobileOpen(false);
             }}
-            className={neonButtonClass}
           >
             Gestión
-          </button>
+          </Boton>
           {/* Opciones de “Gestión” en móvil */}
           {isGestionOpen && (
-            <div className="space-y-2 px-2 mt-1">
-              <Link to="/vendedores" onClick={() => setMenuOpen(false)}>
-                <BotonClaro>Vendedores</BotonClaro>
-              </Link>
+            <div className="space-y-2 px-2 mt-1 text-center">
+              {/* Vendedores con submenú */}
+              <div>
+                <Boton
+                  className="w-full mb-1"
+                  onClick={() => setIsVendedoresMobileOpen((prev) => !prev)}
+                >
+                  Vendedores
+                </Boton>
+                {isVendedoresMobileOpen && (
+                  <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
+                    <Link
+                      to="/vendedores/gestionar"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                      style={{ background: "none", border: "none" }}
+                    >
+                      Gestionar Vendedores
+                    </Link>
+                    <Link
+                      to="/vendedores/pendientes"
+                      onClick={() => setMenuOpen(false)}
+                      className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                      style={{ background: "none", border: "none" }}
+                    >
+                      Pendientes de aprobar
+                    </Link>
+                  </div>
+                )}
+              </div>
               <Link to="/categorias" onClick={() => setMenuOpen(false)}>
-                <BotonClaro>Categorías</BotonClaro>
+                <Boton className="w-full">Categorías</Boton>
               </Link>
               <Link to="/productos" onClick={() => setMenuOpen(false)}>
-                <BotonClaro>Productos</BotonClaro>
+                <Boton className="w-full">Productos</Boton>
               </Link>
             </div>
           )}
 
           {/* BOTÓN “Mi cuenta” en móvil */}
-          <button
+          <Boton
+            className="w-full"
             onClick={() => {
               setIsAvatarOpen((prev) => !prev);
               setIsGestionOpen(false);
               setIsVendedoresOpen(false);
               setIsPendientesOpen(false);
+              setIsVendedoresMobileOpen(false);
             }}
-            className={neonButtonClass}
           >
             Mi cuenta
-          </button>
+          </Boton>
           {/* Submenú “Mi cuenta” en móvil */}
           {isAvatarOpen && (
             <div className="space-y-2 px-2 mt-1">
@@ -241,7 +274,7 @@ export default function Header() {
               <p className="text-sm text-gray-400 mb-1">
                 Correo: <span className="text-white font-medium">{email}</span>
               </p>
-              <BotonClaro onClick={() => setMostrarConfirmacion(true)}>
+              <BotonClaro onClick={() => setMostrarConfirmacion(true)} className="w-full">
                 Cerrar sesión
               </BotonClaro>
             </div>
