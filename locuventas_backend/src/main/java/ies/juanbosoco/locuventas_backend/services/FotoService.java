@@ -96,4 +96,24 @@ public class FotoService {
             throw new RuntimeException("Error al guardar el archivo: " + archivo.getOriginalFilename(), e);
         }
     }
+    public void eliminarImagen(String nombreArchivo) {
+        if (nombreArchivo == null || nombreArchivo.isBlank()) {
+            logger.warn("No se proporcionó nombre de archivo para eliminar.");
+            return;
+        }
+        Path ruta = Paths.get(UPLOADS_DIRECTORY + File.separator + nombreArchivo);
+        try {
+            if (Files.exists(ruta)) {
+                Files.delete(ruta);
+                logger.info("Imagen eliminada exitosamente: " + ruta.toString());
+            } else {
+                logger.warn("La imagen a eliminar no existe: " + ruta.toString());
+            }
+        } catch (IOException e) {
+            logger.error("Error al eliminar la imagen: " + ruta.toString(), e);
+            throw new RuntimeException("Error al eliminar la imagen: " + nombreArchivo, e);
+        }
+    }
+
+
 }

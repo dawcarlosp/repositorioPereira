@@ -1,4 +1,4 @@
-// src/components/common/ModalConfirmacion.jsx
+import React from "react";
 import ReactDOM from "react-dom";
 import Boton from "./Boton";
 import BotonClaro from "./BotonClaro";
@@ -10,12 +10,25 @@ export default function ModalConfirmacion({
   onCancelar,
 }) {
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center px-4">
-      <div className="bg-zinc-900 text-white p-8 rounded-2xl shadow-2xl max-w-md w-full text-center space-y-6">
-        <h2 className="text-xl md:text-2xl font-bold tracking-wide">{mensaje}</h2>
-        <div className="flex flex-col gap-3 w-full items-center">
-          <BotonClaro onClick={onConfirmar}>{confirmText}</BotonClaro>
-          <Boton onClick={onCancelar}>Cancelar</Boton>
+    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-[2px] flex items-center justify-center px-2 sm:px-4">
+      <div
+        className={`
+          bg-zinc-900 text-white rounded-2xl shadow-2xl
+          w-full max-w-md mx-auto
+          p-5 sm:p-8
+          text-center space-y-8
+          border border-zinc-700
+        `}
+        style={{ minWidth: 0 }}
+      >
+        <h2 className="text-lg sm:text-2xl font-bold tracking-wide">{mensaje}</h2>
+        <div className="flex flex-col gap-4 w-full items-center">
+          <BotonClaro onClick={onConfirmar} className="w-full text-base py-3 rounded-xl">
+            {confirmText}
+          </BotonClaro>
+          <Boton onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
+            Cancelar
+          </Boton>
         </div>
       </div>
     </div>,

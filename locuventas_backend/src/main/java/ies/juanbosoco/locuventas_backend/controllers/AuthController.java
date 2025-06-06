@@ -312,6 +312,29 @@ public class AuthController {
         //    pero normalmente devolvemos 200 con lista vacía si no hay coincidencias
         return ResponseEntity.ok(usuariosSoloUser);
     }
+    @DeleteMapping("/usuarios/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
+        Optional<Vendedor> optional = userRepository.findById(id);
+        if (optional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado."));
+        }
+        Vendedor user = optional.get();
+
+        // Eliminar la foto si existe
+        if (user.getFoto() != null && !user.getFoto().isBlank()) {
+            try {
+                fotoVendedorService.eliminarImagen(user.getFoto());
+            } catch (Exception e) {
+                // No impedimos la eliminación del usuario por error de archivo
+            }
+        }
+
+        userRepository.deleteById(id);
+        return ResponseEntity.ok(Map.of("message", "Usuario y foto eliminados correctamente."));
+    }
+
 
 }
 

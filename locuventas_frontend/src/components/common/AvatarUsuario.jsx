@@ -5,7 +5,7 @@ import BotonClaro from "./BotonClaro";
 import ModalConfirmacion from "./ModalConfirmacion";
 import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
-
+import FormEditarPerfil from "../vendedor/Form/FormEditarPerfil";
 export default function AvatarUsuario({
   foto,
   nombre,
@@ -16,7 +16,7 @@ export default function AvatarUsuario({
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
-
+const [modalEditar, setModalEditar] = useState(false);
   const handleLogoutConfirmado = () => {
     setAuth({ token: null, nombre: null, foto: null, email: null, roles: [] });
     navigate("/");
@@ -59,9 +59,15 @@ export default function AvatarUsuario({
           </p>
 
           <div className="flex flex-col gap-2">
-            <BotonClaro onClick={() => alert("Editar perfil (no implementado)")}>
+            <BotonClaro o onClick={() => setModalEditar(true)}>
               Editar perfil
             </BotonClaro>
+            <FormEditarPerfil
+  isOpen={modalEditar}
+  setIsOpen={setModalEditar}
+  usuario={{ nombre, email, foto }} // los datos actuales del usuario
+/>
+
             <BotonClaro onClick={() => setMostrarConfirmacion(true)}>
               Cerrar sesión
             </BotonClaro>

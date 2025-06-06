@@ -1,5 +1,3 @@
-// src/components/Header.jsx
-
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -13,13 +11,21 @@ import GestionDropdown from "./common/GestionDropdown";
 import VendedoresDropdown from "./common/VendedoresDropdown";
 
 export default function Header() {
-  const [menuOpen, setMenuOpen] = useState(false); // ¿Menú móvil abierto?
-  const [showHeader, setShowHeader] = useState(false); // Para animar la cabecera
-  const [isGestionOpen, setIsGestionOpen] = useState(false); // ¿Dropdown “Gestión” abierto?
-  const [isVendedoresOpen, setIsVendedoresOpen] = useState(false); // ¿Dropdown “Vendedores” abierto?
-  const [isPendientesOpen, setIsPendientesOpen] = useState(false); // ¿Dropdown “Pendientes” abierto?
-  const [isAvatarOpen, setIsAvatarOpen] = useState(false); // ¿Dropdown “Mi cuenta” abierto?
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false); // Modal de cerrar sesión
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showHeader, setShowHeader] = useState(false);
+  const [isGestionOpen, setIsGestionOpen] = useState(false);
+  const [isVendedoresOpen, setIsVendedoresOpen] = useState(false);
+  const [isPendientesOpen, setIsPendientesOpen] = useState(false);
+  const [isAvatarOpen, setIsAvatarOpen] = useState(false);
+  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
+
+  // MODAL GLOBAL para confirmación (Aprobar/Eliminar usuarios)
+  const [showModal, setShowModal] = useState(false);
+  const [modalConfig, setModalConfig] = useState({
+    mensaje: "",
+    confirmText: "",
+    onConfirmar: null,
+  });
 
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
@@ -31,12 +37,10 @@ export default function Header() {
   const { nombre, foto, email, roles = [] } = auth || {};
   const esAdmin = roles.includes("ROLE_ADMIN");
 
-  // Animación de entrada de la cabecera
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
   }, []);
 
-  // Cerrar dropdowns si se hace clic fuera del header
   useEffect(() => {
     function handleClickOutside(e) {
       if (headerRef.current && !headerRef.current.contains(e.target)) {
@@ -55,7 +59,6 @@ export default function Header() {
     navigate("/");
   };
 
-  // Estilo “neón” compartido para botones
   const neonButtonClass = `
     px-4 py-2 text-white font-semibold rounded-xl bg-zinc-900
     ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
@@ -63,32 +66,24 @@ export default function Header() {
     transition-all duration-300
   `;
 
-  // Al hacer clic en “Vendedores” dentro de GestionDropdown
   const handleClickVendedores = () => {
     if (!isGestionOpen) {
-      // Si “Gestión” no estaba abierto, lo abrimos y también “Vendedores”
       setIsGestionOpen(true);
       setIsVendedoresOpen(true);
     } else {
-      // Si “Gestión” ya estaba abierto, solo alternamos “Vendedores”
       setIsVendedoresOpen((prev) => !prev);
     }
-    // Al abrir “Vendedores”, cerramos “Pendientes” y “Avatar”
     if (!isVendedoresOpen) {
       setIsPendientesOpen(false);
       setIsAvatarOpen(false);
     }
   };
 
-  // Al hacer clic en “Pendientes de aprobar”
   const handlePendientes = () => {
-    // Alterna solamente “Pendientes”; deja abierto “Vendedores” y “Gestión”
     setIsPendientesOpen((prev) => !prev);
   };
 
-  // Al hacer clic en “Gestionar Vendedores”
   const handleGestionarVendedores = () => {
-    // Redirige a la ruta correspondiente y cierra todos los dropdowns
     navigate("/vendedores/gestionar");
     setIsPendientesOpen(false);
     setIsVendedoresOpen(false);
@@ -102,12 +97,9 @@ export default function Header() {
       className={`
         w-full fixed top-0 left-0 z-50
         transition-all duration-700 ease-out transform
-        ${
-          showHeader ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"
-        }
+        ${showHeader ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}
       `}
     >
-      {/* ====== CABECERA PRINCIPAL ====== */}
       <div
         className="
         max-w-7xl mx-auto px-6 py-4 flex items-center justify-between
@@ -116,7 +108,6 @@ export default function Header() {
         border-b border-white/20
       "
       >
-        {/* --- LOGO --- */}
         <Link
           to="/"
           className="
@@ -128,22 +119,19 @@ export default function Header() {
           Locu<span className="text-orange-400">Ventas</span>
         </Link>
 
-        {/* --- NAVEGACIÓN DE ESCRITORIO (solo ADMIN) --- */}
         {esAdmin && (
           <nav className="hidden md:flex gap-6 items-center relative">
-            {/* BOTÓN “Gestión” */}
             <button
               onClick={() => {
                 setIsGestionOpen((prev) => {
                   if (prev) {
-                    // Al cerrar “Gestión”, también cerrar “Vendedores” y “Pendientes”
                     setIsVendedoresOpen(false);
                     setIsPendientesOpen(false);
                   }
                   return !prev;
                 });
                 setIsAvatarOpen(false);
-                setMenuOpen(false); // Si venía del menú móvil, cerrar ese menú
+                setMenuOpen(false);
               }}
               className={neonButtonClass}
             >
@@ -160,10 +148,13 @@ export default function Header() {
                 onClickPendientes={handlePendientes}
                 isPendientesOpen={isPendientesOpen}
                 onClickGestionar={handleGestionarVendedores}
+                onConfirmacion={(config) => {
+                  setModalConfig(config);
+                  setShowModal(true);
+                }}
               />
             </GestionDropdown>
 
-            {/* AVATAR “Mi cuenta” */}
             <AvatarUsuario
               foto={foto}
               nombre={nombre}
@@ -180,7 +171,7 @@ export default function Header() {
           </nav>
         )}
 
-        {/* --- BOTÓN MENÚ MÓVIL --- */}
+        {/* BOTÓN MENÚ MÓVIL */}
         <button
           onClick={() => {
             setMenuOpen((prev) => !prev);
@@ -195,16 +186,12 @@ export default function Header() {
         </button>
       </div>
 
-      {/* ====== MENÚ MÓVIL ====== */}
+      {/* MENÚ MÓVIL */}
       <div
         className={`
           md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 px-6 py-6 text-center shadow-lg
           border-t border-white/10 transform transition-all duration-500 ease-in-out origin-top overflow-hidden
-          ${
-            menuOpen
-              ? "scale-y-100 opacity-100 max-h-96"
-              : "scale-y-0 opacity-0 max-h-0"
-          }
+          ${menuOpen ? "scale-y-100 opacity-100 max-h-96" : "scale-y-0 opacity-0 max-h-0"}
         `}
       >
         <div className="flex flex-col gap-4">
@@ -213,13 +200,11 @@ export default function Header() {
             onClick={() => {
               setIsGestionOpen((prev) => !prev);
               setIsAvatarOpen(false);
-              // No cerrar menuOpen aquí; solo alternamos el submenú
             }}
             className={neonButtonClass}
           >
             Gestión
           </button>
-
           {/* Opciones de “Gestión” en móvil */}
           {isGestionOpen && (
             <div className="space-y-2 px-2 mt-1">
@@ -247,13 +232,11 @@ export default function Header() {
           >
             Mi cuenta
           </button>
-
           {/* Submenú “Mi cuenta” en móvil */}
           {isAvatarOpen && (
             <div className="space-y-2 px-2 mt-1">
               <p className="text-sm text-gray-400">
-                Usuario:{" "}
-                <span className="text-white font-medium">{nombre}</span>
+                Usuario: <span className="text-white font-medium">{nombre}</span>
               </p>
               <p className="text-sm text-gray-400 mb-1">
                 Correo: <span className="text-white font-medium">{email}</span>
@@ -266,12 +249,24 @@ export default function Header() {
         </div>
       </div>
 
-      {/* ====== MODAL DE CONFIRMACIÓN (Cerrar sesión) ====== */}
       {mostrarConfirmacion && (
         <ModalConfirmacion
           mensaje="¿Estás seguro de cerrar sesión?"
           onConfirmar={handleLogoutConfirmado}
           onCancelar={() => setMostrarConfirmacion(false)}
+        />
+      )}
+
+      {/* MODAL GLOBAL PARA APROBAR/ELIMINAR USUARIOS */}
+      {showModal && (
+        <ModalConfirmacion
+          mensaje={modalConfig.mensaje}
+          confirmText={modalConfig.confirmText}
+          onConfirmar={async () => {
+            await modalConfig.onConfirmar();
+            setShowModal(false);
+          }}
+          onCancelar={() => setShowModal(false)}
         />
       )}
     </header>
