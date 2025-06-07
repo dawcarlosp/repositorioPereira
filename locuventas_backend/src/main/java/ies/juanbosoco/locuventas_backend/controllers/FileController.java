@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 @RestController
-@RequestMapping("/uploads/imagesVendedores")
+@RequestMapping("/imagenes/vendedores")
 public class FileController {
-    private final String uploadDir = "uploads/imagesVendedores"; // Ruta donde están las imágenes
-
+    private final String uploadDir = "uploads/vendedores"; // Ruta donde están las imágenes
+/*
     @GetMapping("/{filename}")
     public ResponseEntity<Resource> getImage(@PathVariable String filename) throws Exception {
         //String username = authentication.getName(); // Obtiene el nombre del usuario autenticado
@@ -23,6 +23,7 @@ public class FileController {
             return ResponseEntity.status(403).build(); // Prohibido si no es su imagen
         }
 */
+    /*
         Path filePath = Paths.get(uploadDir).resolve(filename).normalize();
         Resource resource = new UrlResource(filePath.toUri());
 
@@ -34,4 +35,5 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_TYPE, "image/jpeg")
                 .body(resource);
     }
+    */
 }

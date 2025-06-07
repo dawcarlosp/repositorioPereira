@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2
                         .requestMatchers("/imagenes/vendedores/**").permitAll()
+                        .requestMatchers("/imagenes/productos/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

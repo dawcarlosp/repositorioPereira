@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CategoriaRepository extends JpaRepository<Categoria, Long> {
     boolean existsByNombreAndIdNot(String nombre, Long id);
+    boolean existsByNombre(String nombre);
+
 }

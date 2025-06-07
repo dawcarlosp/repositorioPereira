@@ -4,6 +4,7 @@ import defaultAvatar from "../../assets/default-avatar.png";
 import BotonClaro from "./BotonClaro";
 import Boton from "./Boton";
 import { useAuth } from "../../context/useAuth";
+import { toast } from "react-toastify";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -39,6 +40,7 @@ export default function PendientesList({ onClose, onConfirmacion }) {
       onConfirmar: async () => {
         await apiRequest(`usuarios/${usuario.id}/asignar-rol`, {}, { method: "PUT" });
         setPendientes((prev) => prev.filter((u) => u.id !== usuario.id));
+         toast.success("Usuario aprobado correctamente");
       },
     });
   };
@@ -50,6 +52,7 @@ export default function PendientesList({ onClose, onConfirmacion }) {
       onConfirmar: async () => {
         await apiRequest(`usuarios/${usuario.id}`, {}, { method: "DELETE" });
         setPendientes((prev) => prev.filter((u) => u.id !== usuario.id));
+         toast.success("Usuario eliminado correctamente");
       },
     });
   };

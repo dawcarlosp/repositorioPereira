@@ -19,12 +19,39 @@ import java.nio.file.Paths;
 @RestController
 @RequestMapping("/imagenes")
 public class ImagenController {
-    private static final String UPLOAD_DIR = "uploads/imagesVendedores/";
-
+    private static final String UPLOAD_DIR = "uploads/vendedores/";
+    private static final String UPLOAD_DIR2 = "uploads/productos/";
     @GetMapping("/vendedores/{filename:.+}")
     public ResponseEntity<Resource> serveImage(@PathVariable String filename) {
         try {
             Path filePath = Paths.get(UPLOAD_DIR).resolve(filename).normalize();
+            Resource resource = new UrlResource(filePath.toUri());
+
+            if (!resource.exists()) {
+                return ResponseEntity.notFound().build();
+            }
+
+            String contentType = Files.probeContentType(filePath);
+            if (contentType == null) {
+                contentType = "application/octet-stream";
+            }
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .body(resource);
+
+        } catch (MalformedURLException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);
+        }
+    }
+    @GetMapping("/productos/{filename:.+}")
+    public ResponseEntity<Resource> serveImageP(@PathVariable String filename) {
+        try {
+            Path filePath = Paths.get(UPLOAD_DIR2).resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
 
             if (!resource.exists()) {

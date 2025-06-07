@@ -3,8 +3,10 @@ package ies.juanbosoco.locuventas_backend.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
+import ies.juanbosoco.locuventas_backend.entities.Categoria;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.List;
+
 @Component
 public class DataInitializer implements CommandLineRunner {
     @Autowired
@@ -25,10 +28,14 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PaisRepository paisRepository;
 
+    @Autowired
+    private CategoriaRepository categoriaRepository;
+
     @Override
     public void run(String... args) throws Exception {
         initAdminAndVendedor();
-        //initPaises();
+        initCategorias();
+        initPaises();
     }
 
     private void initAdminAndVendedor() {
@@ -58,7 +65,46 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("✔ Vendedor creado por defecto.");
         }
     }
-/*
+
+    private void initCategorias() {
+        String[] categorias = {
+                "Llamadas Internacionales",
+                "Recargas Telefónicas",
+                "Envío de Dinero",
+                "Fotocopias e Impresiones",
+                "Internet y Ciber",
+                "Venta de Accesorios",
+                "Papelería",
+                "Pago de Servicios",
+                "Trámites y Gestiones",
+                "Envío de Paquetería",
+                "Alimentos y Bebidas",
+                "Venta de Tarjetas SIM",
+                "Traducciones",
+                "Juegos de Azar/Lotería",
+                "Fotografía para Documentos",
+                "Otros Servicios"
+        };
+
+        int contador = 0;
+        for (String nombre : categorias) {
+            if (!categoriaRepository.existsByNombre(nombre)) {
+                Categoria categoria = Categoria.builder()
+                        .nombre(nombre)
+                        .build();
+                categoriaRepository.save(categoria);
+                contador++;
+            }
+        }
+
+        if (contador > 0) {
+            System.out.println("✔ Se han insertado " + contador + " categorías.");
+        } else {
+            System.out.println("ℹ Las categorías ya existen en la base de datos.");
+        }
+    }
+
+
     private void initPaises() throws Exception {
         if (paisRepository.count() > 0) {
             System.out.println("ℹ Paises ya existen en la base de datos.");
@@ -67,20 +113,20 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("🌍 Descargando países desde la API...");
 
-        URL url = new URL("https://restcountries.com/v3.1/all");
+        URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode countries = mapper.readTree(url);
 
         int contador = 0;
         for (JsonNode country : countries) {
             String nombre = country.path("name").path("common").asText();
-            String codigo = country.path("cca2").asText(); // ISO alpha-2
             String enlaceFoto = country.path("flags").path("png").asText();
 
-            if (!paisRepository.findByCodigo(codigo).isPresent()) {
+            // Puedes generar el código a partir del nombre (ejemplo) o añadir más campos si lo necesitas
+
+            if (!paisRepository.findByNombre(nombre).isPresent()) {
                 Pais pais = Pais.builder()
                         .nombre(nombre)
-                        .codigo(codigo)
                         .enlaceFoto(enlaceFoto)
                         .build();
                 paisRepository.save(pais);
@@ -90,5 +136,6 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("✔ Se han insertado " + contador + " países.");
     }
- */
+
+
 }

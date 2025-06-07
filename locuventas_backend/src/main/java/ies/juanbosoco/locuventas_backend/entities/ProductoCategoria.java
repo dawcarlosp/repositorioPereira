@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,11 +18,14 @@ public class ProductoCategoria {
     @ManyToOne
     @MapsId("productoId")
     @JoinColumn(name = "producto_id")
+    @JsonIgnoreProperties("categorias")
+
     private Producto producto;
 
     @ManyToOne
     @MapsId("categoriaId")
     @JoinColumn(name = "categoria_id")
+    @JsonIgnoreProperties("productosCategorias")
     private Categoria categoria;
 
     // Ejemplo de metadatos adicionales

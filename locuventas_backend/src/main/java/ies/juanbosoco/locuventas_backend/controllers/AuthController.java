@@ -1,8 +1,5 @@
 package ies.juanbosoco.locuventas_backend.controllers;
-import ies.juanbosoco.locuventas_backend.DTO.LoginRequestDTO;
-import ies.juanbosoco.locuventas_backend.DTO.LoginResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.PaisResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.DTO.*;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
@@ -27,6 +24,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -63,7 +61,7 @@ public class AuthController {
             // Validar y guardar la foto
             fotoVendedorService.validarArchivo(foto);  // Validamos la foto con el servicio
             String fotoNombre = fotoVendedorService.generarNombreUnico(foto);  // Generamos un nombre único para la foto
-            fotoVendedorService.guardarImagen(foto, fotoNombre);  // Guardamos la foto en el sistema de archivos
+            fotoVendedorService.guardarImagen(foto, fotoNombre, "vendedores");  // Guardamos la foto en el sistema de archivos
 
             // Guardar el usuario en la base de datos
             Vendedor userEntity = this.userRepository.save(
@@ -325,7 +323,7 @@ public class AuthController {
         // Eliminar la foto si existe
         if (user.getFoto() != null && !user.getFoto().isBlank()) {
             try {
-                fotoVendedorService.eliminarImagen(user.getFoto());
+                fotoVendedorService.eliminarImagen(user.getFoto(), "vendedores");
             } catch (Exception e) {
                 // No impedimos la eliminación del usuario por error de archivo
             }
@@ -333,6 +331,77 @@ public class AuthController {
 
         userRepository.deleteById(id);
         return ResponseEntity.ok(Map.of("message", "Usuario y foto eliminados correctamente."));
+    }
+    @PutMapping("/usuarios/editar-perfil")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<?> editarPerfil(
+            Principal principal,
+            @RequestPart("user") @Valid UserEditDTO userEditDTO,
+            @RequestPart(value = "foto", required = false) MultipartFile foto,
+            BindingResult result
+    ) {
+        // 1. Recuperar usuario autenticado por email (desde el token)
+        String email = principal.getName();
+        Vendedor usuario = userRepository.findByEmail(email).orElse(null);
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Map.of("error", "Usuario no autenticado"));
+        }
+
+        // 2. Validaciones de campos
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(fieldError ->
+                    errors.put(fieldError.getField(), fieldError.getDefaultMessage())
+            );
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        }
+
+        // 3. Comprobar duplicidad de email si lo cambió
+        if (!usuario.getEmail().equals(userEditDTO.getEmail())) {
+            boolean emailEnUso = userRepository.findByEmail(userEditDTO.getEmail()).isPresent();
+            if (emailEnUso) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("email", "Ese email ya está en uso"));
+            }
+            usuario.setEmail(userEditDTO.getEmail());
+        }
+
+        // 4. Cambiar nombre si lo cambia
+        usuario.setNombre(userEditDTO.getNombre());
+
+        // 5. Cambiar contraseña si la introduce
+        if (userEditDTO.getPassword() != null && !userEditDTO.getPassword().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(userEditDTO.getPassword()));
+        }
+
+        // 6. Cambiar la foto si la subió (y borrar la anterior)
+        if (foto != null && !foto.isEmpty()) {
+            // Borrar la anterior si existe
+            if (usuario.getFoto() != null && !usuario.getFoto().isBlank()) {
+                try {
+                    fotoVendedorService.eliminarImagen(usuario.getFoto(), "vendedores");
+                } catch (Exception e) {
+                    // Ignora errores de borrado de archivo
+                }
+            }
+            // Guardar la nueva
+            fotoVendedorService.validarArchivo(foto);
+            String nuevoNombreFoto = fotoVendedorService.generarNombreUnico(foto);
+            fotoVendedorService.guardarImagen(foto, nuevoNombreFoto, "vendedores");
+            usuario.setFoto(nuevoNombreFoto);
+        }
+
+        userRepository.save(usuario);
+
+        // 7. Respuesta
+        Map<String, Object> response = new HashMap<>();
+        response.put("nombre", usuario.getNombre());
+        response.put("email", usuario.getEmail());
+        response.put("foto", usuario.getFoto());
+        response.put("message", "Perfil actualizado correctamente.");
+
+        return ResponseEntity.ok(response);
     }
 
 

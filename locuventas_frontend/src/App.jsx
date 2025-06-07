@@ -3,7 +3,7 @@ import { useState } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import VendedoresPendientes from "./pages/VendedoresPendientes";
-
+import GestionProductosPagina from "./pages/GestionProductosPagina";
 import FormVendedorLogin from "./pages/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
 import FormVendedorRegister from "./components/vendedor/Form/FormVendedorRegister";
@@ -48,6 +48,15 @@ function App() {
               element={
                 <PrivateRoute>
                   <VendedoresPendientes />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/productos/gestion"
+              element={
+                <PrivateRoute>
+
+                  <GestionProductosPagina />
                 </PrivateRoute>
               }
             />

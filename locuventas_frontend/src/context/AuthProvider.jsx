@@ -1,9 +1,8 @@
-// src/context/AuthProvider.jsx
 import { useState, useEffect } from "react";
 import { AuthContext } from "./auth.context";
 
 export const AuthProvider = ({ children }) => {
-  // Inicializamos auth leyendo de localStorage, si existe
+  // Carga desde localStorage al arrancar
   const [auth, setAuthState] = useState(() => {
     const stored = localStorage.getItem("auth");
     return stored
@@ -13,21 +12,21 @@ export const AuthProvider = ({ children }) => {
           nombre: null,
           foto: null,
           email: null,
-          roles: [],    // 👈 inicializamos roles como arreglo vacío
+          roles: [],
         };
   });
 
-  // Cada vez que auth cambie, lo guardamos en localStorage
   useEffect(() => {
     localStorage.setItem("auth", JSON.stringify(auth));
   }, [auth]);
 
-  // Función para actualizar auth (recibe un objeto con token, nombre, foto, email, roles)
-  const setAuth = (data) => {
-    setAuthState(data);
+  // El setAuth NO debe borrar el token a menos que sea logout
+  const setAuth = (dataOrFn) => {
+    setAuthState((prev) =>
+      typeof dataOrFn === "function" ? dataOrFn(prev) : { ...prev, ...dataOrFn }
+    );
   };
 
-  // Función de logout: borra localStorage y resetea auth
   const logout = () => {
     localStorage.removeItem("auth");
     setAuthState({

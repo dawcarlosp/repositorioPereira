@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -34,8 +35,10 @@ public class Producto {
 
     @ManyToOne
     @JoinColumn(name = "pais_id")
+    @JsonIgnoreProperties("productos")
+
     private Pais pais;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductoCategoria> categorias;
+    private List<ProductoCategoria> categorias = new ArrayList<>();
 }

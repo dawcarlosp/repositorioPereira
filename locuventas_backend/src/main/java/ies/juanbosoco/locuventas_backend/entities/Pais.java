@@ -1,5 +1,7 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -28,5 +30,6 @@ import java.util.List;
         private String enlaceFoto;
 
         @OneToMany(mappedBy = "pais")
+        @JsonIgnore
         private List<Producto> productos;
     }

@@ -39,6 +39,7 @@ export default function Header() {
 
   const { nombre, foto, email, roles = [] } = auth || {};
   const esAdmin = roles.includes("ROLE_ADMIN");
+  const esVendedor = roles.includes("ROLE_VENDEDOR");
 
   useEffect(() => {
     setTimeout(() => setShowHeader(true), 100);
@@ -113,7 +114,7 @@ export default function Header() {
       "
       >
         <Link
-          to="/"
+          to="/dashboard"
           className="
             text-2xl font-extrabold text-white tracking-wide hover:scale-105
             transition-transform duration-200 drop-shadow-sm
@@ -123,42 +124,48 @@ export default function Header() {
           Locu<span className="text-orange-400">Ventas</span>
         </Link>
 
-        {esAdmin && (
+        {/* === Menú Desktop: Admin y Vendedor === */}
+        {(esAdmin || esVendedor) && (
           <nav className="hidden md:flex gap-6 items-center relative">
-            <button
-              onClick={() => {
-                setIsGestionOpen((prev) => {
-                  if (prev) {
-                    setIsVendedoresOpen(false);
-                    setIsPendientesOpen(false);
-                  }
-                  return !prev;
-                });
-                setIsAvatarOpen(false);
-                setMenuOpen(false);
-              }}
-              className={neonButtonClass}
-            >
-              Gestión
-            </button>
+            {/* Admin: Gestión */}
+            {esAdmin && (
+              <>
+                <button
+                  onClick={() => {
+                    setIsGestionOpen((prev) => {
+                      if (prev) {
+                        setIsVendedoresOpen(false);
+                        setIsPendientesOpen(false);
+                      }
+                      return !prev;
+                    });
+                    setIsAvatarOpen(false);
+                    setMenuOpen(false);
+                  }}
+                  className={neonButtonClass}
+                >
+                  Gestión
+                </button>
+                <GestionDropdown
+                  isOpen={isGestionOpen}
+                  vendedoresLinkRef={vendedoresLinkRef}
+                  onClickVendedores={handleClickVendedores}
+                >
+                  <VendedoresDropdown
+                    isOpen={isVendedoresOpen}
+                    onClickPendientes={handlePendientes}
+                    isPendientesOpen={isPendientesOpen}
+                    onClickGestionar={handleGestionarVendedores}
+                    onConfirmacion={(config) => {
+                      setModalConfig(config);
+                      setShowModal(true);
+                    }}
+                  />
+                </GestionDropdown>
+              </>
+            )}
 
-            <GestionDropdown
-              isOpen={isGestionOpen}
-              vendedoresLinkRef={vendedoresLinkRef}
-              onClickVendedores={handleClickVendedores}
-            >
-              <VendedoresDropdown
-                isOpen={isVendedoresOpen}
-                onClickPendientes={handlePendientes}
-                isPendientesOpen={isPendientesOpen}
-                onClickGestionar={handleGestionarVendedores}
-                onConfirmacion={(config) => {
-                  setModalConfig(config);
-                  setShowModal(true);
-                }}
-              />
-            </GestionDropdown>
-
+            {/* AvatarUsuario para ambos (con edición para vendedor) */}
             <AvatarUsuario
               foto={foto}
               nombre={nombre}
@@ -171,11 +178,17 @@ export default function Header() {
                 setIsPendientesOpen(false);
                 setMenuOpen(false);
               }}
+              onEditarPerfil={
+                esVendedor && !esAdmin
+                  ? () => navigate("/perfil/editar")
+                  : undefined
+              }
+              esVendedor={esVendedor && !esAdmin} // útil para el menú del avatar
             />
           </nav>
         )}
 
-        {/* BOTÓN MENÚ MÓVIL */}
+        {/* === BOTÓN MENÚ MÓVIL === */}
         <button
           onClick={() => {
             setMenuOpen((prev) => !prev);
@@ -191,7 +204,7 @@ export default function Header() {
         </button>
       </div>
 
-      {/* MENÚ MÓVIL */}
+      {/* === MENÚ MÓVIL === */}
       <div
         className={`
           md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 px-6 py-6 text-center shadow-lg
@@ -200,88 +213,107 @@ export default function Header() {
         `}
       >
         <div className="flex flex-col gap-4">
-          {/* BOTÓN “Gestión” en móvil */}
-          <Boton
-            className="w-full"
-            onClick={() => {
-              setIsGestionOpen((prev) => !prev);
-              setIsAvatarOpen(false);
-              setIsVendedoresMobileOpen(false);
-            }}
-          >
-            Gestión
-          </Boton>
-          {/* Opciones de “Gestión” en móvil */}
-          {isGestionOpen && (
-            <div className="space-y-2 px-2 mt-1 text-center">
-              {/* Vendedores con submenú */}
-              <div>
-                <Boton
-                  className="w-full mb-1"
-                  onClick={() => setIsVendedoresMobileOpen((prev) => !prev)}
-                >
-                  Vendedores
-                </Boton>
-                {isVendedoresMobileOpen && (
-                  <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
-                    <Link
-                      to="/vendedores/gestionar"
-                      onClick={() => setMenuOpen(false)}
-                      className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
-                      style={{ background: "none", border: "none" }}
+          {/* Admin: Gestión */}
+          {esAdmin && (
+            <>
+              <Boton
+                className="w-full"
+                onClick={() => {
+                  setIsGestionOpen((prev) => !prev);
+                  setIsAvatarOpen(false);
+                  setIsVendedoresMobileOpen(false);
+                }}
+              >
+                Gestión
+              </Boton>
+              {isGestionOpen && (
+                <div className="space-y-2 px-2 mt-1 text-center">
+                  {/* Vendedores con submenú */}
+                  <div>
+                    <Boton
+                      className="w-full mb-1"
+                      onClick={() => setIsVendedoresMobileOpen((prev) => !prev)}
                     >
-                      Gestionar Vendedores
-                    </Link>
-                    <Link
-                      to="/vendedores/pendientes"
-                      onClick={() => setMenuOpen(false)}
-                      className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
-                      style={{ background: "none", border: "none" }}
-                    >
-                      Pendientes de aprobar
-                    </Link>
+                      Vendedores
+                    </Boton>
+                    {isVendedoresMobileOpen && (
+                      <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
+                        <Link
+                          to="/vendedores/gestionar"
+                          onClick={() => setMenuOpen(false)}
+                          className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                          style={{ background: "none", border: "none" }}
+                        >
+                          Gestionar Vendedores
+                        </Link>
+                        <Link
+                          to="/vendedores/pendientes"
+                          onClick={() => setMenuOpen(false)}
+                          className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                          style={{ background: "none", border: "none" }}
+                        >
+                          Pendientes de aprobar
+                        </Link>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              <Link to="/categorias" onClick={() => setMenuOpen(false)}>
-                <Boton className="w-full">Categorías</Boton>
-              </Link>
-              <Link to="/productos" onClick={() => setMenuOpen(false)}>
-                <Boton className="w-full">Productos</Boton>
-              </Link>
-            </div>
+                  <Link to="/categorias" onClick={() => setMenuOpen(false)}>
+                    <Boton className="w-full">Categorías</Boton>
+                  </Link>
+                  <Link to="/productos/gestion" onClick={() => setMenuOpen(false)}>
+                    <Boton className="w-full">Productos</Boton>
+                  </Link>
+                </div>
+              )}
+            </>
           )}
 
-          {/* BOTÓN “Mi cuenta” en móvil */}
-          <Boton
-            className="w-full"
-            onClick={() => {
-              setIsAvatarOpen((prev) => !prev);
-              setIsGestionOpen(false);
-              setIsVendedoresOpen(false);
-              setIsPendientesOpen(false);
-              setIsVendedoresMobileOpen(false);
-            }}
-          >
-            Mi cuenta
-          </Boton>
-          {/* Submenú “Mi cuenta” en móvil */}
-          {isAvatarOpen && (
-            <div className="space-y-2 px-2 mt-1">
-              <p className="text-sm text-gray-400">
-                Usuario: <span className="text-white font-medium">{nombre}</span>
-              </p>
-              <p className="text-sm text-gray-400 mb-1">
-                Correo: <span className="text-white font-medium">{email}</span>
-              </p>
-              <BotonClaro onClick={() => setMostrarConfirmacion(true)} className="w-full">
-                Cerrar sesión
-              </BotonClaro>
-            </div>
+          {/* Botón Mi cuenta: para admin y vendedor */}
+          {(esAdmin || esVendedor) && (
+            <>
+              <Boton
+                className="w-full"
+                onClick={() => {
+                  setIsAvatarOpen((prev) => !prev);
+                  setIsGestionOpen(false);
+                  setIsVendedoresOpen(false);
+                  setIsPendientesOpen(false);
+                  setIsVendedoresMobileOpen(false);
+                }}
+              >
+                Mi cuenta
+              </Boton>
+              {isAvatarOpen && (
+                <div className="space-y-2 px-2 mt-1">
+                  <p className="text-sm text-gray-400">
+                    Usuario: <span className="text-white font-medium">{nombre}</span>
+                  </p>
+                  <p className="text-sm text-gray-400 mb-1">
+                    Correo: <span className="text-white font-medium">{email}</span>
+                  </p>
+                  {/* Botón para editar perfil (solo vendedor, no admin) */}
+                  {esVendedor && !esAdmin && (
+                    <BotonClaro
+                      className="w-full"
+                      onClick={() => {
+                        setMenuOpen(false);
+                        navigate("/perfil/editar");
+                      }}
+                    >
+                      Editar perfil
+                    </BotonClaro>
+                  )}
+                  <BotonClaro onClick={() => setMostrarConfirmacion(true)} className="w-full">
+                    Cerrar sesión
+                  </BotonClaro>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
+      {/* MODAL CONFIRMACIÓN LOGOUT */}
       {mostrarConfirmacion && (
         <ModalConfirmacion
           mensaje="¿Estás seguro de cerrar sesión?"

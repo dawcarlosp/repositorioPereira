@@ -1,58 +1,53 @@
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
 
 export const apiRequest = async (endpoint, data, options = {}) => {
-    const { method = "POST", isFormData = false } = options;
+  const { method = "POST", isFormData = false } = options;
+  const token = JSON.parse(localStorage.getItem("auth"))?.token;
 
-    // Intentamos obtener el token del localStorage (o ajusta según tu app)
-    const token = JSON.parse(localStorage.getItem("auth"))?.token;
+  const requestOptions = {
+    method,
+    headers: {},
+    credentials: "include",
+  };
 
-    // Configuración base
-    const requestOptions = {
-        method,
-        headers: {},
-        credentials: "include", // Para cookies si aplica
-    };
+  if (
+    token &&
+    !endpoint.includes("auth/login") &&
+    !endpoint.includes("auth/register")
+  ) {
+    requestOptions.headers["Authorization"] = `Bearer ${token}`;
+  }
 
-    const isBodyAllowed = method !== "GET" && method !== "HEAD";
-
-    if (isBodyAllowed && data) {
-        requestOptions.body = isFormData ? data : JSON.stringify(data);
-        if (!isFormData) {
-            requestOptions.headers["Content-Type"] = "application/json";
-        }
+  const isBodyAllowed = method !== "GET" && method !== "HEAD";
+  if (isBodyAllowed && data) {
+    if (isFormData) {
+      requestOptions.body = data;
+      // NO Content-Type, FormData lo maneja el navegador
+    } else {
+      requestOptions.body = JSON.stringify(data);
+      requestOptions.headers["Content-Type"] = "application/json";
     }
+  }
 
-    // Incluir token si existe
-    if (token) {
-        requestOptions.headers["Authorization"] = `Bearer ${token}`;
-    }
+  // GET: añade params como query, no como body
+  let fullUrl = `${apiUrl}/${endpoint}`;
+  if (method === "GET" && data) {
+    const queryParams = new URLSearchParams(data).toString();
+    fullUrl += `?${queryParams}`;
+  }
 
-    // Si es GET con data, convertir a query params
-    let fullUrl = `${apiUrl}/${endpoint}`;
-    if (method === "GET" && data) {
-        const queryParams = new URLSearchParams(data).toString();
-        fullUrl += `?${queryParams}`;
-    }
-
+  try {
+    const response = await fetch(fullUrl, requestOptions);
+    const text = await response.text();
+    let result;
     try {
-        const response = await fetch(fullUrl, requestOptions);
-        const text = await response.text();
-
-        let result;
-        try {
-            result = text ? JSON.parse(text) : {};
-        } catch {
-            result = text || {};
-            console.warn("No se pudo parsear como JSON");
-        }
-
-        if (!response.ok) {
-            throw result;
-        }
-
-        return result;
-    } catch (error) {
-        console.error("Error en la API:", error);
-        throw error;
+      result = text ? JSON.parse(text) : {};
+    } catch {
+      result = text || {};
     }
+    if (!response.ok) throw result;
+    return result;
+  } catch (error) {
+    throw error;
+  }
 };

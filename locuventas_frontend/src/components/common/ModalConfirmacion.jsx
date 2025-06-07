@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Boton from "./Boton";
-import BotonClaro from "./BotonClaro";
+import Boton from "./Boton";         // Ajusta el path según tu estructura
+import BotonClaro from "./BotonClaro"; // Ajusta el path según tu estructura
 
 export default function ModalConfirmacion({
   mensaje,
@@ -10,7 +10,7 @@ export default function ModalConfirmacion({
   onCancelar,
 }) {
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-[2px] flex items-center justify-center px-2 sm:px-4">
+    <div className="fixed inset-0 z-[1000000] bg-black/70 backdrop-blur-[2px] flex items-center justify-center px-2 sm:px-4">
       <div
         className={`
           bg-zinc-900 text-white rounded-2xl shadow-2xl

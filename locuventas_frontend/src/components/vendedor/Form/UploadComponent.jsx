@@ -1,65 +1,61 @@
-import React, { useRef, useState } from "react";
-import { UserRound } from "lucide-react";
+// src/components/common/UploadComponent.jsx
+import React, { useRef } from "react";
 
-const UploadComponent = ({ setFile }) => {
-  const fileInputRef = useRef(null);
-  const [preview, setPreview] = useState(null);
-  const [justSelected, setJustSelected] = useState(false);
+function UploadComponent({ setFile, file, fotoActualUrl }) {
+  const inputRef = useRef();
 
-  const handleClick = () => {
-    fileInputRef.current.click();
-  };
-
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      setFile(file);
-      const imageUrl = URL.createObjectURL(file);
-      setPreview(imageUrl);
-      setJustSelected(true);
-      setTimeout(() => setJustSelected(false), 500);
-    }
-  };
-
-  const borderColor = preview ? "ring-purple-500" : "ring-orange-400";
-  const shadowColor = preview
-    ? "shadow-[0_0_20px_6px_rgba(168,85,247,0.6)]"
-    : "shadow-[0_0_12px_4px_rgba(251,146,60,0.4)]";
+  // Para mostrar la previsualización:
+  const showPreview = file
+    ? URL.createObjectURL(file)
+    : fotoActualUrl
+    ? fotoActualUrl
+    : null;
 
   return (
-    <div className="flex flex-col items-center mt-6 mb-4">
+    <div className="flex flex-col items-center mb-4">
       <div
-        onClick={handleClick}
-        className={`relative w-28 h-28 rounded-full overflow-hidden cursor-pointer ring-4 transition-all duration-500 
-        ${borderColor} ${shadowColor} 
-        hover:ring-purple-500 hover:shadow-[0_0_20px_6px_rgba(168,85,247,0.6)]`}
+        className="w-28 h-28 rounded-full border-4 border-orange-400 flex items-center justify-center cursor-pointer relative overflow-hidden bg-white shadow-lg"
+        onClick={() => inputRef.current.click()}
       >
-        {preview ? (
+        {showPreview ? (
           <img
-            src={preview}
-            alt="Foto de perfil"
-            className={`absolute top-1/2 left-1/2 w-full h-full object-cover transform -translate-x-1/2 -translate-y-1/2 transition-transform duration-500 ${
-              justSelected ? "scale-[1.6]" : "scale-100"
-            }`}
+            src={showPreview}
+            alt="Previsualización"
+            className="w-full h-full object-cover rounded-full"
           />
         ) : (
-          <div className="flex items-center justify-center w-full h-full bg-white/10 text-orange-400 hover:text-purple-500 transition-colors duration-300">
-            <UserRound size={64} /> {/* Icono más grande */}
-          </div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-16 w-16 text-purple-700"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
         )}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={e => {
+            if (e.target.files && e.target.files[0]) {
+              setFile(e.target.files[0]);
+            }
+          }}
+        />
       </div>
-
-      <input
-        type="file"
-        ref={fileInputRef}
-        hidden
-        accept="image/*"
-        onChange={handleFileChange}
-      />
-
-      <p className="text-xs text-gray-500 mt-2">Haz clic para subir una foto</p>
+      <span className="text-xs text-gray-600 underline mt-1 cursor-pointer" onClick={() => inputRef.current.click()}>
+        Haz clic para subir una foto
+      </span>
     </div>
   );
-};
+}
 
 export default UploadComponent;

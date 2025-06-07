@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import BotonClaro from "./BotonClaro";
 
 export default function GestionDropdown({
@@ -7,6 +8,8 @@ export default function GestionDropdown({
   onClickVendedores,
   children,
 }) {
+  const navigate = useNavigate();
+
   if (!isOpen) return null;
 
   return (
@@ -15,11 +18,15 @@ export default function GestionDropdown({
       <div className="absolute -top-2 left-4 w-4 h-4 bg-zinc-900/90 rotate-45" />
 
       <div className="px-2 space-y-1">
+        <BotonClaro onClick={() => navigate("/productos/gestion")}>
+          Productos
+        </BotonClaro>
         <BotonClaro ref={vendedoresLinkRef} onClick={onClickVendedores}>
           Vendedores
         </BotonClaro>
-        <BotonClaro>Categorías</BotonClaro>
-        <BotonClaro>Productos</BotonClaro>
+        <BotonClaro onClick={() => navigate("/categorias")}>
+          Categorías
+        </BotonClaro>
       </div>
 
       {/* Anidamos aquí el panel de “Vendedores” */}

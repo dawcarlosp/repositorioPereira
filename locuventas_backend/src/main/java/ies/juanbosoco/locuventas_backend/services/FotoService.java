@@ -20,7 +20,7 @@ public class FotoService {
     private static final Logger logger = LoggerFactory.getLogger(FotoService.class);
     private static final List<String> TIPOS_PERMITIDOS = List.of("image/jpeg", "image/png", "image/gif", "image/avif", "image/webp", "image/jpg");
     private static final long MAX_FILE_SIZE = 10_000_000;  // 10 MB
-    private static final String UPLOADS_DIRECTORY = "uploads/imagesVendedores/";
+    private static final String UPLOADS_DIRECTORY = "uploads/";
 
     @Autowired
     private ImageService imageService;
@@ -40,17 +40,14 @@ public class FotoService {
         }
     }
 
-    // Validación del tipo de archivo permitido
     private boolean esTipoPermitido(MultipartFile archivo) {
         return TIPOS_PERMITIDOS.contains(archivo.getContentType());
     }
 
-    // Validación del tamaño del archivo
     private boolean esTamañoPermitido(MultipartFile archivo) {
         return archivo.getSize() <= MAX_FILE_SIZE;
     }
 
-    // Generar un nombre único para el archivo con su extensión
     public String generarNombreUnico(MultipartFile archivo) {
         if (archivo.getOriginalFilename() == null || archivo.getOriginalFilename().isEmpty()) {
             throw new IllegalArgumentException("El archivo seleccionado no tiene un nombre válido.");
@@ -61,7 +58,6 @@ public class FotoService {
         return nombreUnico.toString() + extension;
     }
 
-    // Extraer la extensión del archivo
     private String obtenerExtensionArchivo(String nombreArchivo) {
         int index = nombreArchivo.lastIndexOf('.');
         if (index == -1) {
@@ -70,38 +66,45 @@ public class FotoService {
         return nombreArchivo.substring(index);
     }
 
-    // Guardar la imagen en el sistema de archivos
-    public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto) {
-        Path directorioPath = Paths.get(UPLOADS_DIRECTORY);
+    // ============ NUEVO: Permite elegir subdirectorio ("productos", "vendedores", etc) ================
+    public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto, String subdirectorio) {
+        String destinoDir = UPLOADS_DIRECTORY + (subdirectorio != null && !subdirectorio.isBlank() ? subdirectorio + "/" : "");
+        Path directorioPath = Paths.get(destinoDir);
 
-        // Asegurar que el directorio de subida exista
         try {
             if (Files.notExists(directorioPath)) {
-                Files.createDirectories(directorioPath);  // Crea el directorio si no existe
+                Files.createDirectories(directorioPath);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error al crear el directorio de subidas: " + UPLOADS_DIRECTORY, e);
+            throw new RuntimeException("Error al crear el directorio de subidas: " + destinoDir, e);
         }
 
-        Path ruta = Paths.get(UPLOADS_DIRECTORY + File.separator + nuevoNombreFoto);
+        Path ruta = directorioPath.resolve(nuevoNombreFoto);
 
-
-        // Guardar la imagen redimensionada
         try {
             byte[] contenido = archivo.getBytes();
-            byte[] contenidoRedimensionado = imageService.resizeImage(contenido, 1000); // Redimensionamos a un tamaño específico
+            byte[] contenidoRedimensionado = imageService.resizeImage(contenido, 1000);
             Files.write(ruta, contenidoRedimensionado);
             logger.info("Imagen guardada exitosamente en: " + ruta.toString());
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar el archivo: " + archivo.getOriginalFilename(), e);
         }
     }
-    public void eliminarImagen(String nombreArchivo) {
+
+    // ============ Retrocompatibilidad: sube directo a uploads/ como antes ===========
+    public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto) {
+        guardarImagen(archivo, nuevoNombreFoto, null);
+    }
+
+    // ==================== ELIMINAR IMAGEN de subdirectorio =======================
+    public void eliminarImagen(String nombreArchivo, String subdirectorio) {
         if (nombreArchivo == null || nombreArchivo.isBlank()) {
             logger.warn("No se proporcionó nombre de archivo para eliminar.");
             return;
         }
-        Path ruta = Paths.get(UPLOADS_DIRECTORY + File.separator + nombreArchivo);
+        String destinoDir = UPLOADS_DIRECTORY + (subdirectorio != null && !subdirectorio.isBlank() ? subdirectorio + "/" : "");
+        Path ruta = Paths.get(destinoDir + nombreArchivo);
+
         try {
             if (Files.exists(ruta)) {
                 Files.delete(ruta);
@@ -115,5 +118,8 @@ public class FotoService {
         }
     }
 
-
+    // =========== Retrocompatibilidad: elimina directo en uploads/ ============
+    public void eliminarImagen(String nombreArchivo) {
+        eliminarImagen(nombreArchivo, null);
+    }
 }

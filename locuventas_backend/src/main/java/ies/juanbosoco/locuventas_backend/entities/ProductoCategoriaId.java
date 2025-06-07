@@ -1,10 +1,15 @@
 package ies.juanbosoco.locuventas_backend.entities;
 
 import jakarta.persistence.Embeddable;
+import lombok.*;
 
 import java.io.Serializable;
 import java.util.Objects;
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 @Embeddable
 public class ProductoCategoriaId  implements Serializable {
     private Long productoId;
