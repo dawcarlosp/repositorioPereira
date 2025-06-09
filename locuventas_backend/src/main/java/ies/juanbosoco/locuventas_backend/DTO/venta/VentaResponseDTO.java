@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,4 +20,5 @@ public class VentaResponseDTO {
     private String vendedor;
     private LocalDateTime fecha;
     private boolean cancelada;
+    private List<LineaVentaResponseDTO> lineas;
 }
