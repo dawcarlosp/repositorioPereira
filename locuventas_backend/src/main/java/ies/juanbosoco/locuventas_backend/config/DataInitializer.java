@@ -39,32 +39,59 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void initAdminAndVendedor() {
-        if (!vendedorRepository.existsAdmin()) {
-            Vendedor admin = Vendedor.builder()
-                    .email("admin@locutorio.com")
-                    .password(passwordEncoder.encode("admin123"))
-                    .nombre("Administrador")
+        // Admin 1
+        if (!vendedorRepository.existsByEmail("admin1@locutorio.com")) {
+            Vendedor admin1 = Vendedor.builder()
+                    .email("admin1@locutorio.com")
+                    .password(passwordEncoder.encode("Admin.1234")) // Cumple requisitos de complejidad
+                    .nombre("Juan Admin")
                     .authorities(List.of(Roles.ADMIN, Roles.USER, Roles.VENDEDOR))
-                    .foto("default.jpg")
+                    .foto("admin1.jpg")
                     .build();
-            vendedorRepository.save(admin);
-            System.out.println("✔ Admin creado por defecto.");
-        } else {
-            System.out.println("ℹ Ya hay un administrador, no se crea uno nuevo.");
+            vendedorRepository.save(admin1);
+            System.out.println("Admin 1 creado.");
         }
 
+        // Admin 2
+        if (!vendedorRepository.existsByEmail("admin2@locutorio.com")) {
+            Vendedor admin2 = Vendedor.builder()
+                    .email("admin2@locutorio.com")
+                    .password(passwordEncoder.encode("Soporte.123")) // Cumple requisitos de complejidad
+                    .nombre("Maria Soporte")
+                    .authorities(List.of(Roles.ADMIN, Roles.USER, Roles.VENDEDOR))
+                    .foto("admin2.jpg")
+                    .build();
+            vendedorRepository.save(admin2);
+            System.out.println("Admin 2 creado.");
+        }
+
+        // Admin 3
+        if (!vendedorRepository.existsByEmail("admin3@locutorio.com")) {
+            Vendedor admin3 = Vendedor.builder()
+                    .email("admin3@locutorio.com")
+                    .password(passwordEncoder.encode("Gestion.123")) // Cumple requisitos de complejidad
+                    .nombre("Luis Gestion")
+                    .authorities(List.of(Roles.ADMIN, Roles.USER, Roles.VENDEDOR))
+                    .foto("admin3.jpg")
+                    .build();
+            vendedorRepository.save(admin3);
+            System.out.println("Admin 3 creado.");
+        }
+
+        // Vendedor estándar
         if (!vendedorRepository.existsVendedor()) {
             Vendedor vendedor = Vendedor.builder()
                     .email("vendedor@locutorio.com")
-                    .password(passwordEncoder.encode("vendedor123"))
-                    .nombre("Vendedor")
+                    .password(passwordEncoder.encode("Vendedor.123"))
+                    .nombre("Pedro Vendedor")
                     .authorities(List.of(Roles.VENDEDOR, Roles.USER))
-                    .foto("default.jpg")
+                    .foto("vendedor.jpg")
                     .build();
             vendedorRepository.save(vendedor);
-            System.out.println("✔ Vendedor creado por defecto.");
+            System.out.println("Vendedor creado por defecto.");
         }
     }
+
 
     private void initCategorias() {
         String[] categorias = {
@@ -111,32 +138,41 @@ public class DataInitializer implements CommandLineRunner {
             return;
         }
 
-        System.out.println("🌍 Descargando países desde la API...");
-
-        URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3");
         ObjectMapper mapper = new ObjectMapper();
-        JsonNode countries = mapper.readTree(url);
+        JsonNode countries = null;
+
+        //Intenta descargar desde la API
+        try {
+            System.out.println("Descargando países desde la API...");
+            URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3");
+            countries = mapper.readTree(url);
+            System.out.println("Países descargados desde la API.");
+        } catch (Exception ex) {
+            //Si falla, usa el archivo local
+            System.out.println(" No se pudo descargar países desde la API, usando archivo local...");
+            countries = mapper.readTree(getClass().getResourceAsStream("/paises.json"));
+        }
 
         int contador = 0;
         for (JsonNode country : countries) {
             String nombre = country.path("name").path("common").asText();
             String enlaceFoto = country.path("flags").path("png").asText();
-            String codigo = country.path("cca2").asText(); // <-- aquí!
+            String codigo = country.path("cca2").asText();
 
             if (!paisRepository.findByNombre(nombre).isPresent()) {
                 Pais pais = Pais.builder()
                         .nombre(nombre)
                         .enlaceFoto(enlaceFoto)
-                        .codigo(codigo)    // <-- añade esto a tu entidad y builder
+                        .codigo(codigo)
                         .build();
                 paisRepository.save(pais);
                 contador++;
             }
-
         }
 
-        System.out.println("✔ Se han insertado " + contador + " países.");
+        System.out.println("Se han insertado " + contador + " países.");
     }
+
 
 
 }

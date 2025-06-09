@@ -7,21 +7,31 @@ export default function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Comprobamos qué está activo según la ruta
+  // Comprobación de rutas activas
   const isDashboard = location.pathname === "/dashboard";
-  const isVentas = location.pathname === "/ventas" && !location.search.includes("pendientes");
-  const isPendientes = location.pathname === "/ventas" && location.search.includes("pendientes");
+  const isVentas = location.pathname === "/ventas" && !location.pathname.includes("pendientes");
+  const isPendientes = location.pathname.includes("/ventas/pendientes");
 
   return (
     <footer
       className="
-        w-full sticky bottom-0 left-0 z-30
+        w-full
         bg-black flex flex-col md:flex-row justify-center items-center
         gap-2 md:gap-8
         px-4 py-4
         border-t border-zinc-800
         shadow-xl
+        mt-auto
+        rounded-xl
       "
+      style={{
+        position: "sticky",
+        bottom: 0,
+        left: 0,
+        zIndex: 30,
+        maxWidth: "1000px",
+        margin: "0 auto"
+      }}
     >
       <div className="w-full md:max-w-xs">
         {isDashboard ? (

@@ -230,12 +230,12 @@ export default function Header() {
                 <div className="space-y-2 px-2 mt-1 text-center">
                   {/* Vendedores con submenú */}
                   <div>
-                    <Boton
+                    <BotonClaro
                       className="w-full mb-1"
                       onClick={() => setIsVendedoresMobileOpen((prev) => !prev)}
                     >
                       Vendedores
-                    </Boton>
+                    </BotonClaro>
                     {isVendedoresMobileOpen && (
                       <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
                         <Link
@@ -258,10 +258,10 @@ export default function Header() {
                     )}
                   </div>
                   <Link to="/categorias" onClick={() => setMenuOpen(false)}>
-                    <Boton className="w-full">Categorías</Boton>
+                    <BotonClaro className="w-full">Categorías</BotonClaro>
                   </Link>
                   <Link to="/productos/gestion" onClick={() => setMenuOpen(false)}>
-                    <Boton className="w-full">Productos</Boton>
+                    <BotonClaro className="w-full">Productos</BotonClaro>
                   </Link>
                 </div>
               )}

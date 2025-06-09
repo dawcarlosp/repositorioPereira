@@ -42,7 +42,7 @@ export default function ProductoCard({
             style={{ maxWidth: "90%" }}
           />
         ) : (
-          <div className="h-20 w-20 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">
+          <div className="h-20 w-20 bg-white-100 rounded-lg flex items-center justify-center text-zinc-400 text-xs">
             Sin imagen
           </div>
         )}
@@ -52,15 +52,15 @@ export default function ProductoCard({
       <div className="flex-1 overflow-y-auto min-h-0">
         <div className="flex flex-col gap-1 pr-1">
           <div>
-            <span className="font-bold text-gray-800">Nombre: </span>
-            <span className="text-gray-700 break-words">{producto.nombre}</span>
+            <span className="font-bold text-zinc-800">Nombre: </span>
+            <span className="text-zinc-700 break-words">{producto.nombre}</span>
           </div>
           <div>
-            <span className="font-bold text-gray-800">Precio: </span>
-            <span className="text-gray-700">{producto.precio}€</span>
+            <span className="font-bold text-zinc-800">Precio: </span>
+            <span className="text-zinc-700">{producto.precio}€</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-gray-800">País: </span>
+            <span className="font-bold text-zinc-800">País: </span>
             {producto.paisFoto && (
               <img
                 src={producto.paisFoto}
@@ -68,11 +68,11 @@ export default function ProductoCard({
                 className="w-8 h-6 rounded shadow"
               />
             )}
-            <span className="text-gray-700">{producto.paisNombre}</span>
+            <span className="text-zinc-700">{producto.paisNombre}</span>
           </div>
           <div>
-            <span className="font-bold text-gray-800">Categorías: </span>
-            <span className="text-gray-700 break-words">{(producto.categorias || []).join(", ")}</span>
+            <span className="font-bold text-zinc-800">Categorías: </span>
+            <span className="text-zinc-700 break-words">{(producto.categorias || []).join(", ")}</span>
           </div>
         </div>
       </div>

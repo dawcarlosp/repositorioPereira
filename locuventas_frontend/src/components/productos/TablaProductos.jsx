@@ -1,28 +1,37 @@
 import Boton from "../common/Boton";
 import BotonClaro from "../common/BotonClaro";
+import { normalizaMultiValor } from "../../services/normalizaMultiValor"; // Importa la función
 
-// Si usas Vite, importa la variable de entorno así:
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function TablaProductos({ productos, onEditar, onEliminar }) {
   return (
     <div
-      className="rounded-xl shadow-lg p-2"
+      className="overflow-x-auto rounded-xl shadow-lg p-2"
       style={{
         maxHeight: "55vh",
         minHeight: "160px",
-        overflowY: "auto",
-        overflowX: "auto",
         background: "#fff8fd",
         border: "2px solid #FF7F50",
         boxShadow: "0 8px 36px #9b51e022",
+        WebkitOverflowScrolling: "touch",
       }}
     >
-      <table className="min-w-[700px] w-full rounded-xl text-sm sm:text-base">
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            height: 8px;
+          }
+          div::-webkit-scrollbar-thumb {
+            background: #ffb68e;
+            border-radius: 8px;
+          }
+        `}
+      </style>
+      <table className="w-max min-w-full rounded-xl text-sm sm:text-base">
         <thead>
           <tr className="bg-blue-500 text-white">
             <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-                 
               ID
             </th>
             <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
@@ -52,10 +61,10 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
               className={`
                 ${i % 2 === 0 ? "bg-purple-50" : "bg-white"}
                 border-b border-purple-100
-                hover:bg-orange-100 transition
+                hover:bg-purple-100 transition
               `}
             >
-              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-gray-900">
+              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-zinc-900">
                 {p.id}
               </td>
               <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
@@ -63,16 +72,18 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
                   <img
                     src={`${API_URL}/imagenes/productos/${p.foto}`}
                     alt={p.nombre}
-                    className="w-14 h-10 object-cover rounded shadow border border-gray-200"
+                    className="w-14 h-10 object-cover rounded shadow border border-zinc-200"
                   />
                 ) : (
-                  <span className="text-gray-300">Sin foto</span>
+                  <span className="text-zinc-300">Sin foto</span>
                 )}
               </td>
-              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-gray-900">
-                {p.nombre}
+              <td className="px-2 sm:px-4 py-3 text-zinc-900 align-top">
+                <span className="block break-words">
+                  {p.nombre}
+                </span>
               </td>
-              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-gray-900">
+              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-zinc-900">
                 {p.precio}€
               </td>
               <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
@@ -84,15 +95,22 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
                       className="w-8 h-6 rounded shadow inline-block"
                     />
                   )}
-                  <span className="truncate max-w-[60px] text-gray-800">
+                  <span className="text-zinc-800 whitespace-nowrap">
                     {p.paisNombre || "-"}
                   </span>
                 </div>
               </td>
-              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-gray-900">
-                <span className="truncate block max-w-[90px]">
-                  {(p.categorias || []).join(", ")}
-                </span>
+              <td className="px-2 sm:px-4 py-3 text-zinc-900 align-top">
+                <div className="flex flex-wrap gap-1">
+                  {normalizaMultiValor(p.categorias).map((cat, idx) => (
+                    <span
+                      key={idx}
+                      className="inline-block px-2 py-1 bg-purple-100 rounded text-xs  border border-purple-200"
+                    >
+                      {cat}
+                    </span>
+                  ))}
+                </div>
               </td>
               <td className="px-2 sm:px-4 py-3 flex flex-col sm:flex-row gap-2 whitespace-nowrap">
                 <BotonClaro
@@ -112,7 +130,7 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
           ))}
           {productos.length === 0 && (
             <tr>
-              <td colSpan={7} className="py-6 text-center text-gray-400">
+              <td colSpan={7} className="py-6 text-center text-zinc-400">
                 No hay productos
               </td>
             </tr>

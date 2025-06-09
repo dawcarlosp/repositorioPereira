@@ -1,17 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "../../services/api";
-import UploadComponent from "../common/UploadComponent";
 import ModalConfirmacion from "../common/ModalConfirmacion";
 import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
 import ProductoCard from "./ProductoCard";
-import InputFieldset from "../common/InputFieldset";
-import SelectFieldset from "../common/SelectFieldset";
 import TablaProductos from "./TablaProductos";
 import ModalProductoForm from "./ModalProductoForm";
 import FabAgregarProducto from "../productos/FabAgregarProducto"; // <-- Aquí importas el FAB
-
+import Paginacion from "../common/Paginacion";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function GestionProductos() {
@@ -19,7 +15,10 @@ export default function GestionProductos() {
   const [paises, setPaises] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  // PAGINACIÓN
+  const [page, setPage] = useState(0);
+  const [size] = useState(10);
+  const [totalPages, setTotalPages] = useState(0);
   // Formulario
   const [showForm, setShowForm] = useState(false);
   const [editando, setEditando] = useState(null);
@@ -55,20 +54,24 @@ export default function GestionProductos() {
   useEffect(() => {
     fetchData();
     // eslint-disable-next-line
-  }, []);
+  }, [page, size]);
 
   async function fetchData() {
     setLoading(true);
     try {
-      const [prod, pais, cat] = await Promise.all([
-        apiRequest("productos", null, { method: "GET" }),
+      const [prodPage, pais, cat] = await Promise.all([
+        apiRequest(`productos?page=${page}&size=${size}`, null, {
+          method: "GET",
+        }),
         apiRequest("paises", null, { method: "GET" }),
         apiRequest("categorias", null, { method: "GET" }),
       ]);
-      setProductos(prod);
+      setProductos(prodPage.content || []);
+      setTotalPages(prodPage.totalPages || 0);
+      setPage(prodPage.pageNumber || 0);
       setPaises(pais);
       setCategorias(cat);
-    } catch  {
+    } catch {
       toast.error("Error cargando datos.");
     }
     setLoading(false);
@@ -110,6 +113,7 @@ export default function GestionProductos() {
     setShowForm(true);
 
     if (fileInputRef.current) fileInputRef.current.value = "";
+  
   }
 
   function cerrarForm() {
@@ -230,7 +234,7 @@ export default function GestionProductos() {
               </Boton>
             )}
           </div>
-          
+
           {/* MODAL formulario */}
           <ModalProductoForm
             visible={showForm}
@@ -269,11 +273,21 @@ export default function GestionProductos() {
 
           {/* TABLA EN ESCRITORIO / CARDS EN MÓVIL */}
           {!isMobile && (
-            <TablaProductos
-              productos={productos}
-              onEditar={abrirEditar}
-              onEliminar={confirmarEliminarProducto}
-            />
+            <>
+              <TablaProductos
+                productos={productos}
+                onEditar={abrirEditar}
+                onEliminar={confirmarEliminarProducto}
+              />
+              {/* PAGINACIÓN abajo de la tabla */}
+              {totalPages > 1 && (
+                <Paginacion
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              )}
+            </>
           )}
 
           {/* CARDS EN MÓVIL */}
@@ -304,4 +318,4 @@ export default function GestionProductos() {
       </div>
     </>
   );
-};
+}

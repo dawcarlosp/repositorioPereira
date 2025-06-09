@@ -4,7 +4,7 @@ import InputFieldset from "../common/InputFieldset";
 import SelectFieldset from "../common/SelectFieldset";
 import UploadComponent from "../common/UploadComponent";
 import BotonCerrar from "../common/BotonCerrar";
-
+import { toast } from "react-toastify";
 export default function ModalProductoForm({
   visible,
   onClose,
@@ -79,9 +79,11 @@ export default function ModalProductoForm({
                 marginBottom: "0.4rem",
               }}
             />
+            {/*
             <span className="text-sky-200 underline cursor-pointer mt-1">
               Haz clic para subir una foto
             </span>
+            */}
           </div>
 
           <div className="flex flex-col gap-2 items-center">

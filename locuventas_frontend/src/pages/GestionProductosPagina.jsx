@@ -14,12 +14,12 @@ function GestionProductosPagina() {
   }, [])
 
   return (
-    <div>
+    <>
       <Header ref={headerRef} />
       <main style={{ paddingTop: headerHeight }}>
         <GestionProductos />
       </main>
-    </div>
+    </>
   )
 }
 

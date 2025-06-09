@@ -16,5 +16,6 @@ public interface UserEntityRepository extends JpaRepository<Vendedor, Long>{
     boolean existsVendedor();
     @Query("SELECT v FROM Vendedor v WHERE 'ROLE_VENDEDOR' NOT MEMBER OF v.authorities")
     List<Vendedor> findAllSinRolVendedor();
+    boolean existsByEmail(String email);
 
 }

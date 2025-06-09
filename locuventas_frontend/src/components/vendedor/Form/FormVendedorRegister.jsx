@@ -8,6 +8,7 @@ import UploadComponent from "../../common/UploadComponent";
 import Error from "../../common/Error";
 import { toast } from "react-toastify";
 import BotonCerrar from "../../common/BotonCerrar";
+
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);
   const [foto, setFoto] = useState(null);
@@ -27,6 +28,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       setPassword("");
       setError(null);
       setErrors({});
+      toast.dark("Recuerda que en Locuventas es obligatorio proporcionar una foto al registrarse!");
       dialogRef.current?.showModal();
     } else {
       dialogRef.current?.close();
@@ -35,10 +37,11 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+
     if (!foto) {
       setError("Debes seleccionar una foto.");
       return;
-    }
+    } 
     setLoading(true);
     setError(null);
     setErrors({});
@@ -59,6 +62,11 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       setIsOpen(false);
     } catch (err) {
       setErrors(err);
+      toast.error(err.nombre);
+      toast.error(err.email);
+      toast.error(err.password);
+      toast.error(err.foto);
+      toast.error("Error en el registro");
       setError(err.error || "Error en el registro");
     } finally {
       setLoading(false);
@@ -93,7 +101,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         encType="multipart/form-data"
       >
         <UploadComponent setFile={setFoto} file={foto} />
-        {!foto && <Error>Debes seleccionar una foto.</Error>}
+        {/*{!foto && <Error>Debes seleccionar una foto.</Error>}*/} 
         <Error>{errors.error}</Error>
         <InputFieldset
           type="text"
@@ -102,7 +110,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
           onChange={(e) => setNombre(e.target.value)}
           placeholder="Dinos cómo te llamas"
         />
-        <Error>{errors.nombre}</Error>
+        {/*<Error>{errors.nombre}</Error>*/}
         <InputFieldset
           type="email"
           id="email"
@@ -110,7 +118,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Correo electrónico"
         />
-        <Error>{errors.email}</Error>
+        {/*<Error>{errors.email}</Error>*/}
         <InputFieldset
           type="password"
           id="password"
@@ -118,8 +126,8 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Contraseña"
         />
-        <Error>{errors.password}</Error>
-        {error && <Error>{error}</Error>}
+        {/*<Error>{errors.password}</Error>*/}
+        {/*error && <Error>{error}</Error>*/}
         <Boton type="submit" disabled={!foto || loading}>
           {loading ? "Registrando..." : "Registrarse"}
         </Boton>

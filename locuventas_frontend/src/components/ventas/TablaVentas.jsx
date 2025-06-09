@@ -19,17 +19,26 @@ export default function TablaVentas({
 
   return (
     <div
-      className="rounded-xl shadow-lg p-4"
+      className="overflow-x-auto rounded-xl shadow-lg p-4"
       style={{
         maxHeight: "60vh",
         minHeight: "180px",
-        overflowY: "auto",
-        overflowX: "auto",
         background: "#fff8fd",
         border: "2px solid #FF7F50",
         boxShadow: "0 8px 36px #9b51e022",
       }}
     >
+      <style>
+        {`
+          div::-webkit-scrollbar {
+            height: 8px;
+          }
+          div::-webkit-scrollbar-thumb {
+            background: #ffb68e;
+            border-radius: 8px;
+          }
+        `}
+      </style>
       <table className="min-w-[950px] w-full rounded-xl text-base">
         <thead>
           <tr className="bg-blue-500 text-white">
@@ -46,18 +55,22 @@ export default function TablaVentas({
         <tbody>
           {ventas.length === 0 && (
             <tr>
-              <td colSpan={8} className="py-8 text-center text-gray-400">
+              <td colSpan={8} className="py-8 text-center text-zinc-400">
                 No hay ventas
               </td>
             </tr>
           )}
-          {ventas.map((venta) => (
+          {ventas.map((venta, idx) => (
             <tr
               key={venta.id}
-              className="border-b border-purple-100 hover:bg-orange-50 transition"
+              className={`
+                ${idx % 2 === 0 ? "bg-purple-50" : "bg-white"}
+                border-b border-purple-100
+                hover:bg-orange-100 transition
+              `}
             >
-              <td className="px-3 py-2">{venta.id}</td>
-              <td className="px-3 py-2 whitespace-nowrap">
+              <td className="px-3 py-2 text-zinc-900">{venta.id}</td>
+              <td className="px-3 py-2 whitespace-nowrap text-zinc-900">
                 {venta.fecha
                   ? new Date(venta.fecha).toLocaleString("es-ES", {
                       day: "2-digit",
@@ -69,26 +82,26 @@ export default function TablaVentas({
                     })
                   : ""}
               </td>
-              <td className="px-3 py-2">{venta.vendedor || "-"}</td>
-              <td className="px-3 py-2">{venta.total} €</td>
+              <td className="px-3 py-2 text-zinc-900">{venta.vendedor || "-"}</td>
+              <td className="px-3 py-2 text-zinc-900">{venta.total} €</td>
               <td className="px-3 py-2">
                 {venta.estadoPago === "PAGADO" && (
-                  <span className="bg-green-100 text-green-800 rounded-lg px-3 py-1 text-xs font-bold">
+                  <span className="bg-green-500 text-white rounded-lg px-3 py-1 text-xs font-bold">
                     PAGADO
                   </span>
                 )}
                 {venta.estadoPago === "PARCIAL" && (
-                  <span className="bg-yellow-200 text-yellow-900 rounded-lg px-3 py-1 text-xs font-bold">
+                  <span className="bg-yellow-400 text-yellow-900 rounded-lg px-3 py-1 text-xs font-bold">
                     PARCIAL
                   </span>
                 )}
                 {venta.estadoPago === "PENDIENTE" && (
-                  <span className="bg-red-100 text-red-800 rounded-lg px-3 py-1 text-xs font-bold">
+                  <span className="bg-red-500 text-white rounded-lg px-3 py-1 text-xs font-bold">
                     PENDIENTE
                   </span>
                 )}
               </td>
-              <td className="px-3 py-4">{venta.montoPagado ?? 0} €</td>
+              <td className="px-3 py-4 text-zinc-900">{venta.montoPagado ?? 0} €</td>
               <td className="px-3 py-4">
                 {venta.cancelada ? (
                   <span className="text-red-500 font-bold">Sí</span>
@@ -99,20 +112,20 @@ export default function TablaVentas({
               <td className="px-3 py-4 min-w-[220px]">
                 <div className="flex flex-row flex-wrap gap-2 justify-start">
                   <BotonClaro
-                    className="text-base px-4"
+                    className="text-base px-4 bg-purple-500 hover:bg-purple-600 text-white font-bold"
                     onClick={() => onVerDetalle(venta)}
                   >
                     Detalle
                   </BotonClaro>
                   <Boton
-                    className="text-base px-4"
+                    className="text-base px-4 bg-orange-500 hover:bg-orange-600 text-white font-bold"
                     onClick={() => onCancelarVenta(venta.id)}
                   >
                     Cancelar
                   </Boton>
                   {venta.saldo > 0 && !venta.cancelada && (
                     <BotonClaro
-                      className="bg-green-500 text-base px-4"
+                      className="bg-green-500 hover:bg-green-600 text-white text-base px-4"
                       onClick={() => onCobrarResto(venta)}
                     >
                       Cobrar resto
@@ -134,7 +147,7 @@ export default function TablaVentas({
           >
             &lt;
           </button>
-          <span className="font-bold text-lg">
+          <span className="font-bold text-lg text-zinc-900">
             Página {paginaActual + 1} de {totalPaginas}
           </span>
           <button

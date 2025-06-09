@@ -29,25 +29,20 @@ export const apiRequest = async (endpoint, data, options = {}) => {
     }
   }
 
-  // GET: añade params como query, no como body
   let fullUrl = `${apiUrl}/${endpoint}`;
   if (method === "GET" && data) {
     const queryParams = new URLSearchParams(data).toString();
     fullUrl += `?${queryParams}`;
   }
 
+  const response = await fetch(fullUrl, requestOptions);
+  const text = await response.text();
+  let result;
   try {
-    const response = await fetch(fullUrl, requestOptions);
-    const text = await response.text();
-    let result;
-    try {
-      result = text ? JSON.parse(text) : {};
-    } catch {
-      result = text || {};
-    }
-    if (!response.ok) throw result;
-    return result;
-  } catch (error) {
-    throw error;
+    result = text ? JSON.parse(text) : {};
+  } catch {
+    result = text || {};
   }
+  if (!response.ok) throw result;
+  return result;
 };

@@ -46,56 +46,60 @@ public class AuthController {
     private FotoService fotoVendedorService;
     @PostMapping("/auth/register")
     public ResponseEntity<Map<String, String>> save(
-            @Valid @RequestPart("user") UserRegisterDTO userDTO,  // El DTO que contiene los datos del usuario
-            @RequestPart("foto") MultipartFile foto,  // El archivo (foto) enviado como parte de la solicitud multipart, BindingResult result) {
-            BindingResult result){ if (foto.isEmpty()) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", "La foto no puede estar vacía"));
-    }
-        // Validar errores de validación de los parámetros (por ejemplo, nombre, email, password)
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errors.put(error.getField(), error.getDefaultMessage());
-            }
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+            @Valid @RequestPart("user") UserRegisterDTO userDTO,
+            @RequestPart(value = "foto", required = false) MultipartFile foto,
+            BindingResult result) {
+
+        // 1. Si hay errores de validación del DTO, los devuelve Spring automáticamente,
+        //    no hace falta ningún código aquí para el DTO.
+
+        // 2. Validar la foto SOLO si el DTO es válido (no hace falta comprobar result.hasErrors())
+        if (foto == null || foto.isEmpty()) {
+            // El único error posible es el de la foto
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("foto", "Debes seleccionar una foto."));
         }
 
         try {
             // Validar y guardar la foto
-            fotoVendedorService.validarArchivo(foto);  // Validamos la foto con el servicio
-            String fotoNombre = fotoVendedorService.generarNombreUnico(foto);  // Generamos un nombre único para la foto
-            fotoVendedorService.guardarImagen(foto, fotoNombre, "vendedores");  // Guardamos la foto en el sistema de archivos
+            fotoVendedorService.validarArchivo(foto);
+            String fotoNombre = fotoVendedorService.generarNombreUnico(foto);
+            fotoVendedorService.guardarImagen(foto, fotoNombre, "vendedores");
 
-            // Guardar el usuario en la base de datos
+            // Guardar el usuario
             Vendedor userEntity = this.userRepository.save(
                     Vendedor.builder()
                             .password(passwordEncoder.encode(userDTO.getPassword()))
                             .email(userDTO.getEmail())
                             .authorities(List.of(Roles.USER))
-                            .foto(fotoNombre)  // Guardamos el nombre de la foto (la ruta o nombre único generado)
+                            .foto(fotoNombre)
                             .nombre(userDTO.getNombre())
                             .build());
 
-            // Respuesta exitosa
-            return ResponseEntity.status(HttpStatus.CREATED).body(
-                    Map.of("email", userEntity.getEmail())
-            );
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of("email", userEntity.getEmail()));
 
         } catch (DataIntegrityViolationException e) {
-            // Manejo de errores por duplicidad de email
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "Email ya utilizado"));
+                    .body(Map.of("email", "Email ya utilizado"));
         } catch (IllegalArgumentException e) {
-            // Manejo de errores de validación de la foto (por ejemplo, tamaño o tipo incorrecto)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+                    .body(Map.of("foto", e.getMessage()));
         } catch (Exception e) {
-            // Manejo de otros errores generales
+            // Si es error de archivo/foto, mándalo bajo la clave 'foto' si tiene sentido
+            if (e.getMessage() != null &&
+                    (e.getMessage().toLowerCase().contains("foto")
+                            || e.getMessage().toLowerCase().contains("multipart"))) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("foto", e.getMessage()));
+            }
+            // Otros errores inesperados
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+
 
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDTO) {

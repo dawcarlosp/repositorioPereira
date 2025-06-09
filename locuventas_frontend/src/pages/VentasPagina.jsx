@@ -75,12 +75,12 @@ export default function VentasPagina() {
       toast.error("Error al registrar el pago");
     }
   }
-
+const maxWidth = "max-w-[1400px] mx-auto";
   return (
     <div className="flex flex-col min-h-screen bg-zinc-900">
       <Header />
       <div style={{ height: 80 }} />
-      <main className="flex-1 max-w-5xl mx-auto p-2 pt-8 w-full">
+      <main className={`flex-1 w-full ${maxWidth} p-2 pt-8`}>
         <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">Ventas</h1>
         {loading ? (
           <div className="text-center text-gray-500 py-10">Cargando ventas...</div>
@@ -123,7 +123,10 @@ export default function VentasPagina() {
           </>
         )}
       </main>
-      <Footer />
+       {/* Footer SIEMPRE abajo */}
+             <div className={`w-full ${maxWidth} mt-auto`}>
+                <Footer />
+            </div>
       {/* ModalPago igual que antes */}
       {modalPagoAbierto && ventaSeleccionada && (
         <ModalPago

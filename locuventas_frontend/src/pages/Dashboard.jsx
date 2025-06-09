@@ -19,8 +19,7 @@ function Dashboard() {
       setHeaderHeight(headerRef.current.offsetHeight);
     }
   }, []);
-
-  function quitarProducto(id) {
+ function quitarProducto(id) {
     setCarga((prev) => {
       const idx = prev.findIndex((item) => item.producto.id === id);
       if (idx === -1) return prev;
@@ -103,37 +102,33 @@ function Dashboard() {
     }
   }
 
-  const maxWidth = "max-w-[1400px]";
+
+const maxWidth = "max-w-[1400px] mx-auto";
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-900">
       {/* Header fijo */}
-      <div
-        style={{
-          position: "fixed",
-          width: "100%",
-          zIndex: 50,
-          top: 0,
-          left: 0,
-        }}
-      >
+      <div style={{
+        position: "fixed", width: "100%", zIndex: 50, top: 0, left: 0,
+      }}>
         <Header ref={headerRef} />
       </div>
-      {/* Espacio para el header fijo */}
+      {/* Espacio para el header */}
       <div style={{ height: headerHeight || 100 }} />
-      {/* Main + Aside en wrapper centrado */}
-      <div className={`flex flex-col md:flex-row flex-1 w-full ${maxWidth} mx-auto`}>
-        <main className="flex-1 flex flex-col overflow-auto">
+
+      {/* Main + Aside, wrapper centrado */}
+       <div className={`${maxWidth} flex flex-col md:flex-row flex-1 w-full`}>
+        <main className="flex-1 flex flex-col overflow-auto min-h-0 ">
           <Main carga={carga} agregarProducto={agregarProducto} />
         </main>
         <aside
-          className="md:w-[370px] w-full max-w-full md:max-w-sm min-w-[0]"
+          className="md:w-[370px] w-full max-w-full md:max-w-sm min-w-[0] "
           style={{
             border: "2px solid orange",
             borderLeft: "none",
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
-            height: `calc(90vh - ${headerHeight || 100}px)`,
+            height: `calc(80vh - ${headerHeight || 100}px)`,
             position: "sticky",
             top: headerHeight || 100,
             zIndex: 20,
@@ -150,10 +145,10 @@ function Dashboard() {
           />
         </aside>
       </div>
-      {/* Footer, mismo ancho que el contenido principal */}
-      <div className={`w-full ${maxWidth} mx-auto`}>
-        <Footer />
-      </div>
+ <div className={`w-full ${maxWidth} mt-auto`}>
+  <Footer />
+</div>
+
       {/* ModalPago */}
       {modalAbierto && ventaEnCurso && (
         <ModalPago

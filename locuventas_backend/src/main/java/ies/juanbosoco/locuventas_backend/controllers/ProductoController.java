@@ -1,6 +1,7 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
@@ -12,6 +13,10 @@ import ies.juanbosoco.locuventas_backend.services.FotoService;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -71,12 +76,24 @@ public class ProductoController {
     // === LISTAR TODOS LOS PRODUCTOS ===
     @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
     @GetMapping
-    public ResponseEntity<List<ProductoResponseDTO>> getAllProductos() {
-        List<Producto> productos = productoRepository.findAll();
-        List<ProductoResponseDTO> dtos = productos.stream().map(this::toDto).toList();
-        return ResponseEntity.ok(dtos);
-    }
+    public ResponseEntity<PageDTO<ProductoResponseDTO>> getAllProductos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size // o el size que prefieras
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nombre"));
+        Page<Producto> productosPage = productoRepository.findAll(pageable);
 
+        Page<ProductoResponseDTO> dtos = productosPage.map(this::toDto);
+
+        PageDTO<ProductoResponseDTO> dto = new PageDTO<>(
+                dtos.getContent(),
+                dtos.getNumber(),
+                dtos.getTotalPages(),
+                dtos.getTotalElements()
+        );
+
+        return ResponseEntity.ok(dto);
+    }
     // === CREAR PRODUCTO ===
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

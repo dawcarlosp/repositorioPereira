@@ -51,9 +51,11 @@ function UploadComponent({ setFile, file, fotoActualUrl }) {
           }}
         />
       </div>
-      <span className="text-xs text-gray-600 underline mt-1 cursor-pointer" onClick={() => inputRef.current.click()}>
+      {/*
+      <span className="text-xs text-zinc-900 underline mt-1 cursor-pointer" onClick={() => inputRef.current.click()}>
         Haz clic para subir una foto
       </span>
+      */}
     </div>
   );
 }
