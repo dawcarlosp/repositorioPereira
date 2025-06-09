@@ -113,7 +113,7 @@ public class DataInitializer implements CommandLineRunner {
 
         System.out.println("🌍 Descargando países desde la API...");
 
-        URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags");
+        URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3");
         ObjectMapper mapper = new ObjectMapper();
         JsonNode countries = mapper.readTree(url);
 
@@ -121,17 +121,18 @@ public class DataInitializer implements CommandLineRunner {
         for (JsonNode country : countries) {
             String nombre = country.path("name").path("common").asText();
             String enlaceFoto = country.path("flags").path("png").asText();
-
-            // Puedes generar el código a partir del nombre (ejemplo) o añadir más campos si lo necesitas
+            String codigo = country.path("cca2").asText(); // <-- aquí!
 
             if (!paisRepository.findByNombre(nombre).isPresent()) {
                 Pais pais = Pais.builder()
                         .nombre(nombre)
                         .enlaceFoto(enlaceFoto)
+                        .codigo(codigo)    // <-- añade esto a tu entidad y builder
                         .build();
                 paisRepository.save(pais);
                 contador++;
             }
+
         }
 
         System.out.println("✔ Se han insertado " + contador + " países.");

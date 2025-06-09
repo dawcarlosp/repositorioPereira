@@ -1,5 +1,5 @@
 // src/main/java/ies/juanbosoco/locuventas_backend/DTO/ProductoResponseDTO.java
-package ies.juanbosoco.locuventas_backend.DTO;
+package ies.juanbosoco.locuventas_backend.DTO.producto;
 
 import lombok.Data;
 import java.math.BigDecimal;

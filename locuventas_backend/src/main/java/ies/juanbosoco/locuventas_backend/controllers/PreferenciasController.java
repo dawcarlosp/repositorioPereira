@@ -1,6 +1,6 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 
-import ies.juanbosoco.locuventas_backend.DTO.PreferenciasPaisRequest;
+import ies.juanbosoco.locuventas_backend.DTO.pais.PreferenciasPaisRequest;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;

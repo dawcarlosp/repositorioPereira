@@ -8,11 +8,13 @@ import FormVendedorLogin from "./pages/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
 import FormVendedorRegister from "./components/vendedor/Form/FormVendedorRegister";
 import PrivateRoute from "./components/common/PrivateRoute";
-
+import VentasPagina from "./pages/VentasPAgina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthProvider";
 
+import VentasYpendientes from "./pages/VentasPendientesPagina";
+import VentasPendientesPagina from "./pages/VentasPendientesPagina";
 function App() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -36,6 +38,22 @@ function App() {
               }
             />
             <Route
+              path="/ventas"
+              element={
+                <PrivateRoute>
+                  <VentasPagina/>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/ventas/pendientes"
+              element={
+                <PrivateRoute>
+                  <VentasPendientesPagina/>
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/vendedores"
               element={
                 <PrivateRoute>
@@ -55,7 +73,6 @@ function App() {
               path="/productos/gestion"
               element={
                 <PrivateRoute>
-
                   <GestionProductosPagina />
                 </PrivateRoute>
               }

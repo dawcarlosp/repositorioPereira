@@ -3,7 +3,7 @@ import { X } from "lucide-react";
 import { apiRequest } from "../../../services/api";
 import Boton from "../../common/Boton";
 import InputFieldset from "../../common/InputFieldset";
-import UploadComponent from "./UploadComponent";
+import UploadComponent from "../../common/UploadComponent";
 import Error from "../../common/Error";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../context/useAuth";

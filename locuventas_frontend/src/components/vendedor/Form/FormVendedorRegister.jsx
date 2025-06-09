@@ -4,10 +4,10 @@ import { X } from "lucide-react";
 import { apiRequest } from "../../../services/api";
 import Boton from "../../common/Boton";
 import InputFieldset from "../../common/InputFieldset";
-import UploadComponent from "./UploadComponent";
+import UploadComponent from "../../common/UploadComponent";
 import Error from "../../common/Error";
 import { toast } from "react-toastify";
-
+import BotonCerrar from "../../common/BotonCerrar";
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);
   const [foto, setFoto] = useState(null);
@@ -86,13 +86,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         ${isOpen && !isClosing ? "translate-y-0" : "translate-y-[-100vh]"}
       `}
     >
-      <button
-        type="button"
-        className="border bg-orange-400 text-white hover:bg-purple-500 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
-        onClick={handleClose}
-      >
-        <X size={20} />
-      </button>
+      <BotonCerrar onClick={handleClose} />
       <form
         onSubmit={handleRegister}
         className="flex flex-col items-center p-10 group"

@@ -1,4 +1,4 @@
-package ies.juanbosoco.locuventas_backend.DTO;
+package ies.juanbosoco.locuventas_backend.DTO.pais;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

@@ -1,9 +1,9 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ies.juanbosoco.locuventas_backend.DTO.ProductoCreateDTO;
-import ies.juanbosoco.locuventas_backend.DTO.ProductoResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.ProductoUpdateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
 import ies.juanbosoco.locuventas_backend.entities.*;
 import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
@@ -26,7 +26,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/productos")
-@PreAuthorize("hasRole('ADMIN')")
+
 public class ProductoController {
 
     @Autowired
@@ -69,6 +69,7 @@ public class ProductoController {
     }
 
     // === LISTAR TODOS LOS PRODUCTOS ===
+    @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
     @GetMapping
     public ResponseEntity<List<ProductoResponseDTO>> getAllProductos() {
         List<Producto> productos = productoRepository.findAll();
@@ -77,6 +78,7 @@ public class ProductoController {
     }
 
     // === CREAR PRODUCTO ===
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearProductoConFoto(
             @RequestPart("producto") String productoJson,
@@ -163,6 +165,7 @@ public class ProductoController {
     }
 
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> editarProducto(
             @PathVariable Long id,
             @RequestPart("producto") String productoJson,
@@ -247,32 +250,40 @@ public class ProductoController {
 
 
     // === ELIMINAR PRODUCTO ===
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
-        Optional<Producto> producto = productoRepository.findById(id);
-        if (producto.isEmpty()) {
+        Optional<Producto> productoOptional = productoRepository.findById(id);
+        if (productoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Map.of("error", "Producto no encontrado"));
         }
+        Producto producto = productoOptional.get();
+        // 1. Elimina la foto si existe
+        if (producto.getFoto() != null && !producto.getFoto().isBlank()) {
+            fotoProductoService.eliminarImagen(producto.getFoto(), "productos");
+        }
+        // 2. Elimina el producto de la BD
         productoRepository.deleteById(id);
         return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado"));
     }
 
     // === OTRAS BÚSQUEDAS / FILTROS (también devuelven DTOs) ===
+    @PreAuthorize("hasRole('ADMIN', 'VENDEDOR')")
     @GetMapping("/categoria/{id}")
     public ResponseEntity<List<ProductoResponseDTO>> getProductosPorCategoria(@PathVariable Long id) {
         List<Producto> productos = productoRepository.findByCategorias_Categoria_Id(id);
         List<ProductoResponseDTO> dtos = productos.stream().map(this::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @GetMapping("/pais/{id}")
     public ResponseEntity<List<ProductoResponseDTO>> productosPorPais(@PathVariable Long id) {
         List<Producto> productos = productoRepository.findByPais_Id(id);
         List<ProductoResponseDTO> dtos = productos.stream().map(this::toDto).toList();
         return ResponseEntity.ok(dtos);
     }
-
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     @GetMapping("/buscar")
     public ResponseEntity<List<ProductoResponseDTO>> buscarPorNombre(@RequestParam String nombre) {
         List<Producto> resultados = productoRepository.findByNombreContainingIgnoreCase(nombre);

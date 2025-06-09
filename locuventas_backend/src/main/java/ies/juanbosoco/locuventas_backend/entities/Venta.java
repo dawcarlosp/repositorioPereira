@@ -35,6 +35,7 @@ public class Venta {
     private Vendedor vendedor;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Pago> pagos = new ArrayList<>();
 
     public enum EstadoPago {

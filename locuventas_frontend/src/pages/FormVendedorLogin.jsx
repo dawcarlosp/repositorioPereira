@@ -65,7 +65,12 @@ function FormVendedorLogin({ setIsOpen }) {
     <>
       <form
         onSubmit={handleLogin}
-        className="flex flex-col items-center justify-center p-10 rounded-xl mt-5 shadow-2xl bg-gray-900"
+        className="flex flex-col items-center justify-center
+    p-10 rounded-xl mt-5
+    bg-zinc-900
+    transition-all duration-300
+    ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
+    hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
       >
         <h2 className="text-4xl text-white mb-4">Iniciar sesión</h2>
         <UserRound size={100} className="border-2 border-orange-400 rounded-full text-orange-400 my-2" />

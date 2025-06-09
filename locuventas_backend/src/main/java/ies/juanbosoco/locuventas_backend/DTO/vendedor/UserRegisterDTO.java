@@ -1,9 +1,7 @@
-package ies.juanbosoco.locuventas_backend.DTO;
+package ies.juanbosoco.locuventas_backend.DTO.vendedor;
 import jakarta.persistence.Column;
-import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @AllArgsConstructor

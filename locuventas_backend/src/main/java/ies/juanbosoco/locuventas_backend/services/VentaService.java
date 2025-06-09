@@ -1,6 +1,6 @@
 package ies.juanbosoco.locuventas_backend.services;
 
-import ies.juanbosoco.locuventas_backend.DTO.VentaResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.venta.VentaResponseDTO;
 import ies.juanbosoco.locuventas_backend.entities.Pago;
 import ies.juanbosoco.locuventas_backend.entities.Venta;
 import ies.juanbosoco.locuventas_backend.errors.VentaNoEncontradaException;

@@ -1,4 +1,4 @@
-package ies.juanbosoco.locuventas_backend.DTO;
+package ies.juanbosoco.locuventas_backend.DTO.producto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

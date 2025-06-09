@@ -1,4 +1,4 @@
-package ies.juanbosoco.locuventas_backend.DTO;
+package ies.juanbosoco.locuventas_backend.DTO.vendedor;
 import lombok.*;
 @Data
 @NoArgsConstructor

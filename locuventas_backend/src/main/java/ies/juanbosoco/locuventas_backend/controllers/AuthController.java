@@ -1,5 +1,9 @@
 package ies.juanbosoco.locuventas_backend.controllers;
-import ies.juanbosoco.locuventas_backend.DTO.*;
+import ies.juanbosoco.locuventas_backend.DTO.pais.PaisResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserEditDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
