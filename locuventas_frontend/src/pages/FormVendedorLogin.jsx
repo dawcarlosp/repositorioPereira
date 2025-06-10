@@ -3,9 +3,8 @@ import { useAuth } from "../context/useAuth";
 import Boton from "../components/common/Boton";
 import InputFieldset from "../components/common/InputFieldset";
 import Enlace from "../components/common/Enlace";
-import { UserRound } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import AlertSimple from "../components/common/AlertSimple";
 
 function FormVendedorLogin({ setIsOpen }) {
@@ -29,19 +28,6 @@ function FormVendedorLogin({ setIsOpen }) {
 
       if (result.token) {
         const roles = result.roles || [];
-        const esVendedor = roles.includes("ROLE_VENDEDOR");
-        const esAdmin = roles.includes("ROLE_ADMIN");
-
-        if (!esVendedor && !esAdmin) {
-          setMensajeAlerta(
-            "Su cuenta aún no ha sido habilitada como vendedor. Espere a que un administrador le otorgue permisos."
-          );
-          setMostrarAlerta(true);
-          setLoading(false);
-          return;
-        }
-
-        // GUARDA TODO, incluido token
         setAuth({
           token: result.token,
           nombre: result.nombre,
@@ -49,13 +35,23 @@ function FormVendedorLogin({ setIsOpen }) {
           email: result.email,
           roles,
         });
-
         navigate("/dashboard");
+      } else if (result.message) {
+        setMensajeAlerta(result.message);
+        setMostrarAlerta(true);
       } else {
         setError("No se recibió un token");
       }
     } catch (err) {
-      setError(err.message || "Error en la autenticación");
+      console.log("Login error:", err);
+      if (err.message && err.path && err.timestamp) {
+        setMensajeAlerta(err.message);
+        setMostrarAlerta(true);
+      } else if (err.message) {
+        setError(err.message);
+      } else {
+        setError("Error en la autenticación");
+      }
     } finally {
       setLoading(false);
     }
@@ -66,14 +62,25 @@ function FormVendedorLogin({ setIsOpen }) {
       <form
         onSubmit={handleLogin}
         className="flex flex-col items-center justify-center
-    p-10 rounded-xl mt-5
-    bg-zinc-900
-    transition-all duration-300
-    ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
-    hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
+          p-10 rounded-xl mt-5
+          bg-zinc-900
+          transition-all duration-300
+          ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
+          hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
       >
-        <h2 className="text-4xl text-white mb-4">Iniciar sesión</h2>
-        <UserRound size={100} className="border-2 border-orange-400 rounded-full text-orange-400 my-2" />
+        <Link
+          to="/dashboard"
+          className="
+            text-4xl font-extrabold text-white tracking-wide hover:scale-105
+            transition-transform duration-200 drop-shadow-sm
+            bg-zinc-900 px-8 py-4 rounded-2xl mb-7 flex items-center justify-center
+            border-4 border-orange-400 shadow-[0_0_16px_0_rgba(251,146,60,0.5)]
+          "
+          style={{ minWidth: "250px", minHeight: "70px" }}
+        >
+          Locu<span className="text-orange-400">Ventas</span>
+        </Link>
+
         <InputFieldset
           label="Email"
           type="email"

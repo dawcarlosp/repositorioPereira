@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { apiRequest } from "../../../services/api";
 import Boton from "../../common/Boton";
-import InputFieldset from "../../common/InputFieldset";
+import InputFieldset from "../../common/InputFieldsetValidaciones";
 import UploadComponent from "../../common/UploadComponent";
 import Error from "../../common/Error";
 import { toast } from "react-toastify";

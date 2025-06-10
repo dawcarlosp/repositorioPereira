@@ -51,8 +51,6 @@ public class AuthController {
             BindingResult result) {
 
         // 1. Si hay errores de validación del DTO, los devuelve Spring automáticamente,
-        //    no hace falta ningún código aquí para el DTO.
-
         // 2. Validar la foto SOLO si el DTO es válido (no hace falta comprobar result.hasErrors())
         if (foto == null || foto.isEmpty()) {
             // El único error posible es el de la foto
@@ -100,7 +98,6 @@ public class AuthController {
     }
 
 
-
     @PostMapping("/auth/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDTO) {
         try {
@@ -110,21 +107,35 @@ public class AuthController {
             Authentication auth = authenticationManager.authenticate(authToken);
             Vendedor user = (Vendedor) auth.getPrincipal();
 
-            // Generar el token
-            String token = tokenProvider.generateToken(auth);
-
             // Extraer roles en forma de List<String>
             List<String> roles = user.getAuthorities().stream()
                     .map(granted -> granted.getAuthority())
                     .toList();
 
-            // Construir respuesta con roles incluidos
+            // Verificar si es vendedor o admin
+            boolean esVendedor = roles.contains(Roles.VENDEDOR);
+            boolean esAdmin = roles.contains(Roles.ADMIN);
+
+            if (!esVendedor && !esAdmin) {
+                // NO es vendedor ni admin: rechaza login y manda mensaje
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
+                        Map.of(
+                                "message", "Su cuenta aún no ha sido habilitada como vendedor. Espere a que un administrador le otorgue permisos.",
+                                "path", "/auth/login",
+                                "timestamp", new Date()
+                        )
+                );
+            }
+
+            // Generar el token y devolver todo lo necesario
+            String token = tokenProvider.generateToken(auth);
+
             LoginResponseDTO responseDTO = new LoginResponseDTO(
                     user.getUsername(),  // email
                     token,
-                    user.getNombre(),    // nombre
-                    user.getFoto(),      // foto
-                    roles                // lista de roles
+                    user.getNombre(),
+                    user.getFoto(),
+                    roles
             );
 
             return ResponseEntity.ok(responseDTO);

@@ -1,6 +1,6 @@
 import Boton from "../common/Boton";
 import BotonClaro from "../common/BotonClaro";
-import InputFieldset from "../common/InputFieldset";
+import InputFieldset from "../common/InputFieldsetValidaciones";
 import SelectFieldset from "../common/SelectFieldset";
 import UploadComponent from "../common/UploadComponent";
 import BotonCerrar from "../common/BotonCerrar";
