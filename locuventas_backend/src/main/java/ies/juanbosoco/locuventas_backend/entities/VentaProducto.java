@@ -11,6 +11,7 @@ import lombok.*;
 @Builder
 @Table(name = "venta_productos")
 public class VentaProducto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +25,9 @@ public class VentaProducto {
     private Producto producto;
 
     private int cantidad;
-    private double subtotal;
 
+    private double subtotal;         // sin IVA
+    private double iva;              // porcentaje (ej: 21.0)
+    private double subtotalConIva;  // subtotal * (1 + iva / 100)
 
 }

@@ -7,6 +7,7 @@ import ModalPago from "../components/ventas/ModalPago";
 import Paginacion from "../components/common/Paginacion";
 import { apiRequest } from "../services/api";
 import { toast } from "react-toastify";
+import ModalDetalleVenta from "../components/ventas/ModalDetalleVenta";
 
 export default function VentasPagina() {
   const [ventas, setVentas] = useState([]);
@@ -16,8 +17,11 @@ export default function VentasPagina() {
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
+  const [ventaDetalle, setVentaDetalle] = useState(null);
+  const [detalleCargando, setDetalleCargando] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
+
   useEffect(() => {
     const fn = () => setIsMobile(window.innerWidth < 640);
     window.addEventListener("resize", fn);
@@ -32,7 +36,9 @@ export default function VentasPagina() {
   async function fetchVentas(p = page, s = size) {
     setLoading(true);
     try {
-      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, { method: "GET" });
+      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, {
+        method: "GET",
+      });
       setVentas(datos.content || []);
       setTotalPages(datos.totalPages || 0);
       setPage(datos.pageNumber || 0);
@@ -42,9 +48,19 @@ export default function VentasPagina() {
     setLoading(false);
   }
 
-  function onVerDetalle(venta) {
-    toast.info("Función Detalle pendiente de implementar.");
+  async function onVerDetalle(venta) {
+    setDetalleCargando(true);
+    try {
+      const data = await apiRequest(`ventas/${venta.id}`, null, {
+        method: "GET",
+      });
+      setVentaDetalle(data);
+    } catch {
+      toast.error("No se pudo cargar el detalle de la venta");
+    }
+    setDetalleCargando(false);
   }
+
   async function onCancelarVenta(ventaId) {
     if (!window.confirm("¿Seguro que quieres cancelar esta venta?")) return;
     try {
@@ -55,10 +71,12 @@ export default function VentasPagina() {
       toast.error("No se pudo cancelar la venta");
     }
   }
+
   function onCobrarResto(venta) {
     setVentaSeleccionada(venta);
     setModalPagoAbierto(true);
   }
+
   async function confirmarCobro(importe) {
     setModalPagoAbierto(false);
     if (!ventaSeleccionada) return;
@@ -75,29 +93,39 @@ export default function VentasPagina() {
       toast.error("Error al registrar el pago");
     }
   }
-const maxWidth = "max-w-[1400px] mx-auto";
+
+  const maxWidth = "max-w-[1400px] mx-auto";
+
   return (
     <div className="flex flex-col min-h-screen bg-zinc-900">
       <Header />
       <div style={{ height: 80 }} />
       <main className={`flex-1 w-full ${maxWidth} p-2 pt-8`}>
-        <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">Ventas</h1>
+        <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">
+          Ventas
+        </h1>
         {loading ? (
-          <div className="text-center text-gray-500 py-10">Cargando ventas...</div>
+          <div className="text-center text-gray-500 py-10">
+            Cargando ventas...
+          </div>
         ) : (
           <>
             {!isMobile && (
-              <>
+              <div>
                 <TablaVentas
                   ventas={ventas}
                   onVerDetalle={onVerDetalle}
-                  onCancelarVenta={venta => onCancelarVenta(venta.id)}
+                  onCancelarVenta={(venta) => onCancelarVenta(venta.id)}
                   onCobrarResto={onCobrarResto}
                 />
                 {totalPages > 1 && (
-                  <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
+                  <Paginacion
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                  />
                 )}
-              </>
+              </div>
             )}
             {isMobile && (
               <div className="flex flex-col gap-4 pb-20">
@@ -116,18 +144,22 @@ const maxWidth = "max-w-[1400px] mx-auto";
                   />
                 ))}
                 {totalPages > 1 && (
-                  <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
+                  <Paginacion
+                    page={page}
+                    totalPages={totalPages}
+                    onPageChange={setPage}
+                  />
                 )}
               </div>
             )}
           </>
         )}
       </main>
-       {/* Footer SIEMPRE abajo */}
-             <div className={`w-full ${maxWidth} mt-auto`}>
-                <Footer />
-            </div>
-      {/* ModalPago igual que antes */}
+      {/* Footer SIEMPRE abajo */}
+      <div className={`w-full ${maxWidth} mt-auto`}>
+        <Footer />
+      </div>
+      {/* Modal de Cobro */}
       {modalPagoAbierto && ventaSeleccionada && (
         <ModalPago
           totalPendiente={ventaSeleccionada.saldo ?? ventaSeleccionada.total}
@@ -137,6 +169,14 @@ const maxWidth = "max-w-[1400px] mx-auto";
             setVentaSeleccionada(null);
           }}
           confirmText="Cobrar"
+        />
+      )}
+      {/* Modal de Detalle */}
+      {ventaDetalle && (
+        <ModalDetalleVenta
+          venta={ventaDetalle}
+          loading={detalleCargando}
+          onClose={() => setVentaDetalle(null)}
         />
       )}
     </div>

@@ -51,9 +51,16 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //Indicamos que no cree una sesión porque vamos a utilizar tokens
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2
+                        .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2,no implementado
                         .requestMatchers("/imagenes/vendedores/**").permitAll()
                         .requestMatchers("/imagenes/productos/**").permitAll()
+                        .requestMatchers(
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 );
 

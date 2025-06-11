@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import org.springframework.security.access.AccessDeniedException;
@@ -75,5 +76,12 @@ public class GlobalHandlerException {
                 .status(HttpStatus.FORBIDDEN)
                 .body(Map.of("error", "No tienes permiso para realizar esta acción"));
     }
-
+    //Para poder mandar el mensaje adecuado al front
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<?> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        // Aquí puedes personalizar el mensaje y la clave ("foto" para mapear igual que tus otros errores)
+        return ResponseEntity.badRequest().body(
+                Map.of("foto", "La foto es demasiado pesada. El tamaño máximo permitido es 10MB.")
+        );
+    }
 }

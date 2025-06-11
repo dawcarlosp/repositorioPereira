@@ -2,21 +2,23 @@
 import { useState } from "react";
 import defaultAvatar from "../../assets/default-avatar.png";
 import BotonClaro from "./BotonClaro";
+import Boton from "./Boton";
 import ModalConfirmacion from "./ModalConfirmacion";
 import { useAuth } from "../../context/useAuth";
 import { useNavigate } from "react-router-dom";
 import FormEditarPerfil from "../vendedor/Form/FormEditarPerfil";
+import { Link} from "react-router-dom";
 export default function AvatarUsuario({
   foto,
   nombre,
   email,
-  isOpen,           // Si el dropdown está abierto
+  isOpen, // Si el dropdown está abierto
   onToggleDropdown, // Función para alternar el dropdown
 }) {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
-const [modalEditar, setModalEditar] = useState(false);
+  const [modalEditar, setModalEditar] = useState(false);
   const handleLogoutConfirmado = () => {
     setAuth({ token: null, nombre: null, foto: null, email: null, roles: [] });
     navigate("/");
@@ -63,14 +65,17 @@ const [modalEditar, setModalEditar] = useState(false);
               Editar perfil
             </BotonClaro>
             <FormEditarPerfil
-  isOpen={modalEditar}
-  setIsOpen={setModalEditar}
-  usuario={{ nombre, email, foto }} // los datos actuales del usuario
-/>
+              isOpen={modalEditar}
+              setIsOpen={setModalEditar}
+              usuario={{ nombre, email, foto }} // los datos actuales del usuario
+            />
 
             <BotonClaro onClick={() => setMostrarConfirmacion(true)}>
               Cerrar sesión
             </BotonClaro>
+            <Link to={"/aboutme"}>
+              <BotonClaro>{"Perfil del desarrollador"}</BotonClaro>
+            </Link>
           </div>
         </div>
       )}

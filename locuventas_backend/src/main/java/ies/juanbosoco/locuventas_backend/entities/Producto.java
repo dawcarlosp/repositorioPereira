@@ -3,17 +3,10 @@ package ies.juanbosoco.locuventas_backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.hibernate.annotations.UuidGenerator;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,22 +16,27 @@ import java.util.Set;
 @Builder
 @Table(name = "productos")
 public class Producto {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false, length = 100)
     private String nombre;
 
+    @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal precio;
 
     private String foto;
 
     @ManyToOne
-    @JoinColumn(name = "pais_id")
+    @JoinColumn(name = "pais_id", nullable = false)
     @JsonIgnoreProperties("productos")
-
     private Pais pais;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductoCategoria> categorias = new ArrayList<>();
+
+    @Column(nullable = false)
+    private Double iva;
 }

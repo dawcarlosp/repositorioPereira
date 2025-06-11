@@ -6,8 +6,9 @@ import Boton from "../common/Boton";
 import ProductoCard from "./ProductoCard";
 import TablaProductos from "./TablaProductos";
 import ModalProductoForm from "./ModalProductoForm";
-import FabAgregarProducto from "../productos/FabAgregarProducto"; // <-- Aquí importas el FAB
+import FabAgregarProducto from "../productos/FabAgregarProducto";
 import Paginacion from "../common/Paginacion";
+
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function GestionProductos() {
@@ -15,22 +16,21 @@ export default function GestionProductos() {
   const [paises, setPaises] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [loading, setLoading] = useState(true);
-  // PAGINACIÓN
   const [page, setPage] = useState(0);
   const [size] = useState(10);
   const [totalPages, setTotalPages] = useState(0);
-  // Formulario
+
   const [showForm, setShowForm] = useState(false);
   const [editando, setEditando] = useState(null);
   const [nombre, setNombre] = useState("");
   const [precio, setPrecio] = useState("");
+  const [iva, setIva] = useState("");
   const [paisId, setPaisId] = useState("");
   const [categoriaIds, setCategoriaIds] = useState([]);
   const [foto, setFoto] = useState(null);
   const [fotoUrlEdicion, setFotoUrlEdicion] = useState(null);
   const fileInputRef = useRef();
 
-  // Modal de confirmación
   const [modal, setModal] = useState({
     visible: false,
     mensaje: "",
@@ -39,10 +39,10 @@ export default function GestionProductos() {
     onCancelarCustom: null,
   });
 
-  // Detecta móvil
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" && window.innerWidth < 640
   );
+
   useEffect(() => {
     function handleResize() {
       setIsMobile(window.innerWidth < 640);
@@ -81,6 +81,7 @@ export default function GestionProductos() {
     setEditando(null);
     setNombre("");
     setPrecio("");
+    setIva("");
     setPaisId(paises[0]?.id || "");
     setCategoriaIds([]);
     setFoto(null);
@@ -93,27 +94,18 @@ export default function GestionProductos() {
     setEditando(prod);
     setNombre(prod.nombre);
     setPrecio(prod.precio);
-
+    setIva(prod.iva);
     setPaisId(
       prod.paisId || paises.find((p) => p.nombre === prod.paisNombre)?.id || ""
     );
-
     const selectedIds = categorias
       .filter((c) => (prod.categorias || []).includes(c.nombre))
       .map((c) => c.id);
     setCategoriaIds(selectedIds);
-
     setFoto(null);
-
-    if (prod.foto) {
-      setFotoUrlEdicion(`${API_URL}/imagenes/productos/${prod.foto}`);
-    } else {
-      setFotoUrlEdicion(null);
-    }
+    setFotoUrlEdicion(prod.foto ? `${API_URL}/imagenes/productos/${prod.foto}` : null);
     setShowForm(true);
-
     if (fileInputRef.current) fileInputRef.current.value = "";
-  
   }
 
   function cerrarForm() {
@@ -123,46 +115,55 @@ export default function GestionProductos() {
     setFotoUrlEdicion(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
-
-  // Confirmación para eliminar
-  function confirmarEliminarProducto(id) {
-    setModal({
-      visible: true,
-      mensaje: "¿Seguro que quieres eliminar este producto?",
-      confirmText: "Eliminar",
-      onConfirmar: async () => {
-        setModal((m) => ({ ...m, visible: false }));
-        try {
-          await apiRequest(`productos/${id}`, null, { method: "DELETE" });
-          toast.success("Producto eliminado");
-          fetchData();
-        } catch {
-          toast.error("No se pudo eliminar");
+const onEliminar = (id) => {
+  setModal({
+    visible: true,
+    mensaje: "¿Seguro que quieres eliminar este producto?",
+    confirmText: "Eliminar",
+    onConfirmar: async () => {
+      setModal((m) => ({ ...m, visible: false }));
+      try {
+        await apiRequest(`productos/${id}`, null, { method: "DELETE" });
+        toast.success("Producto eliminado correctamente.");
+        fetchData();
+      } catch (error) {
+        if (error.razon === "EN_VENTA") {
+          toast.warn(
+            "No puedes eliminar este producto porque ya ha sido vendido. Consulta las ventas asociadas o marca el producto como inactivo."
+          );
+        } else if (error.error) {
+          toast.error(error.error);
+        } else {
+          toast.error("No se pudo eliminar el producto.");
         }
-      },
-      onCancelarCustom: null,
-    });
-  }
+      }
+    },
+    onCancelarCustom: () => setModal((m) => ({ ...m, visible: false })),
+  });
+};
 
-  // Guardar producto (alta o edición)
+
   async function guardarProducto(formData, id, method) {
     let endpoint = "productos";
     if (id) endpoint += `/${id}`;
-
     try {
       await apiRequest(endpoint, formData, { method, isFormData: true });
       toast.success(id ? "Producto editado" : "Producto creado");
       cerrarForm();
       fetchData();
-    } catch {
-      toast.error("Error guardando producto");
+    } catch (err) {
+      if (err.foto) {
+        toast.error(err.foto);
+      } else if (err.error) {
+        toast.error(err.error);
+      } else {
+        toast.error("Error guardando producto");
+      }
     }
   }
 
-  // Al enviar el formulario
   async function handleSubmit(e) {
     e.preventDefault();
-
     if (!nombre || !precio || !paisId || categoriaIds.length === 0) {
       toast.error("Completa todos los campos obligatorios");
       return;
@@ -175,6 +176,7 @@ export default function GestionProductos() {
     const productoDTO = {
       nombre,
       precio: parseFloat(precio),
+      iva: parseFloat(iva),
       paisId: Number(paisId),
       categoriaIds: categoriaIds.map(Number),
     };
@@ -183,9 +185,8 @@ export default function GestionProductos() {
     formData.append("producto", JSON.stringify(productoDTO));
     if (foto) formData.append("foto", foto);
 
-    // Confirmación SOLO al editar
     if (editando) {
-      setShowForm(false); // Oculta el formulario, para que el modal se vea encima
+      setShowForm(false);
       setModal({
         visible: true,
         mensaje: "¿Guardar cambios de este producto?",
@@ -196,24 +197,18 @@ export default function GestionProductos() {
         },
         onCancelarCustom: () => {
           setModal((m) => ({ ...m, visible: false }));
-          setShowForm(true); // Reabre el formulario si cancela
+          setShowForm(true);
         },
       });
       return;
     }
 
-    // Alta directa
     await guardarProducto(formData, null, "POST");
   }
 
-  // FAB botón flotante SOLO EN MÓVIL (usando componente)
   const botonFlotanteMobile = isMobile ? (
     <FabAgregarProducto onClick={abrirNuevo} />
   ) : null;
-
-  // Map de banderas para paises (por si lo necesitas)
-  const flagMap = {};
-  paises.forEach((p) => (flagMap[p.id] = p.enlaceFoto));
 
   return (
     <>
@@ -223,7 +218,7 @@ export default function GestionProductos() {
           <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center text-white drop-shadow">
             Gestión de Productos
           </h1>
-          {/* Botón escritorio */}
+
           <div className="mb-4 flex justify-end">
             {!isMobile && (
               <Boton
@@ -235,7 +230,6 @@ export default function GestionProductos() {
             )}
           </div>
 
-          {/* MODAL formulario */}
           <ModalProductoForm
             visible={showForm}
             onClose={cerrarForm}
@@ -245,6 +239,8 @@ export default function GestionProductos() {
             setNombre={setNombre}
             precio={precio}
             setPrecio={setPrecio}
+            iva={iva}
+            setIva={setIva}
             paisId={paisId}
             setPaisId={setPaisId}
             categoriaIds={categoriaIds}
@@ -257,7 +253,6 @@ export default function GestionProductos() {
             fileInputRef={fileInputRef}
           />
 
-          {/* Modal confirmación */}
           {modal.visible && (
             <ModalConfirmacion
               mensaje={modal.mensaje}
@@ -271,15 +266,13 @@ export default function GestionProductos() {
             />
           )}
 
-          {/* TABLA EN ESCRITORIO / CARDS EN MÓVIL */}
           {!isMobile && (
             <>
               <TablaProductos
                 productos={productos}
                 onEditar={abrirEditar}
-                onEliminar={confirmarEliminarProducto}
+                onEliminar={onEliminar}
               />
-              {/* PAGINACIÓN abajo de la tabla */}
               {totalPages > 1 && (
                 <Paginacion
                   page={page}
@@ -290,7 +283,6 @@ export default function GestionProductos() {
             </>
           )}
 
-          {/* CARDS EN MÓVIL */}
           {isMobile && (
             <div className="flex flex-col gap-4 pb-12">
               {productos.length === 0 && (
@@ -303,7 +295,7 @@ export default function GestionProductos() {
                   key={p.id}
                   producto={p}
                   onEditar={abrirEditar}
-                  onEliminar={confirmarEliminarProducto}
+                  onEliminar={onEliminar}
                 />
               ))}
             </div>

@@ -1,22 +1,33 @@
 package ies.juanbosoco.locuventas_backend.DTO.producto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.List;
+
 @Getter
 @Setter
 public class ProductoUpdateDTO {
-    @NotBlank
+
+    @NotBlank(message = "El nombre es obligatorio")
+    @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
     private String nombre;
-    @NotNull
+
+    @NotNull(message = "El precio es obligatorio")
+    @DecimalMin(value = "0.01", inclusive = true, message = "El precio debe ser mayor que 0")
     private BigDecimal precio;
-    @NotNull
+
+    @NotNull(message = "El IVA es obligatorio")
+    @DecimalMin(value = "0.0", inclusive = true, message = "El IVA no puede ser negativo")
+    @DecimalMax(value = "100.0", inclusive = true, message = "El IVA no puede ser mayor al 100%")
+    private Double iva;
+
+    @NotNull(message = "El país es obligatorio")
     private Long paisId;
-    @NotNull
-    private List<Long> categoriaIds;
-    // NO pongas foto aquí, ya va en el @RequestPart("foto")
+
+    @NotNull(message = "Debes seleccionar al menos una categoría")
+    @Size(min = 1, message = "Debes seleccionar al menos una categoría")
+    private List<@NotNull(message = "ID de categoría inválido") Long> categoriaIds;
 }

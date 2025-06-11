@@ -1,12 +1,12 @@
-import { apiRequest } from "../services/api";
-import { useAuth } from "../context/useAuth";
-import Boton from "../components/common/Boton";
-import InputFieldset from "../components/common/InputFieldset";
-import Enlace from "../components/common/Enlace";
+import { apiRequest } from "../../../services/api";
+import { useAuth } from "../../../context/useAuth";
+import Boton from "../../common/Boton";
+import InputFieldset from "../../common/InputFieldset";
+import Enlace from "../../common/Enlace";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import AlertSimple from "../components/common/AlertSimple";
-
+import AlertSimple from "../../common/AlertSimple";
+import FooterLogin from "../../FooterLogin";
 function FormVendedorLogin({ setIsOpen }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -119,6 +119,7 @@ function FormVendedorLogin({ setIsOpen }) {
           onClose={() => setMostrarAlerta(false)}
         />
       )}
+
     </>
   );
 }

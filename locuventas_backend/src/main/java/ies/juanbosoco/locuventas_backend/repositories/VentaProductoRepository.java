@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface VentaProductoRepository extends JpaRepository<VentaProducto, Long> {
     List<VentaProducto> findByVenta_Id(Long ventaId);
-
+    // Método para comprobar si existen ventas con un producto concreto
+    boolean existsByProducto_Id(Long productoId);
+    long countByVenta_Id(Long ventaId);
 }

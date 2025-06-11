@@ -130,8 +130,8 @@ export default function Header() {
             {/* Admin: Gestión */}
             {esAdmin && (
               <>
-                <button
-                  onClick={() => {
+                <Boton
+                 onClick={() => {
                     setIsGestionOpen((prev) => {
                       if (prev) {
                         setIsVendedoresOpen(false);
@@ -145,7 +145,7 @@ export default function Header() {
                   className={neonButtonClass}
                 >
                   Gestión
-                </button>
+                </Boton>
                 <GestionDropdown
                   isOpen={isGestionOpen}
                   vendedoresLinkRef={vendedoresLinkRef}
@@ -164,7 +164,6 @@ export default function Header() {
                 </GestionDropdown>
               </>
             )}
-
             {/* AvatarUsuario para ambos (con edición para vendedor) */}
             <AvatarUsuario
               foto={foto}
@@ -239,7 +238,7 @@ export default function Header() {
                     {isVendedoresMobileOpen && (
                       <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
                         <Link
-                          to="/vendedores/gestionar"
+                          to="/vendedores/gestion"
                           onClick={() => setMenuOpen(false)}
                           className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
                           style={{ background: "none", border: "none" }}

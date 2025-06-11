@@ -26,12 +26,12 @@ public class Venta {
 
     private boolean cancelada;
 
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at", updatable = false, nullable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @ManyToOne
-    @JoinColumn(name = "vendedor_id")
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "vendedor_id", nullable = false)
     private Vendedor vendedor;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -45,6 +45,7 @@ public class Venta {
     }
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoPago estadoPago = EstadoPago.PENDIENTE;
 
     public BigDecimal getMontoPagado() {

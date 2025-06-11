@@ -1,12 +1,11 @@
 import React from "react";
 import BotonClaro from "./BotonClaro";
 import PendientesList from "./PendientesList";
-
+import { toast } from "react-toastify";
 export default function VendedoresDropdown({
   isOpen,
   onClickPendientes,
   isPendientesOpen,
-  onClickGestionar,
   onConfirmacion,
 }) {
   if (!isOpen) return null;
@@ -26,7 +25,7 @@ export default function VendedoresDropdown({
               </div>
             )}
           </div>
-          <BotonClaro onClick={onClickGestionar}>
+          <BotonClaro onClick={() => toast.dark("Gestión de vendedores, llegará próximamente!")}>
             Gestionar Vendedores
           </BotonClaro>
         </div>

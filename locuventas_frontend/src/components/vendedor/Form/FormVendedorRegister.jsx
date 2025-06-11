@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { apiRequest } from "../../../services/api";
 import Boton from "../../common/Boton";
-import InputFieldset from "../../common/InputFieldsetValidaciones";
+import InputFieldsetValidaciones from "../../common/InputFieldsetValidaciones";
 import UploadComponent from "../../common/UploadComponent";
 import { toast } from "react-toastify";
 import BotonCerrar from "../../common/BotonCerrar";
@@ -199,13 +199,23 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
             file={foto}
           />
         </div>
-        {/* Feedback para la foto */}
-        {touched.foto && errors.foto && (
-          <div className="text-xs text-orange-700 mb-2">{errors.foto}</div>
-        )}
+        {/* Feedback para la foto, chapucero*/}
+        <div
+          className={`
+    text-xs mt-2 px-3 py-1 rounded-lg font-medium transition-all min-h-[24px]
+    ${
+      touched.foto && errors.foto
+        ? "text-orange-700 bg-white/90 shadow mb-2"
+        : "bg-transparent mb-2"
+    }
+  `}
+          style={{ minHeight: 24 }}
+        >
+          {touched.foto && errors.foto ? errors.foto : ""}
+        </div>
 
         {/* NOMBRE */}
-        <InputFieldset
+        <InputFieldsetValidaciones
           type="text"
           id="nombre"
           value={nombre}
@@ -217,7 +227,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         />
 
         {/* EMAIL */}
-        <InputFieldset
+        <InputFieldsetValidaciones
           type="email"
           id="email"
           value={email}
@@ -229,7 +239,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         />
 
         {/* PASSWORD */}
-        <InputFieldset
+        <InputFieldsetValidaciones
           type="password"
           id="password"
           value={password}

@@ -25,4 +25,6 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
     Page<Venta> findByVendedor_IdAndCanceladaFalseAndEstadoPagoIn(Long vendedorId, List<Venta.EstadoPago> estados, Pageable pageable);
     //Sobrecarga, en post de intentar soportar paginación
     Page<Venta> findByVendedor_Id(Long vendedorId, Pageable pageable);
+    Page<Venta> findByCanceladaFalseAndEstadoPagoInAndVendedor_Id(List<Venta.EstadoPago> estados, Long vendedorId, Pageable pageable);
+
 }

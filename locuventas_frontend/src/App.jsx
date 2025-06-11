@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
 import VendedoresPendientes from "./pages/VendedoresPendientes";
 import GestionProductosPagina from "./pages/GestionProductosPagina";
-import FormVendedorLogin from "./pages/FormVendedorLogin";
+import FormVendedorLogin from "./components/vendedor/Form/FormVendedorLogin";
 import Dashboard from "./pages/Dashboard";
 import FormVendedorRegister from "./components/vendedor/Form/FormVendedorRegister";
 import PrivateRoute from "./components/common/PrivateRoute";
@@ -12,9 +12,10 @@ import VentasPagina from "./pages/VentasPAgina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "./context/AuthProvider";
-
+import SobreMiPage from "./pages/SobreMiPage";
 import VentasYpendientes from "./pages/VentasPendientesPagina";
 import VentasPendientesPagina from "./pages/VentasPendientesPagina";
+import LoginPage from "./pages/LoginPage";
 function App() {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -25,7 +26,7 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={<FormVendedorLogin setIsOpen={setIsOpen} />}
+              element={<LoginPage setIsOpen={setIsOpen} />}
             />
 
             {/* Ruta protegida con PrivateRoute */}
@@ -53,14 +54,16 @@ function App() {
                 </PrivateRoute>
               }
             />
+            /*
             <Route
-              path="/vendedores"
+              path="/vendedores/gestion"
               element={
                 <PrivateRoute>
                   <Dashboard />
                 </PrivateRoute>
               }
             />
+            */
             <Route
               path="/vendedores/pendientes"
               element={
@@ -75,6 +78,12 @@ function App() {
                 <PrivateRoute>
                   <GestionProductosPagina />
                 </PrivateRoute>
+              }
+            />
+            <Route
+              path="/aboutme"
+              element={
+                  <SobreMiPage />
               }
             />
           </Routes>

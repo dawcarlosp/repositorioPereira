@@ -14,4 +14,6 @@ public class ProductoResponseDTO {
     private String paisNombre; // solo el nombre del país
     private String paisFoto;   // URL de la bandera (opcional)
     private List<String> categorias; // nombres de las categorías
+    private Double iva;
+
 }

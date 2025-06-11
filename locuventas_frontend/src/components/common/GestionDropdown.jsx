@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import BotonClaro from "./BotonClaro";
-
+import { toast } from "react-toastify";
 export default function GestionDropdown({
   isOpen,
   vendedoresLinkRef,
@@ -11,6 +11,7 @@ export default function GestionDropdown({
   const navigate = useNavigate();
 
   if (!isOpen) return null;
+
 
   return (
     <div className="absolute top-full left-0 z-50 w-44 bg-zinc-900/90 backdrop-blur-md shadow-xl rounded-xl py-2 my-2">
@@ -24,7 +25,7 @@ export default function GestionDropdown({
         <BotonClaro ref={vendedoresLinkRef} onClick={onClickVendedores}>
           Vendedores
         </BotonClaro>
-        <BotonClaro onClick={() => navigate("/categorias")}>
+        <BotonClaro onClick={() => toast.dark("Gestión de categorías, llegará próximamente!")}>
           Categorías
         </BotonClaro>
       </div>

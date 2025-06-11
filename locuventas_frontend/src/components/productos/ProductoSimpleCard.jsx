@@ -3,7 +3,7 @@ import React from "react";
 export default function ProductoSimpleCard({ producto, cantidad }) {
   return (
     <div
-      className={`rounded-xl bg-white/95 shadow-lg border-2 border-orange-400 flex flex-col px-4 py-3 gap-2
+      className={`relative rounded-xl bg-white/95 shadow-lg border-2 border-orange-400 flex flex-col px-4 py-3 gap-2
         w-full min-h-[180px] max-w-[300px] transition-all duration-200 box-border
         hover:scale-[1.025] cursor-pointer select-none
       `}
@@ -11,9 +11,7 @@ export default function ProductoSimpleCard({ producto, cantidad }) {
     >
       {/* Nombre e ID */}
       <div className="flex items-center gap-3 mb-1">
-        <span className="font-bold text-purple-600 text-lg">
-          {producto.nombre}
-        </span>
+        <span className="font-bold text-purple-600 text-lg">{producto.nombre}</span>
         <span className="text-sm text-zinc-400">#{producto.id}</span>
       </div>
 
@@ -60,12 +58,12 @@ export default function ProductoSimpleCard({ producto, cantidad }) {
           </div>
         )}
       </div>
-      {/* Cantidad visual si quieres dentro de la card (opcional) */}
-   {cantidad > 0 && (
+
+      {cantidad > 0 && (
         <div className="absolute top-1 right-2 bg-orange-500 text-white rounded-full px-2 text-xs font-bold shadow">
           {cantidad}
         </div>
-      )} 
+      )}
     </div>
   );
 }
