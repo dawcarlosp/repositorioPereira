@@ -3,22 +3,27 @@ package ies.juanbosoco.locuventas_backend.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
-import ies.juanbosoco.locuventas_backend.entities.Categoria;
-import ies.juanbosoco.locuventas_backend.entities.Pais;
-import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.entities.*;
 import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
+import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
-
+import java.math.BigDecimal;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 
 @Component
 public class DataInitializer implements CommandLineRunner {
+    private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
     @Autowired
     private UserEntityRepository vendedorRepository;
 
@@ -31,11 +36,15 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
+    @Autowired
+    private ProductoRepository productoRepository;
+
     @Override
     public void run(String... args) throws Exception {
         initAdminAndVendedor();
         initCategorias();
         initPaises();
+        initProductos();
     }
 
     private void initAdminAndVendedor() {
@@ -49,7 +58,7 @@ public class DataInitializer implements CommandLineRunner {
                     .foto("admin1.jpg")
                     .build();
             vendedorRepository.save(admin1);
-            System.out.println("Admin 1 creado.");
+            logger.info("Admin 1 creado.");
         }
 
         // Admin 2
@@ -62,7 +71,7 @@ public class DataInitializer implements CommandLineRunner {
                     .foto("admin2.jpg")
                     .build();
             vendedorRepository.save(admin2);
-            System.out.println("Admin 2 creado.");
+            logger.info("Admin 2 creado.");
         }
 
         // Admin 3
@@ -75,7 +84,7 @@ public class DataInitializer implements CommandLineRunner {
                     .foto("admin3.jpg")
                     .build();
             vendedorRepository.save(admin3);
-            System.out.println("Admin 3 creado.");
+            logger.info("Admin 3 creado.");
         }
 
         // Vendedor estándar
@@ -88,7 +97,7 @@ public class DataInitializer implements CommandLineRunner {
                     .foto("vendedor.jpg")
                     .build();
             vendedorRepository.save(vendedor);
-            System.out.println("Vendedor creado por defecto.");
+            logger.info("Vendedor creado por defecto.");
         }
     }
 
@@ -125,16 +134,16 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         if (contador > 0) {
-            System.out.println("✔ Se han insertado " + contador + " categorías.");
+            logger.info("Se han insertado " + contador + " categorías.");
         } else {
-            System.out.println("ℹ Las categorías ya existen en la base de datos.");
+            logger.warn("ℹ Las categorías ya existen en la base de datos.");
         }
     }
 
 
     private void initPaises() throws Exception {
         if (paisRepository.count() > 0) {
-            System.out.println("ℹ Paises ya existen en la base de datos.");
+            logger.warn("ℹ Paises ya existen en la base de datos.");
             return;
         }
 
@@ -143,13 +152,13 @@ public class DataInitializer implements CommandLineRunner {
 
         //Intenta descargar desde la API
         try {
-            System.out.println("Descargando países desde la API...");
+            logger.info("Descargando países desde la API...");
             URL url = new URL("https://restcountries.com/v3.1/all?fields=name,flags,cca2,cca3");
             countries = mapper.readTree(url);
-            System.out.println("Países descargados desde la API.");
+            logger.info("Países descargados desde la API.");
         } catch (Exception ex) {
             //Si falla, usa el archivo local
-            System.out.println(" No se pudo descargar países desde la API, usando archivo local...");
+            logger.warn(" No se pudo descargar países desde la API, usando archivo local...");
             countries = mapper.readTree(getClass().getResourceAsStream("/paises.json"));
         }
 
@@ -170,9 +179,69 @@ public class DataInitializer implements CommandLineRunner {
             }
         }
 
-        System.out.println("Se han insertado " + contador + " países.");
+        logger.info("Se han insertado " + contador + " países.");
     }
 
+    private void initProductos() throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode productos = mapper.readTree(getClass().getResourceAsStream("/productos.json"));
+
+        int contador = 0;
+
+        for (JsonNode productoNode : productos) {
+            String nombre = productoNode.path("nombre").asText();
+            BigDecimal precio = productoNode.path("precio").decimalValue();
+            String foto = "productosprecargados/" + productoNode.path("foto").asText();
+            Long paisId = productoNode.path("paisId").asLong();
+            int iva = productoNode.path("iva").asInt();
+
+            if (productoRepository.existsByNombre(nombre)) continue;
+
+            Pais pais = paisRepository.findById(paisId).orElse(null);
+            if (pais == null) {
+                System.out.println("⚠ País no encontrado para ID " + paisId + " (producto: " + nombre + ")");
+                continue;
+            }
+
+            // Creamos el producto
+            Producto producto = Producto.builder()
+                    .nombre(nombre)
+                    .precio(precio)
+                    .foto(foto)
+                    .pais(pais)
+                    .iva((double) iva)
+                    .categorias(new ArrayList<>())
+                    .build();
+
+            //Guardamos el producto primero para que tenga ID
+            producto = productoRepository.save(producto);
+
+            //Relacionamos con categorías existentes
+            JsonNode categoriaIds = productoNode.path("categoriaIds");
+            for (JsonNode categoriaIdNode : categoriaIds) {
+                Long categoriaId = categoriaIdNode.asLong();
+                Categoria categoria = categoriaRepository.findById(categoriaId).orElse(null);
+                if (categoria == null) {
+                    logger.warn("⚠ Categoría no encontrada con ID " + categoriaId + " para producto " + nombre);
+                    continue;
+                }
+
+                // Creamos clave compuesta e instancia
+                ProductoCategoria relacion = new ProductoCategoria();
+                relacion.setProducto(producto);
+                relacion.setCategoria(categoria);
+                relacion.setId(new ProductoCategoriaId(producto.getId(), categoria.getId()));
+
+                producto.getCategorias().add(relacion);
+            }
+
+            // Guardamos el producto actualizado (relaciones se manejan por cascade)
+            productoRepository.save(producto);
+            contador++;
+        }
+
+        logger.info(" Se han insertado " + contador + " productos con sus relaciones.");
+    }
 
 
 }

@@ -1,9 +1,28 @@
+# Documentación
 HELP.md
+
+# Archivos de compilación
 target/
+build/
+
+# No ignorar Maven Wrapper jar
 !.mvn/wrapper/maven-wrapper.jar
+
+# No ignorar targets o builds dentro de src
 !**/src/main/**/target/
 !**/src/test/**/target/
-!**/uploads/**/
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Ignorar carpetas específicas dentro de uploads
+uploads/vendedores/
+uploads/productos/
+
+# Mantener productos precargados en el repositorio
+!uploads/productosprecargados/
+!uploads/productosprecargados/**
+
+# IDEs
 ### STS ###
 .apt_generated
 .classpath
@@ -14,7 +33,7 @@ target/
 .sts4-cache
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -25,9 +44,20 @@ target/
 /dist/
 /nbdist/
 /.nb-gradle/
-build/
-!**/src/main/**/build/
-!**/src/test/**/build/
 
 ### VS Code ###
 .vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Docker
+.env
+docker-compose.override.yml
+
+# Maven extra
+.mvn/timing.properties

@@ -54,6 +54,7 @@ public class SecurityConfig {
                         .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2,no implementado
                         .requestMatchers("/imagenes/vendedores/**").permitAll()
                         .requestMatchers("/imagenes/productos/**").permitAll()
+                        .requestMatchers("/imagenes/productosprecargados/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -74,8 +75,9 @@ public class SecurityConfig {
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOriginPatterns(List.of("*")); // Permitir cualquier origen
         //config.setAllowedOrigins(List.of("*")); // Permitir el frontend
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Permitir métodos HTTP
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Permitir métodos HTTP
         config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Permitir headers necesarios
+        config.setExposedHeaders(List.of("Content-Disposition"));//Para mandar bien el nombre del ticket
         config.setAllowCredentials(true); // Permitir credenciales
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

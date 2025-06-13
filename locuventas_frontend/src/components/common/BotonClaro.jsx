@@ -1,10 +1,5 @@
 // src/components/common/BotonClaro.jsx
 import React from "react";
-
-/**
- * BotonClaro es “exactamente” tu componente, pero envuelto en forwardRef 
- * para poder pasarle un ref desde el dropdown padre.
- */
 const BotonClaro = React.forwardRef(({ children, disabled, onClick }, ref) => {
   return (
     <button

@@ -4,209 +4,239 @@
     "precio": 7.99,
     "foto": "llamadasInternacionales.jpg",
     "paisId": 153,
-    "categoriaIds": [1]
+    "categoriaIds": [1],
+    "iva": 21
   },
   {
     "nombre": "DIGI",
     "precio": 8.99,
     "foto": "llamdasInternacionales2.jpg",
     "paisId": 46,
-    "categoriaIds": [1]
+    "categoriaIds": [1],
+    "iva": 21
   },
-    {
+  {
     "nombre": "Tigo",
     "precio": 10.99,
     "foto": "recargasTelefonicas.jpg",
     "paisId": 149,
-    "categoriaIds": [2]
+    "categoriaIds": [2],
+    "iva": 21
   },
   {
     "nombre": "CLARO",
     "precio": 10.99,
     "foto": "recargasTelefonicas2.png",
     "paisId": 149,
-    "categoriaIds": [2]
+    "categoriaIds": [2],
+    "iva": 21
   },
-    {
+  {
     "nombre": "Personal",
     "precio": 9.99,
     "foto": "recargasTelefonicas3.png",
     "paisId": 149,
-    "categoriaIds": [2]
+    "categoriaIds": [2],
+    "iva": 21
   },
   {
     "nombre": "Ria",
     "precio": 4.99,
     "foto": "envioDeDinero.jpg",
     "paisId": 149,
-    "categoriaIds": [3]
+    "categoriaIds": [3],
+    "iva": 21
   },
-    {
+  {
     "nombre": "Western Union",
     "precio": 5.99,
     "foto": "envioDeDinero2.png",
     "paisId": 149,
-    "categoriaIds": [3]
+    "categoriaIds": [3],
+    "iva": 21
   },
-    {
+  {
     "nombre": "Wes Transfer",
     "precio": 5.99,
     "foto": "envioDeDinero3.png",
     "paisId": 149,
-    "categoriaIds": [3]
+    "categoriaIds": [3],
+    "iva": 21
   },
   {
     "nombre": "Impresiones Premium",
     "precio": 2.09,
     "foto": "fotocopiasEImpresiones.png",
     "paisId": 140,
-    "categoriaIds": [4,7]
+    "categoriaIds": [4, 7],
+    "iva": 10
   },
-    {
+  {
     "nombre": "Fotocopias a color",
     "precio": 1.02,
     "foto": "fotocopiaEImpresiones2.png",
     "paisId": 140,
-    "categoriaIds": [4,7]
+    "categoriaIds": [4, 7],
+    "iva": 10
   },
   {
     "nombre": "Internet con Boost",
     "precio": 15.40,
     "foto": "InternetYCiber.png",
     "paisId": 140,
-    "categoriaIds": [5]
+    "categoriaIds": [5],
+    "iva": 21
   },
   {
     "nombre": "Auricular de Diadema",
     "precio": 10.40,
     "foto": "ventaDeAccesorios.jpg",
     "paisId": 140,
-    "categoriaIds": [6]
+    "categoriaIds": [6],
+    "iva": 21
   },
-   {
+  {
     "nombre": "Auriculares inalámbricos",
     "precio": 12.70,
     "foto": "ventaDeAccesorios2.jpg",
     "paisId": 140,
-    "categoriaIds": [6]
+    "categoriaIds": [6],
+    "iva": 21
   },
   {
     "nombre": "Cargador blanco Sanda",
     "precio": 8.75,
     "foto": "ventaDeAccesorios3.jpg",
     "paisId": 140,
-    "categoriaIds": [6]
+    "categoriaIds": [6],
+    "iva": 21
   },
   {
     "nombre": "Kit escolar",
     "precio": 18.55,
     "foto": "papeleria.jpg",
     "paisId": 140,
-    "categoriaIds": [7]
+    "categoriaIds": [7],
+    "iva": 4
   },
-    {
+  {
     "nombre": "Papel premium para dibujar",
     "precio": 1.55,
     "foto": "papeleria2.jpg",
     "paisId": 140,
-    "categoriaIds": [7]
+    "categoriaIds": [7],
+    "iva": 4
   },
   {
     "nombre": "Pago de servicios",
     "precio": 3.75,
     "foto": "pagoDeServicios.jpg",
     "paisId": 140,
-    "categoriaIds": [8]
+    "categoriaIds": [8],
+    "iva": 10
   },
-    {
+  {
     "nombre": "Pago de servicios ofrecidos por terceros",
     "precio": 6.00,
     "foto": "pagoDeServicios2.jpg",
     "paisId": 140,
-    "categoriaIds": [8]
+    "categoriaIds": [8],
+    "iva": 10
   },
   {
     "nombre": "Apoyo, tramitación NIE",
     "precio": 16.00,
     "foto": "tramitesYGestiones.png",
     "paisId": 140,
-    "categoriaIds": [9]
+    "categoriaIds": [9],
+    "iva": 21
   },
   {
     "nombre": "Apoyo, tramitación pasaporte",
     "precio": 16.00,
     "foto": "tramitesYGestiones2.jpg",
     "paisId": 140,
-    "categoriaIds": [9]
+    "categoriaIds": [9],
+    "iva": 21
   },
-    {
+  {
     "nombre": "Almacenamiento provisional de Amazon",
     "precio": 16.00,
     "foto": "envioDePaqueteria.png",
     "paisId": 140,
-    "categoriaIds": [10]
+    "categoriaIds": [10],
+    "iva": 21
   },
   {
     "nombre": "Recogida DHL",
     "precio": 7.00,
     "foto": "envioDePaqueteria2.jpg",
     "paisId": 140,
-    "categoriaIds": [10]
+    "categoriaIds": [10],
+    "iva": 21
   },
   {
     "nombre": "Yerba mate Kurupí",
     "precio": 7.00,
     "foto": "alimentosYBebidas.jpg",
     "paisId": 140,
-    "categoriaIds": [11]
+    "categoriaIds": [11],
+    "iva": 10
   },
-    {
+  {
     "nombre": "Yerba mate Pajarito",
     "precio": 4.50,
     "foto": "alimentosYBebidas2.jpg",
     "paisId": 140,
-    "categoriaIds": [11]
+    "categoriaIds": [11],
+    "iva": 10
   },
-   {
+  {
     "nombre": "Yerba mate Selecta",
     "precio": 3.70,
     "foto": "AlimentosYBebidas3.jpg",
     "paisId": 140,
-    "categoriaIds": [11]
+    "categoriaIds": [11],
+    "iva": 10
   },
-   {
+  {
     "nombre": "SIM nueva gama",
     "precio": 23.20,
     "foto": "ventaDeTarjetasSim.jpg",
     "paisId": 177,
-    "categoriaIds": [12]
+    "categoriaIds": [12],
+    "iva": 21
   },
   {
     "nombre": "Traducciones personalizadas",
     "precio": 15.97,
     "foto": "traducciones.png",
     "paisId": 140,
-    "categoriaIds": [13]
+    "categoriaIds": [13],
+    "iva": 21
   },
   {
     "nombre": "Rule Pro",
     "precio": 5.0,
     "foto": "juegosDeAzarLoteria.jpg",
     "paisId": 140,
-    "categoriaIds": [14]
+    "categoriaIds": [14],
+    "iva": 21
   },
-   {
+  {
     "nombre": "Loteria y apuestas del Estado",
     "precio": 25.0,
     "foto": "juegosDeAzarLoteria2.jpg",
     "paisId": 140,
-    "categoriaIds": [14]
+    "categoriaIds": [14],
+    "iva": 21
   },
-   {
+  {
     "nombre": "Fotos pros para documentos",
     "precio": 1.0,
     "foto": "fotografiaParaDocumentos.jpg",
     "paisId": 140,
-    "categoriaIds": [15]
+    "categoriaIds": [15],
+    "iva": 21
   }
 ]

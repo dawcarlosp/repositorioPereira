@@ -1,12 +1,11 @@
-// src/components/common/AvatarUsuario.jsx
+// src/components/vendedor/AvatarUsuario.jsx
 import { useState } from "react";
-import defaultAvatar from "../../assets/default-avatar.png";
-import BotonClaro from "./BotonClaro";
-import Boton from "./Boton";
-import ModalConfirmacion from "./ModalConfirmacion";
-import { useAuth } from "../../context/useAuth";
+import defaultAvatar from "@/assets/default-avatar.png";
+import BotonClaro from "@components/common/BotonClaro";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
+import { useAuth } from "@context/useAuth";
 import { useNavigate } from "react-router-dom";
-import FormEditarPerfil from "../vendedor/Form/FormEditarPerfil";
+import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
 import { Link} from "react-router-dom";
 export default function AvatarUsuario({
   foto,

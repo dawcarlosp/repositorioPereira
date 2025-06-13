@@ -29,7 +29,7 @@ const SobreMi = () => (
       {/* Sobre mí */}
       <h2 className="text-2xl font-bold mb-4">🎓 Sobre mí</h2>
       <ul className="list-disc list-inside space-y-2 mb-8 text-lg">
-        <li>📍 Soy Carlos P., estudiante de <strong>Desarrollo de Aplicaciones Web</strong></li>
+        <li>📍 Estudiante de <strong>Desarrollo de Aplicaciones Web</strong></li>
         <li>🛠️ Me apasiona crear soluciones reales con tecnologías modernas</li>
         <li>🚀 Actualmente enfocado en el back-end con <strong>Java + Spring Boot</strong> y explorando <strong>React</strong></li>
         <li>🧩 Curioso, autodidacta y con muchas ganas de aprender y aportar</li>

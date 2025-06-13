@@ -1,8 +1,14 @@
-import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
-import { normalizaMultiValor } from "../../services/normalizaMultiValor"; // Importa la función
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
+import { normalizaMultiValor } from "@services/normalizaMultiValor";
 
 const API_URL = import.meta.env.VITE_API_URL;
+
+// Lógica para determinar si hay que prepender "productos/"
+function resolverRutaFoto(foto) {
+  if (!foto) return null;
+  return foto.includes("/") ? foto : `productos/${foto}`;
+}
 
 export default function TablaProductos({ productos, onEditar, onEliminar }) {
   return (
@@ -31,46 +37,28 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
       <table className="w-max min-w-full rounded-xl text-sm sm:text-base">
         <thead>
           <tr className="bg-blue-500 text-white">
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              ID
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              Foto
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              Nombre
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              Precio
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              País
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              Categorías
-            </th>
-            <th className="px-2 sm:px-4 py-3 text-left whitespace-nowrap sticky top-0 bg-blue-500 z-10">
-              Acciones
-            </th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">ID</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">Foto</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">Nombre</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">Precio</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">País</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">Categorías</th>
+            <th className="px-2 sm:px-4 py-3 text-left sticky top-0 bg-blue-500 z-10">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {productos.map((p, i) => (
             <tr
               key={p.id}
-              className={`
-                ${i % 2 === 0 ? "bg-purple-50" : "bg-white"}
-                border-b border-purple-100
-                hover:bg-purple-100 transition
-              `}
+              className={`${
+                i % 2 === 0 ? "bg-purple-50" : "bg-white"
+              } border-b border-purple-100 hover:bg-purple-100 transition`}
             >
-              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-zinc-900">
-                {p.id}
-              </td>
+              <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-zinc-900">{p.id}</td>
               <td className="px-2 sm:px-4 py-3 whitespace-nowrap">
                 {p.foto ? (
                   <img
-                    src={`${API_URL}/imagenes/productos/${p.foto}`}
+                    src={`${API_URL}/imagenes/${resolverRutaFoto(p.foto)}`}
                     alt={p.nombre}
                     className="w-14 h-10 object-cover rounded shadow border border-zinc-200"
                   />
@@ -79,9 +67,7 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
                 )}
               </td>
               <td className="px-2 sm:px-4 py-3 text-zinc-900 align-top">
-                <span className="block break-words">
-                  {p.nombre}
-                </span>
+                <span className="block break-words">{p.nombre}</span>
               </td>
               <td className="px-2 sm:px-4 py-3 whitespace-nowrap text-zinc-900">
                 {p.precio}€
@@ -105,7 +91,7 @@ export default function TablaProductos({ productos, onEditar, onEliminar }) {
                   {normalizaMultiValor(p.categorias).map((cat, idx) => (
                     <span
                       key={idx}
-                      className="inline-block px-2 py-1 bg-purple-100 rounded text-xs  border border-purple-200"
+                      className="inline-block px-2 py-1 bg-purple-100 rounded text-xs border border-purple-200"
                     >
                       {cat}
                     </span>

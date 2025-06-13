@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { apiRequest } from "../services/api";
-import defaultAvatar from "../assets/default-avatar.png";
-import BotonClaro from "../components/common/BotonClaro";
-import Boton from "../components/common/Boton";
-import ModalConfirmacion from "../components/common/ModalConfirmacion";
-import { useAuth } from "../context/useAuth";
-import Header from "../components/Header";
+import { apiRequest } from "@services/api";
+import defaultAvatar from "@assets/default-avatar.png";
+import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@components/common/Boton";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
+import { useAuth } from "@context/useAuth";
+import Header from "@components/Header";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
@@ -39,6 +39,8 @@ export default function VendedoresPendientes() {
           null,
           { method: "GET" }
         );
+        // Ordenar por fecha de creación DESCENDENTE (más reciente primero)
+      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPendientes(data);
       } catch (err) {
         setError(err);

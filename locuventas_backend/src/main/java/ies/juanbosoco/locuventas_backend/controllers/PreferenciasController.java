@@ -27,7 +27,7 @@ public class PreferenciasController {
         this.paisRepository = paisRepository;
     }
 
-    // ✅ Obtener países preferidos de un vendedor
+    //Obtener países preferidos de un vendedor
     @GetMapping("/{id}/preferencias-paises")
     @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
     public ResponseEntity<List<Pais>> obtenerPaisesPreferidos(@PathVariable Long id) {
@@ -37,7 +37,7 @@ public class PreferenciasController {
         return ResponseEntity.ok(vendedor.getPaisesPreferidos());
     }
 
-    // ✅ Actualizar países preferidos de un vendedor
+    // Actualizar países preferidos de un vendedor
     @PatchMapping("/{id}/preferencias-paises")
     @PreAuthorize("hasRole('VENDEDOR') or hasRole('ADMIN')")
     public ResponseEntity<?> actualizarPaisesPreferidos(

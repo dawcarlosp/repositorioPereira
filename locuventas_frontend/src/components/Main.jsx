@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { apiRequest } from "../services/api";
-import ProductoSimpleCard from "../components/productos/ProductoSimpleCard";
-import Paginacion from "../components/common/Paginacion";
+import { apiRequest } from "@services/api";
+import ProductoSimpleCard from "@components/productos/ProductoSimpleCard";
+import Paginacion from "@components/common/Paginacion";
 
 export default function Main({ carga, agregarProducto }) {
   const [productos, setProductos] = useState([]);
@@ -68,11 +68,6 @@ export default function Main({ carga, agregarProducto }) {
         producto={producto}
         cantidad={getCantidad(producto.id)}
       />
-      {getCantidad(producto.id) > 0 && (
-        <span className="absolute top-1 right-2 bg-orange-500 text-white rounded-full px-2 text-xs font-bold shadow">
-          {getCantidad(producto.id)}
-        </span>
-      )}
     </div>
   );
 

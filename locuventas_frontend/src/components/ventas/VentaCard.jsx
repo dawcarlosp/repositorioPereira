@@ -1,5 +1,5 @@
-import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
 
 export default function VentaCard({
   venta,
@@ -26,7 +26,7 @@ export default function VentaCard({
           {!venta.cancelada && (
             <Boton
               className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1"
-              onClick={() => onCancelar(venta.id)}
+              onClick={() => onCancelar(venta)}
             >
               Cancelar
             </Boton>

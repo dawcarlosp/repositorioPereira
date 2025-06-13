@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BotonClaro from "./BotonClaro";
+import BotonClaro from "@components/common/BotonClaro";
 import { toast } from "react-toastify";
 export default function GestionDropdown({
   isOpen,

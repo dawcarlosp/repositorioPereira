@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
-import InputFieldset from "../common/InputFieldset";
-import SelectFieldset from "../common/SelectFieldset";
-import UploadComponent from "../common/UploadComponent";
-import BotonCerrar from "../common/BotonCerrar";
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
+import InputFieldset from "@components/common/InputFieldset";
+import SelectFieldset from "@components/common/SelectFieldset";
+import UploadComponent from "@components/common/UploadComponent";
+import BotonCerrar from "@components/common/BotonCerrar";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function ModalProductoForm({
   visible,
@@ -27,7 +29,6 @@ export default function ModalProductoForm({
   paises,
   categorias,
 }) {
-  // ✅ Hook fuera del condicional
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
   useEffect(() => {
@@ -36,27 +37,18 @@ export default function ModalProductoForm({
     return () => window.removeEventListener("resize", handler);
   }, []);
 
-  // ✅ Luego se puede usar el `return null` sin problema
   if (!visible) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-[100000] flex items-center justify-center px-2 sm:px-4"
-      style={{ backdropFilter: "blur(5px)", background: "rgba(40,40,60,0.58)" }}
-    >
-      <div
-        className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto flex flex-col border border-blue-400 bg-white/30 backdrop-blur-lg transition-all duration-500"
-        style={{ boxShadow: "0 6px 40px #19192e33", maxHeight: "96vh" }}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-1 sticky top-0 ">
+    <div className="fixed inset-0 z-[100000] flex items-center justify-center px-2 sm:px-4" style={{ backdropFilter: "blur(5px)", background: "rgba(40,40,60,0.58)" }}>
+      <div className="relative rounded-3xl shadow-2xl w-full max-w-md mx-auto flex flex-col border border-blue-400 bg-white/30 backdrop-blur-lg transition-all duration-500" style={{ boxShadow: "0 6px 40px #19192e33", maxHeight: "96vh" }}>
+        <div className="flex items-center justify-between px-6 pt-6 pb-1 sticky top-0">
           <h2 className="text-xl font-bold text-white drop-shadow-md text-left">
             {editando ? "Editar" : "Agregar"} Producto
           </h2>
           <BotonCerrar onClick={onClose} className="absolute right-6 top-6" />
         </div>
 
-        {/* Scrollable content */}
         <div className="flex-1 px-6 py-2 overflow-y-auto" style={{ maxHeight: "calc(96vh - 120px)" }}>
           {paises.length === 0 && (
             <div className="bg-red-100 text-red-700 rounded px-2 py-2 mb-3 font-semibold text-center text-sm">
@@ -67,7 +59,7 @@ export default function ModalProductoForm({
           <div className="flex flex-col items-center justify-center mb-3">
             <UploadComponent
               setFile={setFoto}
-              file={foto}
+              file={foto instanceof File ? foto : null}
               fotoActualUrl={fotoUrlEdicion}
               disabled={paises.length === 0}
               style={{ width: "90px", height: "90px", marginBottom: "0.4rem" }}
@@ -83,7 +75,6 @@ export default function ModalProductoForm({
               required
               className="text-base"
             />
-
             <InputFieldset
               id="precio"
               value={precio}
@@ -93,7 +84,6 @@ export default function ModalProductoForm({
               required
               className="text-base"
             />
-
             <InputFieldset
               id="iva"
               value={iva}
@@ -137,7 +127,6 @@ export default function ModalProductoForm({
               )}
             </div>
 
-            {/* Categorías */}
             <div>
               <label className="block text-white font-semibold text-sm mb-1 text-left">
                 Selecciona categorías <span className="text-orange-400">*</span>
@@ -162,8 +151,7 @@ export default function ModalProductoForm({
                     className="text-base"
                   />
                   <div className="text-xs text-gray-200 mt-1">
-                    Pulsa <span className="font-bold">Ctrl</span> (o{" "}
-                    <span className="font-bold">Cmd</span> en Mac) para seleccionar varias categorías
+                    Pulsa <span className="font-bold">Ctrl</span> (o <span className="font-bold">Cmd</span> en Mac) para seleccionar varias categorías
                   </div>
                 </>
               ) : (
@@ -201,7 +189,6 @@ export default function ModalProductoForm({
           </div>
         </div>
 
-        {/* Botones */}
         <div className="flex gap-2 mt-3 mb-4 px-6 sticky bottom-0">
           <Boton
             type="submit"

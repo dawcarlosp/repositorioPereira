@@ -1,4 +1,4 @@
-// Puedes mover esto a un archivo api/tickets.js si prefieres modularidad.
+// src/api/tickets.js
 export async function descargarTicketPDF(ventaId) {
   try {
     const token = JSON.parse(localStorage.getItem("auth"))?.token;
@@ -11,16 +11,26 @@ export async function descargarTicketPDF(ventaId) {
         },
       }
     );
+
     if (!response.ok) throw new Error("Error al descargar el ticket");
 
-    // Crear un enlace "virtual" para descargar el archivo PDF
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
 
-    // Forzar la descarga
+    //  Obtener el nombre correcto desde el header
+    const contentDisposition = response.headers.get("Content-Disposition");
+    let filename = `ticket-venta-${ventaId}.pdf`;
+
+    if (contentDisposition) {
+      const match = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (match?.[1]) {
+        filename = match[1];
+      }
+    }
+
     const a = document.createElement("a");
     a.href = url;
-    a.download = `ticket-venta-${ventaId}.pdf`;
+    a.download = filename;
     document.body.appendChild(a);
     a.click();
     a.remove();

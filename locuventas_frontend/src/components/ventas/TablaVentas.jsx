@@ -1,6 +1,6 @@
 import React from "react";
-import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
 
 export default function TablaVentas({
   ventas,
@@ -119,7 +119,7 @@ export default function TablaVentas({
                   </BotonClaro>
                   <Boton
                     className="text-base px-4 bg-orange-500 hover:bg-orange-600 text-white font-bold"
-                    onClick={() => onCancelarVenta(venta.id)}
+                    onClick={() => onCancelarVenta(venta)}
                   >
                     Cancelar
                   </Boton>

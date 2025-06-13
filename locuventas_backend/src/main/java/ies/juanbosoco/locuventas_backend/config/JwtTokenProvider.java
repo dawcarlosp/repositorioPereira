@@ -7,8 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
-import java.security.Key;
-import java.util.Base64;
 import java.util.Date;
 @Component
 public class JwtTokenProvider {
@@ -61,6 +59,7 @@ public class JwtTokenProvider {
         Claims claims = parser.parseClaimsJws(token).getBody();
         return claims.get("username").toString();
     }
+    //No usado
     public Long getIdFromToken(String token) {
         try {
             // Verificación de la firma con la clave secreta.

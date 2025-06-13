@@ -1,7 +1,6 @@
 import React from "react";
 import { Link} from "react-router-dom";
-import Boton from "./common/Boton";
-import BotonClaro from "./common/BotonClaro";
+import Boton from "@components/common/Boton";
 
 export default function Footer({hacia, texto}) {
 

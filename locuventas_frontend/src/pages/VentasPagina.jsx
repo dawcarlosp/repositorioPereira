@@ -1,24 +1,33 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import TablaVentas from "../components/ventas/TablaVentas";
-import VentaCard from "../components/ventas/VentaCard";
-import ModalPago from "../components/ventas/ModalPago";
-import Paginacion from "../components/common/Paginacion";
-import { apiRequest } from "../services/api";
-import { toast } from "react-toastify";
-import ModalDetalleVenta from "../components/ventas/ModalDetalleVenta";
+import Header from "@components/Header";
+import Footer from "@components/Footer";
+import TablaVentas from "@components/ventas/TablaVentas";
+import VentaCard from "@components/ventas/VentaCard";
+import ModalPago from "@components/ventas/ModalPago";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
+import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
+import Paginacion from "@components/common/Paginacion";
+import useVentasManager from "@hooks/useVentasManager";
 
 export default function VentasPagina() {
-  const [ventas, setVentas] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [ventaSeleccionada, setVentaSeleccionada] = useState(null);
-  const [modalPagoAbierto, setModalPagoAbierto] = useState(false);
-  const [page, setPage] = useState(0);
-  const [size] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
-  const [ventaDetalle, setVentaDetalle] = useState(null);
-  const [detalleCargando, setDetalleCargando] = useState(false);
+  const {
+    ventas,
+    loading,
+    page,
+    totalPages,
+    setPage,
+    modalPago,
+    abrirPago,
+    confirmarPago,
+    cerrarModalPago,
+    modalConfirmacion,
+    setModalConfirmacion,
+    solicitarCancelacion,
+    verDetalleVenta,
+    ventaDetalle,
+    setVentaDetalle,
+    detalleCargando,
+  } = useVentasManager();
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
@@ -27,72 +36,6 @@ export default function VentasPagina() {
     window.addEventListener("resize", fn);
     return () => window.removeEventListener("resize", fn);
   }, []);
-
-  useEffect(() => {
-    fetchVentas(page, size);
-    // eslint-disable-next-line
-  }, [page, size]);
-
-  async function fetchVentas(p = page, s = size) {
-    setLoading(true);
-    try {
-      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, {
-        method: "GET",
-      });
-      setVentas(datos.content || []);
-      setTotalPages(datos.totalPages || 0);
-      setPage(datos.pageNumber || 0);
-    } catch {
-      toast.error("Error al cargar ventas");
-    }
-    setLoading(false);
-  }
-
-  async function onVerDetalle(venta) {
-    setDetalleCargando(true);
-    try {
-      const data = await apiRequest(`ventas/${venta.id}`, null, {
-        method: "GET",
-      });
-      setVentaDetalle(data);
-    } catch {
-      toast.error("No se pudo cargar el detalle de la venta");
-    }
-    setDetalleCargando(false);
-  }
-
-  async function onCancelarVenta(ventaId) {
-    if (!window.confirm("¿Seguro que quieres cancelar esta venta?")) return;
-    try {
-      await apiRequest(`ventas/${ventaId}/cancelar`, null, { method: "PATCH" });
-      toast.success("Venta cancelada");
-      fetchVentas();
-    } catch {
-      toast.error("No se pudo cancelar la venta");
-    }
-  }
-
-  function onCobrarResto(venta) {
-    setVentaSeleccionada(venta);
-    setModalPagoAbierto(true);
-  }
-
-  async function confirmarCobro(importe) {
-    setModalPagoAbierto(false);
-    if (!ventaSeleccionada) return;
-    try {
-      await apiRequest(
-        `ventas/${ventaSeleccionada.id}/pago`,
-        { monto: importe },
-        { method: "POST" }
-      );
-      toast.success("Pago registrado correctamente");
-      setVentaSeleccionada(null);
-      fetchVentas();
-    } catch {
-      toast.error("Error al registrar el pago");
-    }
-  }
 
   const maxWidth = "max-w-[1400px] mx-auto";
 
@@ -104,6 +47,7 @@ export default function VentasPagina() {
         <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">
           Ventas
         </h1>
+
         {loading ? (
           <div className="text-center text-gray-500 py-10">
             Cargando ventas...
@@ -111,12 +55,12 @@ export default function VentasPagina() {
         ) : (
           <>
             {!isMobile && (
-              <div>
+              <>
                 <TablaVentas
                   ventas={ventas}
-                  onVerDetalle={onVerDetalle}
-                  onCancelarVenta={(venta) => onCancelarVenta(venta.id)}
-                  onCobrarResto={onCobrarResto}
+                  onVerDetalle={verDetalleVenta}
+                  onCancelarVenta={(venta) => solicitarCancelacion(venta.id)}
+                  onCobrarResto={abrirPago}
                 />
                 {totalPages > 1 && (
                   <Paginacion
@@ -125,8 +69,9 @@ export default function VentasPagina() {
                     onPageChange={setPage}
                   />
                 )}
-              </div>
+              </>
             )}
+
             {isMobile && (
               <div className="flex flex-col gap-4 pb-20">
                 {ventas.length === 0 && (
@@ -138,9 +83,9 @@ export default function VentasPagina() {
                   <VentaCard
                     key={venta.id}
                     venta={venta}
-                    onDetalle={onVerDetalle}
-                    onCancelar={onCancelarVenta}
-                    onCobrarResto={onCobrarResto}
+                    onDetalle={verDetalleVenta}
+                    onCancelar={(venta) => solicitarCancelacion(venta.id)}
+                    onCobrarResto={abrirPago}
                   />
                 ))}
                 {totalPages > 1 && (
@@ -155,23 +100,34 @@ export default function VentasPagina() {
           </>
         )}
       </main>
-      {/* Footer SIEMPRE abajo */}
+
       <div className={`w-full ${maxWidth} mt-auto`}>
         <Footer />
       </div>
-      {/* Modal de Cobro */}
-      {modalPagoAbierto && ventaSeleccionada && (
+
+      {/* Modal Pago */}
+      {modalPago.visible && modalPago.venta && (
         <ModalPago
-          totalPendiente={ventaSeleccionada.saldo ?? ventaSeleccionada.total}
-          onConfirmar={confirmarCobro}
-          onCancelar={() => {
-            setModalPagoAbierto(false);
-            setVentaSeleccionada(null);
-          }}
+          totalPendiente={modalPago.totalPendiente}
+          onConfirmar={confirmarPago}
+          onCancelar={cerrarModalPago}
           confirmText="Cobrar"
         />
       )}
-      {/* Modal de Detalle */}
+
+      {/* Modal Confirmación */}
+      {modalConfirmacion.visible && (
+        <ModalConfirmacion
+          mensaje={modalConfirmacion.mensaje}
+          confirmText="Sí, cancelar"
+          onConfirmar={modalConfirmacion.onConfirmar}
+          onCancelar={() =>
+            setModalConfirmacion((m) => ({ ...m, visible: false }))
+          }
+        />
+      )}
+
+      {/* Modal Detalle */}
       {ventaDetalle && (
         <ModalDetalleVenta
           venta={ventaDetalle}

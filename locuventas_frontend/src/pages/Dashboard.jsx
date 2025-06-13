@@ -1,12 +1,13 @@
+// Dashboard.jsx actualizado para que el footer no sea empujado y aside funcione bien
 import React, { useEffect, useState, useRef } from "react";
-import Header from "../components/Header";
-import Aside from "../components/Aside";
-import Main from "../components/Main";
-import Footer from "../components/Footer";
-import { apiRequest } from "../services/api";
-import ModalPago from "../components/ventas/ModalPago";
+import Header from "@components/Header";
+import Aside from "@components/Aside";
+import Main from "@components/Main";
+import Footer from "@components/Footer";
+import { apiRequest } from "@services/api";
+import ModalPago from "@components/ventas/ModalPago";
 import { toast } from "react-toastify";
-import ModalDetalleVenta from "../components/ventas/ModalDetalleVenta";
+import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
 
 function Dashboard() {
   const headerRef = useRef();
@@ -55,66 +56,58 @@ function Dashboard() {
     });
   }
 
-async function guardarVentaSinCobrar() {
-  const lineas = carga.map((item) => {
-    const precio = Number(item.producto.precio);
-    const iva = Number(item.producto.iva || 0);
-    const precioConIva = precio * (1 + iva / 100);
-    return {
-      productoId: item.producto.id,
-      cantidad: item.cantidad,
-      subtotal: +(precioConIva * item.cantidad).toFixed(2),
-    };
-  });
-
-  try {
-    const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
-    setCarga([]);
-    setVentaFinalizada(venta);
-    toast.success("Venta guardada sin cobrar");
-  } catch (err) {
-    if (err?.error) {
-      toast.error(err.error); // <- aquí se muestra el mensaje exacto del backend
-    } else {
-      toast.error("Error al guardar la venta");
-    }
-  }
-}
-
-async function finalizarYCobrar() {
-  const lineas = carga.map((item) => {
-    const precio = Number(item.producto.precio);
-    const iva = Number(item.producto.iva || 0);
-    const precioConIva = precio * (1 + iva / 100);
-    return {
-      productoId: item.producto.id,
-      cantidad: item.cantidad,
-      subtotal: +(precioConIva * item.cantidad).toFixed(2),
-    };
-  });
-
-  try {
-    const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
-    setVentaEnCurso({
-      ...venta,
-      total: lineas.reduce((sum, l) => sum + l.subtotal, 0),
+  async function guardarVentaSinCobrar() {
+    const lineas = carga.map((item) => {
+      const precio = Number(item.producto.precio);
+      const iva = Number(item.producto.iva || 0);
+      const precioConIva = precio * (1 + iva / 100);
+      return {
+        productoId: item.producto.id,
+        cantidad: item.cantidad,
+        subtotal: +(precioConIva * item.cantidad).toFixed(2),
+      };
     });
-    setModalAbierto(true);
-  } catch (err) {
-    if (err?.error) {
-      toast.error(err.error); // <- Mensaje enviado desde el backend
-    } else {
-      toast.error("Error al crear la venta");
+
+    try {
+      const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
+      setCarga([]);
+      setVentaFinalizada(venta);
+      toast.success("Venta guardada sin cobrar");
+    } catch (err) {
+      toast.error(err?.error || "Error al guardar la venta");
     }
   }
-}
+
+  async function finalizarYCobrar() {
+    const lineas = carga.map((item) => {
+      const precio = Number(item.producto.precio);
+      const iva = Number(item.producto.iva || 0);
+      const precioConIva = precio * (1 + iva / 100);
+      return {
+        productoId: item.producto.id,
+        cantidad: item.cantidad,
+        subtotal: +(precioConIva * item.cantidad).toFixed(2),
+      };
+    });
+
+    try {
+      const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
+      setVentaEnCurso({
+        ...venta,
+        total: lineas.reduce((sum, l) => sum + l.subtotal, 0),
+      });
+      setModalAbierto(true);
+    } catch (err) {
+      toast.error(err?.error || "Error al crear la venta");
+    }
+  }
 
   async function confirmarPago(importe) {
     setModalAbierto(false);
     if (!ventaEnCurso) return;
 
     try {
-      const actualizada =  await apiRequest(
+      const actualizada = await apiRequest(
         `ventas/${ventaEnCurso.id}/pago`,
         { monto: importe },
         { method: "POST" }
@@ -143,37 +136,41 @@ async function finalizarYCobrar() {
       >
         <Header ref={headerRef} />
       </div>
+
       <div style={{ height: headerHeight || 100 }} />
-      <div className={`${maxWidth} flex flex-col md:flex-row flex-1 w-full`}>
+
+      <div className={`${maxWidth} flex flex-col md:flex-row flex-1 min-h-0 w-full`}>
         <main className="flex-1 flex flex-col overflow-auto min-h-0">
           <Main carga={carga} agregarProducto={agregarProducto} />
         </main>
+
         <aside
-          className="md:w-[370px] w-full max-w-full md:max-w-sm min-w-[0] flex flex-col"
+          className="w-full md:w-[370px] flex flex-col min-h-0"
           style={{
+            maxHeight: `calc(75vh - ${headerHeight}px)`,
+            position: "sticky",
+            top: headerHeight || 100,
+            background: "#fff",
             border: "2px solid orange",
             borderLeft: "none",
             borderTopLeftRadius: 0,
             borderTopRightRadius: 0,
-            position: "sticky",
-            top: headerHeight || 100,
-            zIndex: 20,
-            boxSizing: "border-box",
-            background: "#fff",
+            overflow: "hidden",
           }}
         >
           <Aside
             carga={carga}
             quitarProducto={quitarProducto}
-            headerHeight={headerHeight}
             onGuardarVenta={guardarVentaSinCobrar}
             onFinalizarYCobrar={finalizarYCobrar}
           />
         </aside>
       </div>
+
       <div className={`w-full ${maxWidth} mt-auto`}>
         <Footer />
       </div>
+
       {modalAbierto && ventaEnCurso && (
         <ModalPago
           totalPendiente={
@@ -186,6 +183,7 @@ async function finalizarYCobrar() {
           }}
         />
       )}
+
       {ventaFinalizada && (
         <ModalDetalleVenta
           venta={ventaFinalizada}

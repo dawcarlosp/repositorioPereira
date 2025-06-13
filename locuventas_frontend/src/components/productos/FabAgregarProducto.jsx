@@ -1,4 +1,4 @@
-// src/components/common/FabAgregarProducto.jsx
+// src/components/productos/FabAgregarProducto.jsx
 export default function FabAgregarProducto({ onClick, title = "Agregar producto" }) {
   return (
     <button

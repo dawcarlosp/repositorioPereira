@@ -179,7 +179,7 @@ public class AuthController {
     @PutMapping("/usuarios/{id}/asignar-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> asignarRolVendedor(@PathVariable Long id) {
-        // 1) Recuperamos el Authentication del contexto (el filtro JWT ya lo habrá llenado)
+        // Recuperamos el Authentication del contexto (el filtro JWT ya lo habrá llenado)
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             // Si no hay Authentication, devolvemos 401
@@ -187,7 +187,7 @@ public class AuthController {
                     .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 2) Extraemos el username/email del principal.
+        // Extraemos el username/email del principal.
         // Puede venir como String (username) o como UserDetails.
         String emailAdmin;
         Object principalObj = auth.getPrincipal();
@@ -201,20 +201,20 @@ public class AuthController {
                     .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 3) Buscamos en BD al administrador real
+        // Buscamos en BD al administrador real
         Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Administrador no encontrado."));
         }
 
-        // 4) Evitamos que el ADMIN se asigne el rol a sí mismo → 403 Forbidden
+        // Evitamos que el ADMIN se asigne el rol a sí mismo → 403 Forbidden
         if (currentUser.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "No puedes asignarte el rol a ti mismo."));
         }
 
-        // 5) Buscamos al usuario destino (el que recibimos en la URL)
+        // Buscamos al usuario destino (el que recibimos en la URL)
         Optional<Vendedor> optional = userRepository.findById(id);
         if (optional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -222,7 +222,7 @@ public class AuthController {
         }
         Vendedor user = optional.get();
 
-        // 6) Si ese usuario ya tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
+        // Si ese usuario ya tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
         boolean yaEsVendedor = user.getAuthorities().stream()
                 .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
         if (yaEsVendedor) {
@@ -230,7 +230,7 @@ public class AuthController {
                     .body(Map.of("error", "El usuario ya tiene el rol de VENDEDOR."));
         }
 
-        // 7) Asignamos el rol y guardamos
+        // Asignamos el rol y guardamos
         user.getAuthoritiesRaw().add(Roles.VENDEDOR);
         userRepository.save(user);
 
@@ -244,14 +244,14 @@ public class AuthController {
     @PutMapping("/usuarios/{id}/quitar-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> quitarRolVendedor(@PathVariable Long id) {
-        // 1) Obtenemos el Authentication del contexto
+        // Obtenemos el Authentication del contexto
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 2) Extraemos el email/username del principal
+        //  Extraemos el email/username del principal
         String emailAdmin;
         Object principalObj = auth.getPrincipal();
         if (principalObj instanceof UserDetails) {
@@ -263,20 +263,20 @@ public class AuthController {
                     .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 3) Buscamos en BD al administrador real
+        // Buscamos en BD al administrador real
         Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
         if (currentUser == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Administrador no encontrado."));
         }
 
-        // 4) Evitamos que el ADMIN se quite a sí mismo → 403 Forbidden
+        // Evitamos que el ADMIN se quite a sí mismo → 403 Forbidden
         if (currentUser.getId().equals(id)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body(Map.of("error", "No puedes quitarte el rol a ti mismo."));
         }
 
-        // 5) Buscamos al usuario destino
+        //  Buscamos al usuario destino
         Optional<Vendedor> optional = userRepository.findById(id);
         if (optional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -284,7 +284,7 @@ public class AuthController {
         }
         Vendedor user = optional.get();
 
-        // 6) Si ese usuario NO tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
+        //  Si ese usuario NO tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
         boolean tieneRolVendedor = user.getAuthorities().stream()
                 .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
         if (!tieneRolVendedor) {
@@ -292,7 +292,7 @@ public class AuthController {
                     .body(Map.of("error", "El usuario no tiene el rol de VENDEDOR."));
         }
 
-        // 7) Quitamos el rol y guardamos
+        //  Quitamos el rol y guardamos
         user.getAuthoritiesRaw().remove(Roles.VENDEDOR);
         userRepository.save(user);
 
@@ -307,16 +307,13 @@ public class AuthController {
     @GetMapping("/usuarios/sinrol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> listarUsuariosSoloUser() {
-        // 1) (Opcional) podrías obtener el Authentication y comprobar si es null,
-        //    pero @PreAuthorize ya garantiza que el que entra tiene ROLE_ADMIN.
-        //    Si quieres, puedes replicar la misma verificación que en los otros métodos:
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Debes iniciar sesión como admin."));
         }
 
-        // 2) Obtiene todos los usuarios de la BD y filtra los que NO tienen ROLE_VENDEDOR ni ROLE_ADMIN
+        // Obtiene todos los usuarios de la BD y filtra los que NO tienen ROLE_VENDEDOR ni ROLE_ADMIN
         List<Vendedor> usuariosSoloUser = userRepository.findAll().stream()
                 .filter(u ->
                         u.getAuthorities().stream()
@@ -324,9 +321,6 @@ public class AuthController {
                                         || gr.getAuthority().equals(Roles.ADMIN))
                 )
                 .collect(Collectors.toList());
-
-        // 3) Si quieres, podrías comprobar que la lista no venga vacía,
-        //    pero normalmente devolvemos 200 con lista vacía si no hay coincidencias
         return ResponseEntity.ok(usuariosSoloUser);
     }
     @DeleteMapping("/usuarios/{id}")
@@ -359,7 +353,7 @@ public class AuthController {
             @RequestPart(value = "foto", required = false) MultipartFile foto,
             BindingResult result
     ) {
-        // 1. Recuperar usuario autenticado por email (desde el token)
+        // Recuperar usuario autenticado por email (desde el token)
         String email = principal.getName();
         Vendedor usuario = userRepository.findByEmail(email).orElse(null);
         if (usuario == null) {
@@ -367,7 +361,7 @@ public class AuthController {
                     .body(Map.of("error", "Usuario no autenticado"));
         }
 
-        // 2. Validaciones de campos
+        //  Validaciones de campos
         if (result.hasErrors()) {
             Map<String, String> errors = new HashMap<>();
             result.getFieldErrors().forEach(fieldError ->
@@ -376,7 +370,7 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
         }
 
-        // 3. Comprobar duplicidad de email si lo cambió
+        // Comprobar duplicidad de email si lo cambió
         if (!usuario.getEmail().equals(userEditDTO.getEmail())) {
             boolean emailEnUso = userRepository.findByEmail(userEditDTO.getEmail()).isPresent();
             if (emailEnUso) {
@@ -386,15 +380,15 @@ public class AuthController {
             usuario.setEmail(userEditDTO.getEmail());
         }
 
-        // 4. Cambiar nombre si lo cambia
+        // Cambiar nombre si lo cambia
         usuario.setNombre(userEditDTO.getNombre());
 
-        // 5. Cambiar contraseña si la introduce
+        // Cambiar contraseña si la introduce
         if (userEditDTO.getPassword() != null && !userEditDTO.getPassword().isBlank()) {
             usuario.setPassword(passwordEncoder.encode(userEditDTO.getPassword()));
         }
 
-        // 6. Cambiar la foto si la subió (y borrar la anterior)
+        // Cambiar la foto si la subió (y borrar la anterior)
         if (foto != null && !foto.isEmpty()) {
             // Borrar la anterior si existe
             if (usuario.getFoto() != null && !usuario.getFoto().isBlank()) {
@@ -413,7 +407,7 @@ public class AuthController {
 
         userRepository.save(usuario);
 
-        // 7. Respuesta
+        // Respuesta
         Map<String, Object> response = new HashMap<>();
         response.put("nombre", usuario.getNombre());
         response.put("email", usuario.getEmail());

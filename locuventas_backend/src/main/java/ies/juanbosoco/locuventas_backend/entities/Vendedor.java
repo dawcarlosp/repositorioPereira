@@ -1,6 +1,8 @@
 package ies.juanbosoco.locuventas_backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.GenericGenerator;
@@ -35,9 +37,9 @@ public class Vendedor implements UserDetails {
     private Long id;
 
     @Column(unique = true)
+    @NotBlank(message = "El email es obligatorio")
     @jakarta.validation.constraints.Email(message = "El email no tiene el formato válido")
     private String email;
-
     private String password;
     private String foto;
     private String nombre;
@@ -50,17 +52,17 @@ public class Vendedor implements UserDetails {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // ✅ Relación con ventas
+    // Relación con ventas
     @OneToMany(mappedBy = "vendedor", cascade = CascadeType.ALL)
     private List<Venta> ventas = new ArrayList<>();
 
-    // ✅ Autoridades
+    // Autoridades
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_authorities", joinColumns = @JoinColumn(name = "user_id"))
     @Builder.Default
     private List<String> authorities = new ArrayList<>();
 
-    // ✅ Relación con países preferidos
+    //  Relación con países preferidos
     @ManyToMany
     @JoinTable(
             name = "vendedor_paises",

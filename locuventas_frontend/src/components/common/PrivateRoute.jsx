@@ -1,6 +1,6 @@
 // src/components/common/PrivateRoute.jsx
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../context/useAuth";
+import { useAuth } from "@context/useAuth";
 
 export default function PrivateRoute({ children }) {
   const { auth } = useAuth();
@@ -35,6 +35,6 @@ export default function PrivateRoute({ children }) {
     );
   }
 
-  // 3) Si sí tiene rol válido, renderiza el componente protegido
+  // 3) Si tiene rol válido, renderiza el componente protegido
   return children;
 }

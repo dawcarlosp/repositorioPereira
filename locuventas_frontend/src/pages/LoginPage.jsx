@@ -1,6 +1,6 @@
 // src/pages/LoginPage.jsx
-import FormVendedorLogin from "../components/vendedor/Form/FormVendedorLogin";
-import FooterLogin from "../components/FooterLogin";
+import FormVendedorLogin from "@components/vendedor/Form/FormVendedorLogin";
+import FooterLogin from "@components/FooterLogin";
 
 export default function LoginPage({ setIsOpen }) {
   return (

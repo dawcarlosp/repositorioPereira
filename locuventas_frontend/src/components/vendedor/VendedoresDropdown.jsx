@@ -1,6 +1,6 @@
 import React from "react";
-import BotonClaro from "./BotonClaro";
-import PendientesList from "./PendientesList";
+import BotonClaro from "@components/common/BotonClaro";
+import PendientesList from "@components/vendedor/PendientesList";
 import { toast } from "react-toastify";
 export default function VendedoresDropdown({
   isOpen,

@@ -1,15 +1,16 @@
 import { useState, useEffect, useRef } from "react";
 import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/useAuth";
+import { useAuth } from "@context/useAuth";
 
-import BotonClaro from "./common/BotonClaro";
-import Boton from "./common/Boton";
-import ModalConfirmacion from "./common/ModalConfirmacion";
-import AvatarUsuario from "./common/AvatarUsuario";
-import GestionDropdown from "./common/GestionDropdown";
-import VendedoresDropdown from "./common/VendedoresDropdown";
-
+import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@components/common/Boton";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
+import AvatarUsuario from "@components/vendedor/AvatarUsuario";
+import GestionDropdown from "@components/common/GestionDropdown";
+import VendedoresDropdown from "@components/vendedor/VendedoresDropdown";
+import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil"; // ¡IMPORTANTE!
+import { toast } from "react-toastify";
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showHeader, setShowHeader] = useState(false);
@@ -29,6 +30,9 @@ export default function Header() {
     confirmText: "",
     onConfirmar: null,
   });
+
+  // MODAL GLOBAL editar perfil (móvil y desktop)
+  const [modalEditar, setModalEditar] = useState(false);
 
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
@@ -131,7 +135,7 @@ export default function Header() {
             {esAdmin && (
               <>
                 <Boton
-                 onClick={() => {
+                  onClick={() => {
                     setIsGestionOpen((prev) => {
                       if (prev) {
                         setIsVendedoresOpen(false);
@@ -164,7 +168,7 @@ export default function Header() {
                 </GestionDropdown>
               </>
             )}
-            {/* AvatarUsuario para ambos (con edición para vendedor) */}
+            {/* AvatarUsuario para ambos */}
             <AvatarUsuario
               foto={foto}
               nombre={nombre}
@@ -177,12 +181,8 @@ export default function Header() {
                 setIsPendientesOpen(false);
                 setMenuOpen(false);
               }}
-              onEditarPerfil={
-                esVendedor && !esAdmin
-                  ? () => navigate("/perfil/editar")
-                  : undefined
-              }
-              esVendedor={esVendedor && !esAdmin} // útil para el menú del avatar
+              onEditarPerfil={() => setModalEditar(true)}
+              esVendedor={esVendedor && !esAdmin}
             />
           </nav>
         )}
@@ -237,14 +237,9 @@ export default function Header() {
                     </BotonClaro>
                     {isVendedoresMobileOpen && (
                       <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
-                        <Link
-                          to="/vendedores/gestion"
-                          onClick={() => setMenuOpen(false)}
-                          className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                         <button  className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
                           style={{ background: "none", border: "none" }}
-                        >
-                          Gestionar Vendedores
-                        </Link>
+                         onClick={() => toast.dark("Gestión de vendedores, llegará próximamente!")}>Gestionar vendedores</button>
                         <Link
                           to="/vendedores/pendientes"
                           onClick={() => setMenuOpen(false)}
@@ -256,9 +251,7 @@ export default function Header() {
                       </div>
                     )}
                   </div>
-                  <Link to="/categorias" onClick={() => setMenuOpen(false)}>
-                    <BotonClaro className="w-full">Categorías</BotonClaro>
-                  </Link>
+                    <BotonClaro className="w-full" onClick={() => toast.dark("Gestión de categorías, llegará próximamente!")}>Categorías</BotonClaro>
                   <Link to="/productos/gestion" onClick={() => setMenuOpen(false)}>
                     <BotonClaro className="w-full">Productos</BotonClaro>
                   </Link>
@@ -290,19 +283,25 @@ export default function Header() {
                   <p className="text-sm text-gray-400 mb-1">
                     Correo: <span className="text-white font-medium">{email}</span>
                   </p>
-                  {/* Botón para editar perfil (solo vendedor, no admin) */}
-                  {esVendedor && !esAdmin && (
-                    <BotonClaro
-                      className="w-full"
-                      onClick={() => {
-                        setMenuOpen(false);
-                        navigate("/perfil/editar");
-                      }}
-                    >
-                      Editar perfil
-                    </BotonClaro>
-                  )}
-                  <BotonClaro onClick={() => setMostrarConfirmacion(true)} className="w-full">
+                  {/* SIEMPRE disponible: editar perfil */}
+                  <BotonClaro
+                    className="w-full"
+                    onClick={() => {
+                      setModalEditar(true);
+                      setMenuOpen(false);
+                      setIsAvatarOpen(false);
+                    }}
+                  >
+                    Editar perfil
+                  </BotonClaro>
+                  {/* SIEMPRE disponible: perfil del desarrollador */}
+                  <Link to="/aboutme" onClick={() => setMenuOpen(false)}>
+                    <BotonClaro className="w-full">Perfil del desarrollador</BotonClaro>
+                  </Link>
+                  <BotonClaro
+                    onClick={() => setMostrarConfirmacion(true)}
+                    className="w-full"
+                  >
                     Cerrar sesión
                   </BotonClaro>
                 </div>
@@ -333,6 +332,13 @@ export default function Header() {
           onCancelar={() => setShowModal(false)}
         />
       )}
+
+      {/* MODAL EDITAR PERFIL (SIEMPRE DISPONIBLE PARA ADMIN Y VENDEDOR) */}
+      <FormEditarPerfil
+        isOpen={modalEditar}
+        setIsOpen={setModalEditar}
+        usuario={{ nombre, email, foto }}
+      />
     </header>
   );
 }

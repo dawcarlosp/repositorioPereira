@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import Header from '../components/Header'
-import GestionProductos from '../components/productos/GestionProductos'
+import Header from '@components/Header'
+import GestionProductos from '@components/productos/GestionProductos'
 
 function GestionProductosPagina() {
   // Para la altura dinámica del header

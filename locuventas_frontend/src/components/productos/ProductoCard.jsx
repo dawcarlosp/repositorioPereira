@@ -1,5 +1,5 @@
-import Boton from "../common/Boton";
-import BotonClaro from "../common/BotonClaro";
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
 
 export default function ProductoCard({
   producto,
@@ -36,7 +36,7 @@ export default function ProductoCard({
       <div className="flex justify-center items-center my-2 min-h-[96px] h-[96px]">
         {producto.foto ? (
           <img
-            src={`http://localhost:8080/imagenes/productos/${producto.foto}`}
+            src={`${import.meta.env.VITE_API_URL}/imagenes/${producto.foto}`}
             alt={producto.nombre}
             className="h-24 w-auto rounded-lg shadow-md object-contain bg-[#fafafa]"
             style={{ maxWidth: "90%" }}

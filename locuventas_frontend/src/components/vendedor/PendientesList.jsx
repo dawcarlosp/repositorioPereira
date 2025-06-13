@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { apiRequest } from "../../services/api";
-import defaultAvatar from "../../assets/default-avatar.png";
-import BotonClaro from "./BotonClaro";
-import Boton from "./Boton";
-import { useAuth } from "../../context/useAuth";
+import { apiRequest } from "@services/api";
+import defaultAvatar from "@/assets/default-avatar.png";
+import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@components/common/Boton";
+import { useAuth } from "@context/useAuth";
 import { toast } from "react-toastify";
 
 import { formatDistanceToNow } from "date-fns";
@@ -23,6 +23,8 @@ export default function PendientesList({ onClose, onConfirmacion }) {
           null,
           { method: "GET" }
         );
+        // Ordenar por fecha de creación DESCENDENTE (más reciente primero)
+      data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         setPendientes(data);
       } catch (err) {
         setError(err);

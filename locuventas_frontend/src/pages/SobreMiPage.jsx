@@ -1,7 +1,6 @@
 // src/pages/SobreMiPage.jsx
-import FormVendedorLogin from "../components/vendedor/Form/FormVendedorLogin";
-import FooterLogin from "../components/FooterLogin";
-import SobreMi from "../components/SobreMi";
+import FooterLogin from "@/components/FooterLogin";
+import SobreMi from "@/components/SobreMi";
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#18181b]">

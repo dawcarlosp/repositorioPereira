@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import Boton from "./Boton";         // Ajusta el path según tu estructura
-import BotonClaro from "./BotonClaro"; // Ajusta el path según tu estructura
+import Boton from "@components/common/Boton";        
+import BotonClaro from "@components/common/BotonClaro"; 
 
 export default function ModalConfirmacion({
   mensaje,

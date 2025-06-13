@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
-import TablaVentas from "../components/ventas/TablaVentas";
-import VentaCard from "../components/ventas/VentaCard";
-import ModalPago from "../components/ventas/ModalPago";
-import ModalDetalleVenta from "../components/ventas/ModalDetalleVenta"; // <--- IMPORTANTE
-import Paginacion from "../components/common/Paginacion";
-import { apiRequest } from "../services/api";
+import Header from "@components/Header";
+import Footer from "@components/Footer";
+import TablaVentas from "@components/ventas/TablaVentas";
+import VentaCard from "@components/ventas/VentaCard";
+import ModalPago from "@components/ventas/ModalPago";
+import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta"; // <--- IMPORTANTE
+import Paginacion from "@components/common/Paginacion";
+import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 
 export default function VentasPendientesPagina() {

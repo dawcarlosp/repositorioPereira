@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import { apiRequest } from "../../services/api";
-import ModalConfirmacion from "../common/ModalConfirmacion";
-import Boton from "../common/Boton";
-import ProductoCard from "./ProductoCard";
-import TablaProductos from "./TablaProductos";
-import ModalProductoForm from "./ModalProductoForm";
-import FabAgregarProducto from "../productos/FabAgregarProducto";
-import Paginacion from "../common/Paginacion";
+import { apiRequest } from "@/services/api";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
+import Boton from "@components/common/Boton";
+import ProductoCard from "@components/productos/ProductoCard";
+import TablaProductos from "@components/productos/TablaProductos";
+import ModalProductoForm from "@components/productos/ModalProductoForm";
+import FabAgregarProducto from "@components/productos/FabAgregarProducto";
+import Paginacion from "@components/common/Paginacion";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -103,7 +103,11 @@ export default function GestionProductos() {
       .map((c) => c.id);
     setCategoriaIds(selectedIds);
     setFoto(null);
-    setFotoUrlEdicion(prod.foto ? `${API_URL}/imagenes/productos/${prod.foto}` : null);
+    const rutaFoto = prod.foto?.includes("/")
+      ? prod.foto
+      : `productos/${prod.foto}`;
+    setFotoUrlEdicion(prod.foto ? `${API_URL}/imagenes/${rutaFoto}` : null);
+
     setShowForm(true);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
@@ -115,33 +119,32 @@ export default function GestionProductos() {
     setFotoUrlEdicion(null);
     if (fileInputRef.current) fileInputRef.current.value = "";
   }
-const onEliminar = (id) => {
-  setModal({
-    visible: true,
-    mensaje: "¿Seguro que quieres eliminar este producto?",
-    confirmText: "Eliminar",
-    onConfirmar: async () => {
-      setModal((m) => ({ ...m, visible: false }));
-      try {
-        await apiRequest(`productos/${id}`, null, { method: "DELETE" });
-        toast.success("Producto eliminado correctamente.");
-        fetchData();
-      } catch (error) {
-        if (error.razon === "EN_VENTA") {
-          toast.warn(
-            "No puedes eliminar este producto porque ya ha sido vendido. Consulta las ventas asociadas o marca el producto como inactivo."
-          );
-        } else if (error.error) {
-          toast.error(error.error);
-        } else {
-          toast.error("No se pudo eliminar el producto.");
+  const onEliminar = (id) => {
+    setModal({
+      visible: true,
+      mensaje: "¿Seguro que quieres eliminar este producto?",
+      confirmText: "Eliminar",
+      onConfirmar: async () => {
+        setModal((m) => ({ ...m, visible: false }));
+        try {
+          await apiRequest(`productos/${id}`, null, { method: "DELETE" });
+          toast.success("Producto eliminado correctamente.");
+          fetchData();
+        } catch (error) {
+          if (error.razon === "EN_VENTA") {
+            toast.warn(
+              "No puedes eliminar este producto porque ya ha sido vendido. Consulta las ventas asociadas o marca el producto como inactivo."
+            );
+          } else if (error.error) {
+            toast.error(error.error);
+          } else {
+            toast.error("No se pudo eliminar el producto.");
+          }
         }
-      }
-    },
-    onCancelarCustom: () => setModal((m) => ({ ...m, visible: false })),
-  });
-};
-
+      },
+      onCancelarCustom: () => setModal((m) => ({ ...m, visible: false })),
+    });
+  };
 
   async function guardarProducto(formData, id, method) {
     let endpoint = "productos";

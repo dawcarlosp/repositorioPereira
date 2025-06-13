@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import Boton from "./common/Boton";
-import BotonClaro from "./common/BotonClaro";
+import Boton from "@components/common/Boton";
+import BotonClaro from "@components/common/BotonClaro";
 
 export default function Footer() {
   const navigate = useNavigate();

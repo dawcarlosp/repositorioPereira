@@ -190,6 +190,7 @@ public class ProductoController {
         if (productoOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Producto no encontrado"));
         }
+
         Optional<Pais> paisOptional = paisRepository.findById(dto.getPaisId());
         if (paisOptional.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("paisId", "País no encontrado"));
@@ -223,6 +224,11 @@ public class ProductoController {
             producto.getCategorias().addAll(nuevasRelaciones);
 
             if (foto != null && !foto.isEmpty()) {
+                // 🧹 Eliminar la imagen anterior si ya existía
+                if (producto.getFoto() != null && !producto.getFoto().isBlank()) {
+                    fotoProductoService.eliminarImagen(producto.getFoto(), "productos");
+                }
+
                 fotoProductoService.validarArchivo(foto);
                 String fotoNombre = fotoProductoService.generarNombreUnico(foto);
                 fotoProductoService.guardarImagen(foto, fotoNombre, "productos");
@@ -239,6 +245,7 @@ public class ProductoController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage(), "exception", e.toString()));
         }
     }
+
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
