@@ -301,6 +301,15 @@ export default function GestionProductos() {
                   onEliminar={onEliminar}
                 />
               ))}
+               {totalPages > 1 && (
+      <div className="mt-4">
+        <Paginacion
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
+      </div>
+    )}
             </div>
           )}
 
