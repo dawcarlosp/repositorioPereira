@@ -21,7 +21,7 @@ services:
       retries: 10
 
   backend:
-    image: ${DOCKER_HUB_USER}/locuventas-backend:4.7
+    image: ${DOCKER_HUB_USER}/locuventas-backend:4.8
     container_name: locuventas_backend
     environment:
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
