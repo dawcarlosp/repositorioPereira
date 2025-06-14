@@ -41,12 +41,13 @@ services:
     volumes:
       - ./uploads/productos:/app/uploads/productos
       - ./uploads/vendedores:/app/uploads/vendedores
+      - ./uploads/productosprecargados:/app/uploads/productosprecargados
     networks:
       - locuventas_network
     restart: unless-stopped
 
   frontend:
-    image: ${DOCKER_HUB_USER}/locuventas-frontend:4.1
+    image: ${DOCKER_HUB_USER}/locuventas-frontend:4.4
     container_name: locuventas_frontend
     ports:
       - "${FRONTEND_PORT}:80"

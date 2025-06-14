@@ -10,10 +10,12 @@ COPY . .
   
 # Build argument (Vite env variable)  
 ARG VITE_API_URL  
+
+# Pass it to Vite via environment variable  
 ENV VITE_API_URL=$VITE_API_URL  
-  
-# Build app (Vite will pick up VITE_API_URL from environment)  
-RUN npm run build  
+
+#  Important: pass it inline to the build step explicitly  
+RUN VITE_API_URL=$VITE_API_URL npm run build  
   
 # Production stage  
 FROM nginx:alpine  
