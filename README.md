@@ -40,7 +40,7 @@ cp .env.example .env
 
 ---
 
-> Nota, tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
+> Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
 > Para funcionamiento inmedianto, se recomienda:
 
 ```bash
