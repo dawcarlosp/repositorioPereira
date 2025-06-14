@@ -88,6 +88,7 @@ docker-compose up -d
 
 ```bash
 docker compose down
+```
 
 - Para eliminar también volúmenes (base de datos incluida):
 
