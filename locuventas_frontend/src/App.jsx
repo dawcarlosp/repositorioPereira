@@ -7,7 +7,7 @@ import GestionProductosPagina from "@pages/GestionProductosPagina";
 import Dashboard from "@pages/Dashboard";
 import FormVendedorRegister from "@components/vendedor/Form/FormVendedorRegister";
 import PrivateRoute from "@components/common/PrivateRoute";
-import VentasPagina from "@pages/VentasPAgina";
+import VentasPagina from "@pages/VentasPagina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "@context/AuthProvider";

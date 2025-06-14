@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: locuventas_db
+    environment:
+      MYSQL_ROOT_PASSWORD: toor
+      MYSQL_DATABASE: locuventas
+      MYSQL_USER: locuventas_user
+      MYSQL_PASSWORD: locuventas_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - locuventas_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build:
+      context: ./locuventas_backend
+      dockerfile: Dockerfile
+    container_name: locuventas_backend
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: locuventas
+      DB_USER: root
+      DB_PASS: toor
+      APP_ADMIN_EMAIL: admin@locutorio.com
+      APP_ADMIN_PASSWORD: Admin.1234
+      APP_ADMIN_NOMBRE: Admin Docker
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./uploads/productos:/app/uploads/productos
+      - ./uploads/imagesVendedores:/app/uploads/imagesVendedores
+    networks:
+      - locuventas_network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./locuventas_frontend
+      dockerfile: Dockerfile
+      args:
+        VITE_API_URL: http://localhost:8080
+    container_name: locuventas_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - locuventas_network
+    restart: unless-stopped
+
+volumes:
+  mysql_data:
+
+networks:
+  locuventas_network:
+    driver: bridge
