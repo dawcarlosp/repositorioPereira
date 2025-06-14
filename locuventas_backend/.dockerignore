@@ -1,0 +1,26 @@
+# Maven build artifacts
+target/
+.mvn/
+mvnw.cmd
+
+# IDEs y editores
+*.iml
+.idea/
+.vscode/
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Control de versiones
+.git/
+.gitignore
+
+# Archivos de entorno y configuración local
+.env
+.env.*
+*.log
+
+# Node (si tienes el frontend dentro del mismo proyecto)
+node_modules/
+dist/

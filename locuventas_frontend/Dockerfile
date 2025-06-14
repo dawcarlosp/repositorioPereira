@@ -1,28 +1,26 @@
+# Build stage  
 FROM node:18-alpine as build  
   
 WORKDIR /app  
   
-# Copy package files  
 COPY package*.json ./  
-  
-# Install dependencies  
 RUN npm ci  
   
-# Copy source code  
 COPY . .  
   
-# Accept build argument for API URL  
+# Build argument (Vite env variable)  
 ARG VITE_API_URL  
 ENV VITE_API_URL=$VITE_API_URL  
   
-# Build the app  
+# Build app (Vite will pick up VITE_API_URL from environment)  
 RUN npm run build  
   
 # Production stage  
 FROM nginx:alpine  
+  
 COPY --from=build /app/dist /usr/share/nginx/html  
   
-# Configure nginx for React Router  
+# Configure Nginx for React Router  
 RUN echo 'server { \  
     listen 80; \  
     location / { \  

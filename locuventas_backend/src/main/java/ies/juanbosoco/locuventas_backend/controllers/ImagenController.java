@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 
+import org.springframework.beans.factory.annotation.Value; // Add this import
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -11,12 +12,17 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/imagenes")
 public class ImagenController {
 
-    private static final String BASE_UPLOAD_DIR = "uploads";
+    private static final Logger logger = LoggerFactory.getLogger(ImagenController.class);
+
+    @Value("${spring.web.resources.static-locations}")
+    private String baseUploadDirProperty;
 
     @GetMapping("/{tipo}/{filename:.+}")
     public ResponseEntity<Resource> serveImage(
@@ -30,8 +36,17 @@ public class ImagenController {
                         .body(null);
             }
 
-            Path filePath = Paths.get(BASE_UPLOAD_DIR, tipo).resolve(filename).normalize();
+            // Strip "file:" prefix if present from the injected property
+            String actualBaseDir = baseUploadDirProperty.replace("file:", "");
+            Path filePath = Paths.get(actualBaseDir, tipo).resolve(filename).normalize();
             Resource resource = new UrlResource(filePath.toUri());
+
+            // Add logging to debug path resolution
+            logger.info("Attempting to serve image from base: " + actualBaseDir + ", type: " + tipo + ", filename: " + filename);
+            logger.info("Constructed filePath: " + filePath.toAbsolutePath().toString());
+            logger.info("Resource exists: " + resource.exists());
+            logger.info("Resource is readable: " + resource.isReadable());
+
 
             if (!resource.exists() || !resource.isReadable()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -47,6 +62,7 @@ public class ImagenController {
                     .body(resource);
 
         } catch (IOException e) {
+            logger.error("Error serving image: " + e.getMessage(), e); // Log the error
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
