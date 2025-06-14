@@ -80,7 +80,7 @@ docker-compose up -d
 
 --- 
 
-> Recuerda, que si registraas una nueva cuenta, tienes que aprobarla a través del administrador
+> Recuerda, que si registras una nueva cuenta, tienes que aprobarla a través del administrador
 
 ###  Detener y limpiar
 
