@@ -13,16 +13,7 @@ import java.util.List;
 
 @Repository
 public interface VentaRepository extends JpaRepository<Venta, Long> {
-    @Query("SELECT v FROM Venta v WHERE " +
-            "(:estado IS NULL OR v.estadoPago = :estado) AND " +
-            "(:cancelada IS NULL OR v.cancelada = :cancelada)")
-    Page<Venta> findByEstadoAndCancelada(@Param("estado") Venta.EstadoPago estado,
-                                         @Param("cancelada") Boolean cancelada,
-                                         Pageable pageable);
-    List<Venta> findByVendedor_Id(Long vendedorId);
-    // En VentaRepository
     Page<Venta> findByCanceladaFalseAndEstadoPagoIn(List<Venta.EstadoPago> estados, Pageable pageable);
-    Page<Venta> findByVendedor_IdAndCanceladaFalseAndEstadoPagoIn(Long vendedorId, List<Venta.EstadoPago> estados, Pageable pageable);
     //Sobrecarga, en post de intentar soportar paginación
     Page<Venta> findByVendedor_Id(Long vendedorId, Pageable pageable);
     Page<Venta> findByCanceladaFalseAndEstadoPagoInAndVendedor_Id(List<Venta.EstadoPago> estados, Long vendedorId, Pageable pageable);

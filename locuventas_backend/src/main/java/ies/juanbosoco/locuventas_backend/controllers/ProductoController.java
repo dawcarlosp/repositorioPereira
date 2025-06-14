@@ -1,5 +1,4 @@
 package ies.juanbosoco.locuventas_backend.controllers;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
@@ -270,27 +269,5 @@ public class ProductoController {
         return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado"));
     }
 
-    @PreAuthorize("hasRole('ADMIN', 'VENDEDOR')")
-    @GetMapping("/categoria/{id}")
-    public ResponseEntity<List<ProductoResponseDTO>> getProductosPorCategoria(@PathVariable Long id) {
-        List<Producto> productos = productoRepository.findByCategorias_Categoria_Id(id);
-        List<ProductoResponseDTO> dtos = productos.stream().map(this::toDto).toList();
-        return ResponseEntity.ok(dtos);
-    }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-    @GetMapping("/pais/{id}")
-    public ResponseEntity<List<ProductoResponseDTO>> productosPorPais(@PathVariable Long id) {
-        List<Producto> productos = productoRepository.findByPais_Id(id);
-        List<ProductoResponseDTO> dtos = productos.stream().map(this::toDto).toList();
-        return ResponseEntity.ok(dtos);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-    @GetMapping("/buscar")
-    public ResponseEntity<List<ProductoResponseDTO>> buscarPorNombre(@RequestParam String nombre) {
-        List<Producto> resultados = productoRepository.findByNombreContainingIgnoreCase(nombre);
-        List<ProductoResponseDTO> dtos = resultados.stream().map(this::toDto).toList();
-        return ResponseEntity.ok(dtos);
-    }
 }

@@ -1,5 +1,4 @@
 package ies.juanbosoco.locuventas_backend.config;
-import ch.qos.logback.core.util.StringUtil;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -58,35 +57,5 @@ public class JwtTokenProvider {
                 .build();
         Claims claims = parser.parseClaimsJws(token).getBody();
         return claims.get("username").toString();
-    }
-    //No usado
-    public Long getIdFromToken(String token) {
-        try {
-            // Verificación de la firma con la clave secreta.
-            JwtParser parser = Jwts.parser()
-                    .setSigningKey(SECRET_KEY.getBytes())  // Usar la clave directamente
-                    .build();
-
-            // Extraer los claims del token
-            Claims claims = parser.parseClaimsJws(token).getBody();
-
-            // Obtener el campo 'sub' (ID del usuario)
-            Object sub = claims.get("sub");
-
-            // Convertir el campo 'sub' a Long de manera segura
-            if (sub instanceof String) {
-                return Long.parseLong((String) sub);
-            } else if (sub instanceof Number) {
-                return ((Number) sub).longValue();
-            } else {
-                throw new IllegalArgumentException("El campo 'sub' no es válido");
-            }
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException("El token ha expirado: " + e.getMessage(), e);
-        } catch (SignatureException e) {
-            throw new RuntimeException("Firma del token no válida: " + e.getMessage(), e);
-        } catch (JwtException | IllegalArgumentException e) {
-            throw new RuntimeException("Token inválido: " + e.getMessage(), e);
-        }
     }
 }

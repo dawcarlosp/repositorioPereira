@@ -42,12 +42,14 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
     e.preventDefault();
       console.log("Archivo foto:", foto.name, foto.type, foto.size);
     const validationErrors = validateUser({ nombre, email, password, foto }, { validarFoto: false });
+
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length > 0) {
       toast.error("Revisa los campos marcados.");
       return;
     }
+
 
     setLoading(true);
     const formData = new FormData();

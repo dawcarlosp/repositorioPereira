@@ -33,6 +33,7 @@ public class VentaController {
     private VentaTicketService ventaTicketService;
 
     @GetMapping("/pendientes")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<PageDTO<VentaResponseDTO>> getVentasPendientes(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
@@ -91,6 +92,7 @@ public class VentaController {
 
     @Transactional
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> crearVenta(@RequestBody VentaRequestDTO ventaRequest, Authentication authentication) {
         String email = authentication.getName();
         Optional<Vendedor> vendedorOpt = vendedorRepository.findByEmail(email);
@@ -151,6 +153,7 @@ public class VentaController {
     }
 
     @PostMapping("/{id}/pago")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> registrarPago(@PathVariable Long id, @RequestBody PagoRequestDTO pagoRequest) {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
         if (ventaOpt.isEmpty()) {
@@ -179,6 +182,7 @@ public class VentaController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<PageDTO<VentaResponseDTO>> getVentas(
             Authentication authentication,
             @RequestParam(defaultValue = "0") int page,
@@ -203,6 +207,7 @@ public class VentaController {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
 
         if (ventaOpt.isPresent()) {
+            //para devolver el detalle más organizado
             return ResponseEntity.ok(toDto(ventaOpt.get()));
         } else {
             Map<String, String> error = new HashMap<>();
@@ -227,6 +232,7 @@ public class VentaController {
     }
 
     @GetMapping("/{id}/ticket-pdf")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> descargarTicketPdf(@PathVariable Long id) {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
         if (ventaOpt.isEmpty()) {
