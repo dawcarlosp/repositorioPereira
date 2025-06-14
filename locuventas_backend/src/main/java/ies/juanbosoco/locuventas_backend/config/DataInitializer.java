@@ -66,7 +66,7 @@ public class DataInitializer implements CommandLineRunner {
                     .password(passwordEncoder.encode(adminPassword))
                     .nombre(adminNombre)
                     .authorities(List.of(Roles.ADMIN, Roles.USER, Roles.VENDEDOR))
-                    .foto("admin_docker.jpg")
+                    .foto(null)
                     .build();
             vendedorRepository.save(adminDocker);
             logger.info("Administrador creado desde variables de entorno: {}", adminEmail);
