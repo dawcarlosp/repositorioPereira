@@ -29,12 +29,14 @@ RUN mkdir -p /app/uploads/productos /app/uploads/vendedores /app/uploads/product
 COPY --from=builder /app/target/locuventas_backend-0.0.1-SNAPSHOT.jar app.jar
 COPY --from=builder /app/uploads/productosprecargados /app/uploads/productosprecargados
 
-# Copiar entrypoint
+# Copiar entrypoint y dar permisos
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Crear usuario no-root
-RUN addgroup -S spring && adduser -S spring -G spring
+# Crear usuario no-root y asignar permisos a carpetas internas
+RUN addgroup -S spring && adduser -S spring -G spring && \
+    chown -R spring:spring /app
+
 USER spring
 
 EXPOSE 8080
