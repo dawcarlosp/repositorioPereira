@@ -21,28 +21,34 @@ Antes de empezar, asegúrate de tener instalado:
 
 ## 📁 Paso 1. Clonar el repositorio
 
+---
+
 ```bash
 git clone https://github.com/dawcarlosp/repositorioPereira.git
 cd repositorioPereira
+```
 
 ---
 
 ## 📁 Paso 2. Configurar el entorno
 
+---
+
 ```bash
 cp .env.example .env
+```
 
 ---
 
-## Nota, tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
-## Para funcionamiento inmedianto, se recomienda:
+> Nota, tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
+> Para funcionamiento inmedianto, se recomienda:
 
 ```bash
 APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
-
+```
 ---
 
-## La foto ya te la pones una vez estes dentro de la app😉​
+> La foto ya te la pones una vez estes dentro de la app😉​
 
 ---
 
@@ -54,10 +60,10 @@ docker compose up -d
 
 # O con Docker Compose clásico
 docker-compose up -d
-
+```
 ---
 
-## Esto hara lo siguiente
+### Esto hará lo siguiente
 
 - 🛠️ Crear una red interna locuventas_network
 - 🐬 Iniciar MySQL y esperar que esté saludable
@@ -67,14 +73,14 @@ docker-compose up -d
 
 --- 
 
-## Verificar
+### Verificar
 
 - Accede al frontend: http://localhost:3000
 - Revisa el backend (si lo necesitas): http://localhost:8080
 
 --- 
 
-##  Detener y limpiar
+###  Detener y limpiar
 
 - Para los servicios:
 
@@ -85,8 +91,8 @@ docker compose down
 
 ```bash
 docker compose down -v
-
+```
 ---
 
-##Proyecto educativo para DAW – IES Juan Bosco
+#####Proyecto educativo para DAW – IES Juan Bosco
 
