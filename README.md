@@ -80,6 +80,8 @@ docker-compose up -d
 
 --- 
 
+> Recuerda, que si registraas una nueva cuenta, tienes que aprobarla a través del administrador
+
 ###  Detener y limpiar
 
 - Para los servicios:
@@ -94,5 +96,5 @@ docker compose down -v
 ```
 ---
 
-#####Proyecto educativo para DAW – IES Juan Bosco
+##### Proyecto educativo para DAW – IES Juan Bosco
 
