@@ -6,9 +6,6 @@
 
 ¡Bienvenido/a! Aquí encontrarás los pasos necesarios para levantar **LocuVentas** (backend + frontend + base de datos) usando `docker-compose`.
 
-Este proyecto está alojado en:  
-🔗 [`repositorioPereira`](https://github.com/dawcarlosp/repositorioPereira)
-
 ---
 
 ## 🧱 Requisitos previos
