@@ -29,16 +29,17 @@ RUN mkdir -p /app/uploads/productos /app/uploads/vendedores /app/uploads/product
 COPY --from=builder /app/target/locuventas_backend-0.0.1-SNAPSHOT.jar app.jar
 COPY --from=builder /app/uploads/productosprecargados /app/uploads/productosprecargados
 
-# Crear usuario no-root y dar permisos
-RUN addgroup -S spring && adduser -S spring -G spring && \
-    chown -R spring:spring /app
+# Copiar entrypoint
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
+# Crear usuario no-root
+RUN addgroup -S spring && adduser -S spring -G spring
 USER spring
 
 EXPOSE 8080
 
-# Verificación periódica del contenedor
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
   CMD wget --no-verbose --tries=1 --spider http://localhost:8080/actuator/health || exit 1
 
-CMD ["java", "-jar", "app.jar"]
+ENTRYPOINT ["/app/entrypoint.sh"]
