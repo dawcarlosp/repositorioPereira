@@ -25,7 +25,7 @@ Antes de empezar, asegúrate de tener instalado:
 
 ---
 
-## 📁 Paso 1. Clonar el repositorio
+## 📁 Paso 1. Clonar el repositorio y acceder a el
 
 ---
 
