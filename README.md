@@ -29,6 +29,9 @@ Antes de empezar, asegúrate de tener instalado:
 
 ```bash
 git clone https://github.com/dawcarlosp/repositorioPereira.git
+```
+
+```bash
 cd repositorioPereira
 ```
 
@@ -44,8 +47,11 @@ cp .env.example .env
 
 ---
 
-> Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
-> Para funcionamiento inmediato y evitar conclictos, se recomienda:
+> Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado) <
+
+---
+
+> Para funcionamiento inmediato y evitar conclictos, se recomienda: <
 
 ```bash
 APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
@@ -58,11 +64,12 @@ APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
 
 ## Paso 3. Levantar el proyecto
 
-```bash
 # Con Docker Compose V2 (Docker moderno)
+```bash
 docker compose --env-file .env up -d
-
+```
 # O con Docker Compose clásico
+```bash
 docker-compose --env-file .env up -d
 ```
 ---
