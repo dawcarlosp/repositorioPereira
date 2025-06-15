@@ -66,9 +66,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        //config.setAllowedOriginPatterns(List.of("*")); // Permitir cualquier origen
-        config.setAllowedOriginPatterns(List.of("*"));
-        //config.setAllowedOrigins(List.of("*")); // Permitir el frontend
+        config.setAllowedOriginPatterns(List.of("*"));//Para poder probar con equipos en la misma red, sino limitar al cliente deseado
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Permitir métodos HTTP
         config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Permitir headers necesarios
         config.setExposedHeaders(List.of("Content-Disposition"));//Para mandar bien el nombre del ticket
