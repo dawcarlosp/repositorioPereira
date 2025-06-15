@@ -60,7 +60,7 @@ APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
 
 ```bash
 # Con Docker Compose V2 (Docker moderno)
-docker-compose --env-file .env up -d
+docker compose --env-file .env up -d
 
 # O con Docker Compose clásico
 docker-compose --env-file .env up -d
