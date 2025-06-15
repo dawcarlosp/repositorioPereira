@@ -26,8 +26,7 @@ public class SwaggerConfig {
                                 .name("LocuVentas Team")
                                 .email("support@locuventas.com")))
                 .servers(List.of(
-                        new Server().url("http://34.175.85.23:8080").description("Desarrollo"),
-                        new Server().url("https://api.locuventas.com").description("Producción")))
+                        new Server().url("http://localhost:8080").description("Desarrollo")))
                 .components(new Components()
                         .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
