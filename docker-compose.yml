@@ -5,36 +5,36 @@ services:
     image: mysql:8.0
     container_name: locuventas_db
     environment:
-      MYSQL_ROOT_PASSWORD: your_root_password
-      MYSQL_DATABASE: locuventas
-      MYSQL_USER: locuventas_user
-      MYSQL_PASSWORD: secure_user_password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
-      - locuventas_network
+      - locuventas_net
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
 
   backend:
-    image: dawcarlosp/locuventas-backend:1.0
+    image: ${DOCKER_HUB_USER}/locuventas-backend:1.0
     container_name: locuventas_backend
     environment:
-      SPRING_PROFILES_ACTIVE: prod
-      DB_HOST: db
-      DB_PORT: 3306
-      DB_NAME: locuventas
-      DB_USER: locuventas_user
-      DB_PASS: secure_user_password
-      APP_ADMIN_EMAIL: admin@empresa.com
-      APP_ADMIN_PASSWORD: AdminSeguro1234
-      APP_ADMIN_NOMBRE: Administrador Principal
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
+      APP_ADMIN_EMAIL: ${APP_ADMIN_EMAIL}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD}
+      APP_ADMIN_NOMBRE: ${APP_ADMIN_NOMBRE}
     ports:
-      - "8080:8080"
+      - "${BACKEND_PORT}:8080"
     depends_on:
       db:
         condition: service_healthy
@@ -43,23 +43,21 @@ services:
       - ./uploads/vendedores:/app/uploads/vendedores
       - ./uploads/productosprecargados:/app/uploads/productosprecargados
     networks:
-      - locuventas_network
-    restart: unless-stopped
+      - locuventas_net
 
   frontend:
-    image: dawcarlosp/locuventas-frontend:1.0
+    image: ${DOCKER_HUB_USER}/locuventas-frontend:1.0
     container_name: locuventas_frontend
     ports:
-      - "3000:80"
+      - "${FRONTEND_PORT}:80"
     depends_on:
       - backend
     networks:
-      - locuventas_network
-    restart: unless-stopped
+      - locuventas_net
 
 volumes:
   mysql_data:
 
 networks:
-  locuventas_network:
+  locuventas_net:
     driver: bridge

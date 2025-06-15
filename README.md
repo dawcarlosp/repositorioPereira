@@ -45,14 +45,14 @@ cp .env.example .env
 ---
 
 > Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado)
-> Para funcionamiento inmedianto, se recomienda:
+> Para funcionamiento inmediato y evitar conclictos, se recomienda:
 
 ```bash
 APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
 ```
 ---
 
-> La foto ya te la pones una vez estes dentro de la app😉​
+> La foto ya te la pones una vez estés dentro de la app😉​
 
 ---
 
@@ -71,8 +71,8 @@ docker-compose --env-file .env up -d
 
 - 🛠️ Crear una red interna locuventas_network
 - 🐬 Iniciar MySQL y esperar que esté saludable
-- 🔧 Levantar el backend desde la imagen ${DOCKER_HUB_USER}/locuventas-backend
-- 🎨 Levantar el frontend desde ${DOCKER_HUB_USER}/locuventas-frontend
+- 🔧 Levantar el backend desde la imagen [dawcarlosp/backend:1.0](https://hub.docker.com/repository/docker/dawcarlosp/locuventas-frontend/tags/1.0/sha256-20b8ff2ddc07779d835d7969466b3df5aeb083ed532d7cc2a4ccbe1c686feb59)
+- 🎨 Levantar el frontend desde [dawcarlosp/frontend:1.0](https://hub.docker.com/repository/docker/dawcarlosp/locuventas-backend/tags/1.0/sha256-242ea3b9c02d3a5b32e36cb5253648581dac0b7bc5452f1c74b16add29ccf0b1)
 - 📁 Mapear los volúmenes de imágenes (uploads/)
 
 --- 

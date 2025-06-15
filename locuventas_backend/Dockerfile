@@ -20,22 +20,19 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Crear carpetas de uploads
+# Crear carpetas necesarias
 RUN mkdir -p /app/uploads/productos /app/uploads/vendedores /app/uploads/productosprecargados
 
-# Copiar app y precargados temporales
+# Copiar jar y archivos base
 COPY --from=builder /app/target/locuventas_backend-0.0.1-SNAPSHOT.jar app.jar
 COPY --from=builder /app/uploads_precargados_base /app/uploads_precargados_base
-
-# Copiar entrypoint y dar permisos
 COPY entrypoint.sh /app/entrypoint.sh
+
+# Permisos de ejecución
 RUN chmod +x /app/entrypoint.sh
 
-# Crear usuario no-root
-RUN addgroup -S spring && adduser -S spring -G spring && \
-    chown -R spring:spring /app
-
-USER spring
+# Ejecutar como root (solo para entorno local)
+# ⚠️ Esto evita problemas de permisos al montar volúmenes en Windows/Linux
 
 EXPOSE 8080
 
