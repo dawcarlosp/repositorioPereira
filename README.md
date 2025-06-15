@@ -1,9 +1,10 @@
-<a align="center" href="https://github.com/dawcarlosp/repositorioPereira.git">
-  <img src="https://github.com/dawcarlosp/dawcarlosp/blob/main/logoAnimadoLocuVentas.svg" width="350"/>
-</a>
-
+<div align="center">
+  <a href="https://github.com/dawcarlosp/repositorioPereira.git">
+    <img src="https://github.com/dawcarlosp/dawcarlosp/blob/main/logoAnimadoLocuVentas.svg" width="350"/>
+  </a>
+</div>
 ---
-> Probar en linea: [Pincha aquí](https://tfg.dawcarlosp.com/)
+> Probar en lÍnea: [Pincha aquí](https://tfg.dawcarlosp.com/)
 ---
 
 # 🐳 Guía de instalación de LocuVentas con Docker
@@ -50,14 +51,16 @@ cp .env.example .env
 > Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado).
 
 
-> Para funcionamiento inmediato y evitar conclictos, se recomienda: 
+> Para funcionamiento inmediato y evitar conflictos, se recomienda: 
 
-```bash
-APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
+```env
+APP_ADMIN_EMAIL
+APP_ADMIN_PASSWORD 
+APP_ADMIN_NOMBRE
 ```
 ---
 
-> La foto ya te la pones una vez estés dentro de la app😉​
+> 📸La foto ya te la pones una vez estés dentro de la app😉​
 
 ---
 
