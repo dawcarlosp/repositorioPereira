@@ -10,6 +10,13 @@ import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
 import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
 import ies.juanbosoco.locuventas_backend.repositories.VentaProductoRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.wrapper.CrearProductoRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +75,14 @@ public class ProductoController {
         return dto;
     }
 
+    @Operation(
+            summary = "Listar productos",
+            description = "Devuelve una lista paginada de productos.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Lista de productos paginada")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
     @GetMapping
     public ResponseEntity<PageDTO<ProductoResponseDTO>> getAllProductos(
@@ -85,7 +100,24 @@ public class ProductoController {
         );
         return ResponseEntity.ok(dto);
     }
-
+    @Operation(
+            summary = "Crear un nuevo producto",
+            description = "Permite crear un producto nuevo incluyendo datos JSON y una imagen.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = CrearProductoRequest.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Producto creado correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos o imagen faltante"),
+                    @ApiResponse(responseCode = "404", description = "País o categoría no encontrados"),
+                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> crearProductoConFoto(
@@ -162,6 +194,23 @@ public class ProductoController {
         }
     }
 
+    @Operation(
+            summary = "Editar un producto existente",
+            description = "Permite actualizar datos de un producto y cambiar su imagen si se desea.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = CrearProductoRequest.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto actualizado correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                    @ApiResponse(responseCode = "404", description = "Producto o país no encontrado")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyRole('ADMIN')")
     public ResponseEntity<?> editarProducto(
@@ -245,8 +294,18 @@ public class ProductoController {
         }
     }
 
-
+    @Operation(
+            summary = "Eliminar un producto",
+            description = "Elimina un producto por ID, siempre que no haya sido vendido previamente.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Producto eliminado"),
+                    @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
+                    @ApiResponse(responseCode = "409", description = "Producto no se puede eliminar por ventas asociadas")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasAnyRole('ADMIN')")
+    @Parameter(description = "ID del producto a eliminar", required = true)
     @DeleteMapping("/{id}")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
         Optional<Producto> productoOptional = productoRepository.findById(id);

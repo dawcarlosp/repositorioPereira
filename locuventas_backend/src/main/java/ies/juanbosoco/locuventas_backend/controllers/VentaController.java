@@ -5,6 +5,13 @@ import ies.juanbosoco.locuventas_backend.DTO.venta.*;
 import ies.juanbosoco.locuventas_backend.entities.*;
 import ies.juanbosoco.locuventas_backend.repositories.*;
 import ies.juanbosoco.locuventas_backend.services.VentaTicketService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -31,7 +38,15 @@ public class VentaController {
     private final VentaProductoRepository ventaProductoRepository;
     @Autowired
     private VentaTicketService ventaTicketService;
-
+    @Operation(
+            summary = "Listar ventas pendientes o parcialmente pagadas",
+            description = "Devuelve una lista paginada de ventas cuyo estado de pago es PENDIENTE o PARCIAL. Solo accesible para ADMIN o VENDEDORES. El ADMIN ve todas, el vendedor solo las suyas.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Listado de ventas pendientes"),
+                    @ApiResponse(responseCode = "401", description = "No autenticado o sin permisos"),
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/pendientes")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<PageDTO<VentaResponseDTO>> getVentasPendientes(
@@ -90,6 +105,35 @@ public class VentaController {
         return toDto(venta, lineas);
     }
 
+    @Operation(
+            summary = "Crear una nueva venta",
+            description = "Crea una venta con una o más líneas. Requiere autenticación. El vendedor se asigna automáticamente desde el token.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = VentaRequestDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Ejemplo de creación de venta",
+                                    value = """
+                {
+                  "lineas": [
+                    { "productoId": 1, "cantidad": 2 },
+                    { "productoId": 3, "cantidad": 1 }
+                  ]
+                }
+                """
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Venta creada correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Error en los datos (producto no existe, sin líneas, etc)"),
+                    @ApiResponse(responseCode = "401", description = "No autenticado"),
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @Transactional
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
@@ -152,6 +196,44 @@ public class VentaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(venta, lineasGuardadas));
     }
 
+    @Operation(
+            summary = "Registrar pago a una venta",
+            description = "Registra un pago parcial o total a una venta existente, identificada por su ID.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "ID de la venta a la que se aplicará el pago",
+                            required = true,
+                            example = "42"
+                    )
+            },
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.APPLICATION_JSON_VALUE,
+                            schema = @Schema(implementation = PagoRequestDTO.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Pago parcial",
+                                            summary = "Pago parcial de 50€",
+                                            value = "{ \"monto\": 50.00 }"
+                                    ),
+                                    @ExampleObject(
+                                            name = "Pago total",
+                                            summary = "Pago total de 149.99€",
+                                            value = "{ \"monto\": 149.99 }"
+                                    )
+                            }
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Pago registrado correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Error de validación en el monto o venta cancelada"),
+                    @ApiResponse(responseCode = "404", description = "Venta no encontrada")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/{id}/pago")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> registrarPago(@PathVariable Long id, @RequestBody PagoRequestDTO pagoRequest) {
@@ -181,6 +263,20 @@ public class VentaController {
         return ResponseEntity.ok(toDto(venta));
     }
 
+
+    @Operation(
+            summary = "Listar todas las ventas",
+            description = "Devuelve una lista paginada de ventas del usuario autenticado. Si el usuario es administrador, devuelve todas las ventas.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(name = "page", description = "Número de página (por defecto 0)", example = "0"),
+                    @Parameter(name = "size", description = "Tamaño de página (por defecto 10)", example = "10")
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Listado de ventas paginado")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<PageDTO<VentaResponseDTO>> getVentas(
@@ -202,6 +298,26 @@ public class VentaController {
         return ResponseEntity.ok(dto);
     }
 
+
+    @Operation(
+            summary = "Obtener detalles de una venta",
+            description = "Devuelve toda la información detallada de una venta específica por su ID, incluyendo sus productos, pagos y estado.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "ID de la venta que se desea consultar",
+                            required = true,
+                            example = "123"
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Venta encontrada y retornada correctamente"),
+                    @ApiResponse(responseCode = "404", description = "Venta no encontrada")
+            }
+    )
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}")
     public ResponseEntity<?> getVenta(@PathVariable Long id) {
         Optional<Venta> ventaOpt = ventaRepository.findById(id);
@@ -216,8 +332,24 @@ public class VentaController {
         }
     }
 
-
-
+    @Operation(
+            summary = "Cancelar una venta",
+            description = "Permite cancelar una venta existente. Solo accesible por administradores.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "ID de la venta a cancelar",
+                            required = true,
+                            example = "123"
+                    )
+            },
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Venta cancelada correctamente"),
+                    @ApiResponse(responseCode = "404", description = "Venta no encontrada")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("/{id}/cancelar")
     public ResponseEntity<?> cancelarVenta(@PathVariable Long id) {
@@ -231,6 +363,33 @@ public class VentaController {
         return ResponseEntity.ok(Map.of("mensaje", "Venta cancelada correctamente"));
     }
 
+
+    @Operation(
+            summary = "Descargar ticket en PDF",
+            description = "Devuelve un archivo PDF con el ticket de la venta especificada.",
+            security = @SecurityRequirement(name = "bearerAuth"),
+            parameters = {
+                    @Parameter(
+                            name = "id",
+                            description = "ID de la venta para la que se desea obtener el ticket PDF",
+                            required = true,
+                            example = "456"
+                    )
+            },
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "PDF generado correctamente",
+                            content = @Content(
+                                    mediaType = "application/pdf",
+                                    schema = @Schema(type = "string", format = "binary")
+                            )
+                    ),
+                    @ApiResponse(responseCode = "404", description = "Venta no encontrada"),
+                    @ApiResponse(responseCode = "500", description = "Error interno al generar el PDF")
+            }
+    )
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/{id}/ticket-pdf")
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<?> descargarTicketPdf(@PathVariable Long id) {

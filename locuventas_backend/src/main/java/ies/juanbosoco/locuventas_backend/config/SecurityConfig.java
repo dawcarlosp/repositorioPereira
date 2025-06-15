@@ -1,26 +1,19 @@
 package ies.juanbosoco.locuventas_backend.config;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.List;
 
@@ -51,10 +44,12 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //Indicamos que no cree una sesión porque vamos a utilizar tokens
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/login/oauth2/**").permitAll() // Permitir el acceso a los endpoints OAuth2,no implementado
-                        .requestMatchers("/imagenes/vendedores/**").permitAll()
-                        .requestMatchers("/imagenes/productos/**").permitAll()
-                        .requestMatchers("/imagenes/productosprecargados/**").permitAll()
+                        .requestMatchers("/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/paises/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/categorias/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/imagenes/vendedores/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/imagenes/productos/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/imagenes/productosprecargados/**").hasAnyRole("ADMIN", "VENDEDOR")
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -74,8 +69,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         //config.setAllowedOriginPatterns(List.of("*")); // Permitir cualquier origen
-        config.setAllowedOriginPatterns(List.of( "http://localhost:3000",
-                "http://localhost:5173"));
+        config.setAllowedOriginPatterns(List.of( "*"));
         //config.setAllowedOrigins(List.of("*")); // Permitir el frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Permitir métodos HTTP
         config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Permitir headers necesarios

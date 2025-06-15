@@ -1,5 +1,9 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Value; // Add this import
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -23,7 +27,17 @@ public class ImagenController {
 
     @Value("${spring.web.resources.static-locations}")
     private String baseUploadDirProperty;
-
+    @Operation(
+            summary = "Obtener una imagen por tipo y nombre",
+            description = "Devuelve una imagen almacenada en el servidor. Solo permite acceder a carpetas seguras: `vendedores`, `productos`, `productosprecargados`."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Imagen servida correctamente",
+                    content = @Content(mediaType = "image/jpeg")),
+            @ApiResponse(responseCode = "400", description = "Tipo de imagen no permitido"),
+            @ApiResponse(responseCode = "404", description = "Imagen no encontrada"),
+            @ApiResponse(responseCode = "500", description = "Error al intentar acceder a la imagen")
+    })
     @GetMapping("/{tipo}/{filename:.+}")
     public ResponseEntity<Resource> serveImage(
             @PathVariable String tipo,

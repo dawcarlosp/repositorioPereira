@@ -10,21 +10,27 @@ import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.wrapper.EditarPerfilRequest;
+import ies.juanbosoco.locuventas_backend.wrapper.RegisterRequest;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,7 +50,23 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private FotoService fotoVendedorService;
-    @PostMapping("/auth/register")
+    @Operation(
+            summary = "Registro de nuevo usuario",
+            description = "Permite registrar un usuario nuevo con nombre, email, contraseña y una foto de perfil.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = RegisterRequest.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Usuario creado correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Datos inválidos o email ya usado"),
+                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+            }
+    )
+    @PostMapping(value = "/auth/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Map<String, String>> save(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
@@ -152,16 +174,6 @@ public class AuthController {
     }
 
 
-    @GetMapping("/mis-paises")
-    @PreAuthorize("hasAnyRole('VENDEDOR', 'ADMIN')")
-    public ResponseEntity<List<PaisResponseDTO>> obtenerMisPaises(@AuthenticationPrincipal Vendedor vendedor) {
-        List<PaisResponseDTO> paises = vendedor.getPaisesPreferidos().stream()
-                .map(this::mapToDTO)
-                .toList();
-
-        return ResponseEntity.ok(paises);
-    }
-
     private PaisResponseDTO mapToDTO(Pais pais) {
         return new PaisResponseDTO(
                 pais.getId(),
@@ -176,6 +188,7 @@ public class AuthController {
      * Asigna el rol ROLE_VENDEDOR a un usuario ajeno al ADMIN que invoca.
      * Solo puede accederlo ADMIN.
      */
+    @SecurityRequirement(name = "bearerAuth")
     @PutMapping("/usuarios/{id}/asignar-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> asignarRolVendedor(@PathVariable Long id) {
@@ -238,68 +251,6 @@ public class AuthController {
     }
 
     /**
-     * Elimina el rol ROLE_VENDEDOR de un usuario que ya lo tenía.
-     * Solo puede accederlo ADMIN.
-     */
-    @PutMapping("/usuarios/{id}/quitar-rol")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> quitarRolVendedor(@PathVariable Long id) {
-        // Obtenemos el Authentication del contexto
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Debes iniciar sesión como admin."));
-        }
-
-        //  Extraemos el email/username del principal
-        String emailAdmin;
-        Object principalObj = auth.getPrincipal();
-        if (principalObj instanceof UserDetails) {
-            emailAdmin = ((UserDetails) principalObj).getUsername();
-        } else if (principalObj instanceof String) {
-            emailAdmin = (String) principalObj;
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Debes iniciar sesión como admin."));
-        }
-
-        // Buscamos en BD al administrador real
-        Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Administrador no encontrado."));
-        }
-
-        // Evitamos que el ADMIN se quite a sí mismo → 403 Forbidden
-        if (currentUser.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "No puedes quitarte el rol a ti mismo."));
-        }
-
-        //  Buscamos al usuario destino
-        Optional<Vendedor> optional = userRepository.findById(id);
-        if (optional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado."));
-        }
-        Vendedor user = optional.get();
-
-        //  Si ese usuario NO tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
-        boolean tieneRolVendedor = user.getAuthorities().stream()
-                .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
-        if (!tieneRolVendedor) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "El usuario no tiene el rol de VENDEDOR."));
-        }
-
-        //  Quitamos el rol y guardamos
-        user.getAuthoritiesRaw().remove(Roles.VENDEDOR);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR eliminado correctamente."));
-    }
-
-    /**
      * Devuelve todos los usuarios que NO tienen ni ROLE_VENDEDOR ni ROLE_ADMIN.
      * Es decir, aquellos cuya única autoridad es ROLE_USER.
      * Solo puede accederlo ADMIN.
@@ -323,6 +274,7 @@ public class AuthController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(usuariosSoloUser);
     }
+    @SecurityRequirement(name = "bearerAuth")
     @DeleteMapping("/usuarios/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
@@ -345,6 +297,23 @@ public class AuthController {
         userRepository.deleteById(id);
         return ResponseEntity.ok(Map.of("message", "Usuario y foto eliminados correctamente."));
     }
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(
+            summary = "Editar perfil del usuario autenticado",
+            description = "Permite editar nombre, email, contraseña y subir una nueva foto de perfil.",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = EditarPerfilRequest.class)
+                    )
+            ),
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Perfil actualizado correctamente"),
+                    @ApiResponse(responseCode = "400", description = "Error en los datos enviados"),
+                    @ApiResponse(responseCode = "401", description = "No autenticado")
+            }
+    )
     @PutMapping("/usuarios/editar-perfil")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<?> editarPerfil(
