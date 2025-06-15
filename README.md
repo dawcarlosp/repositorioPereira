@@ -1,6 +1,6 @@
-<p align="center">
+<a align="center" href="https://github.com/dawcarlosp/repositorioPereira.git">
   <img src="https://github.com/dawcarlosp/dawcarlosp/blob/main/logoAnimadoLocuVentas.svg" width="350"/>
-</p>
+</a>
 
 ---
 > Probar en linea: [Pincha aquí](https://tfg.dawcarlosp.com/)
