@@ -86,7 +86,7 @@ docker-compose --env-file .env up -d
 ### Verificar
 
 - Accede al frontend: http://localhost:3000
-- Revisa el backend (si lo necesitas): http://localhost:8080
+- Revisa el backend (si lo necesitas): http://localhost:8080/swagger-ui/index.html
 
 --- 
 
