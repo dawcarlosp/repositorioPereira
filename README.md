@@ -10,7 +10,8 @@
 
 # 🐳 Guía de instalación de LocuVentas con Docker
 
-¡Bienvenido/a! Aquí encontrarás los pasos necesarios para levantar **LocuVentas** (backend + frontend + base de datos) usando `docker-compose`.
+¡Bienvenido/a! Aquí encontrarás los pasos necesarios para levantar **LocuVentas** (backend + frontend + base de datos) **en tu entorno local** usando `docker-compose`. Esta guía no cubre despliegue en producción, solo uso en local para desarrollo o pruebas.
+
 
 ---
 
