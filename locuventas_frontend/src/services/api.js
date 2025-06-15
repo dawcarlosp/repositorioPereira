@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://34.175.85.23:8080";
+const apiUrl = import.meta.env.VITE_API_URL || "http://tfg.dawcarlosp.com/api";
 
 export const apiRequest = async (endpoint, data, options = {}) => {
   const { method = "POST", isFormData = false } = options;
@@ -55,4 +55,4 @@ export const apiRequest = async (endpoint, data, options = {}) => {
   // Si NO ok (error HTTP), lanza el error parseado para el catch
   if (!response.ok) throw result;
   return result;
-};
+}

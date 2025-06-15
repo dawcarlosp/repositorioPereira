@@ -15,6 +15,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+
 import java.util.List;
 
 @Configuration
@@ -44,12 +45,9 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) //Indicamos que no cree una sesión porque vamos a utilizar tokens
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/ventas/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/paises/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/categorias/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/imagenes/vendedores/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/imagenes/productos/**").hasAnyRole("ADMIN", "VENDEDOR")
-                        .requestMatchers("/imagenes/productosprecargados/**").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers("/imagenes/vendedores/**").permitAll()
+                        .requestMatchers("/imagenes/productos/**").permitAll()
+                        .requestMatchers("/imagenes/productosprecargados/**").permitAll()
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
@@ -69,7 +67,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
         //config.setAllowedOriginPatterns(List.of("*")); // Permitir cualquier origen
-        config.setAllowedOriginPatterns(List.of( "*"));
+        config.setAllowedOriginPatterns(List.of("*"));
         //config.setAllowedOrigins(List.of("*")); // Permitir el frontend
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH")); // Permitir métodos HTTP
         config.setAllowedHeaders(List.of("Authorization", "Content-Type")); // Permitir headers necesarios

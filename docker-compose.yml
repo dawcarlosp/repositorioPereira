@@ -63,3 +63,4 @@ volumes:
 networks:
   locuventas_network:
     driver: bridge
+

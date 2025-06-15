@@ -3,18 +3,16 @@ FROM eclipse-temurin:17-jdk-alpine AS builder
 
 WORKDIR /app
 
-# Instalar Maven y dependencias necesarias
+# Instalar Maven
 RUN apk add --no-cache maven
 
-# Copiar dependencias del proyecto
+# Copiar proyecto y precargados
 COPY pom.xml .
 COPY src ./src
-COPY uploads/productosprecargados ./uploads/productosprecargados
+COPY uploads/productosprecargados ./uploads_precargados_base
 
-# Descargar dependencias y compilar (sin tests)
+# Compilar sin tests
 RUN mvn clean package -DskipTests -B
-
-# Verificar que el JAR se generó
 RUN test -f target/locuventas_backend-0.0.1-SNAPSHOT.jar
 
 # ---------- RUNTIME STAGE ----------
@@ -22,18 +20,18 @@ FROM eclipse-temurin:17-jre-alpine
 
 WORKDIR /app
 
-# Crear carpetas necesarias antes de cambiar de usuario
+# Crear carpetas de uploads
 RUN mkdir -p /app/uploads/productos /app/uploads/vendedores /app/uploads/productosprecargados
 
-# Copiar JAR y precargados desde builder
+# Copiar app y precargados temporales
 COPY --from=builder /app/target/locuventas_backend-0.0.1-SNAPSHOT.jar app.jar
-COPY --from=builder /app/uploads/productosprecargados /app/uploads/productosprecargados
+COPY --from=builder /app/uploads_precargados_base /app/uploads_precargados_base
 
 # Copiar entrypoint y dar permisos
 COPY entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 
-# Crear usuario no-root y asignar permisos a carpetas internas
+# Crear usuario no-root
 RUN addgroup -S spring && adduser -S spring -G spring && \
     chown -R spring:spring /app
 

@@ -3,7 +3,7 @@
 </p>
 
 ---
-> Probar en linea: [Pincha aquí](http://tfg.dawcarlosp.com:3000/)
+> Probar en linea: [Pincha aquí](https://tfg.dawcarlosp.com/)
 ---
 
 # 🐳 Guía de instalación de LocuVentas con Docker
@@ -60,7 +60,7 @@ APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
 
 ```bash
 # Con Docker Compose V2 (Docker moderno)
-docker --env-file .env up -d
+docker-compose --env-file .env up -d
 
 # O con Docker Compose clásico
 docker-compose --env-file .env up -d
