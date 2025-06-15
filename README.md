@@ -65,7 +65,7 @@ APP_ADMIN_NOMBRE
 
 ---
 
-## Paso 3. Levantar el proyecto
+## 📁 Paso 3. Levantar el proyecto
 
 ### Con Docker Compose V2 (Docker moderno)
 ```bash
