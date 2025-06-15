@@ -87,11 +87,10 @@ docker-compose --env-file .env up -d
 
 - Accede al frontend: http://localhost:3000
 - Revisa el backend (si lo necesitas): http://localhost:8080/swagger-ui/index.html
-- O si prefieres usar
-<img src="https://skillicons.dev/icons?i=postman" />
+- O si prefieres usar <img src="https://skillicons.dev/icons?i=postman" />
 
 ```bash
-http://localhost:8080
+http://localhost:8080/
 ```
 
 --- 
