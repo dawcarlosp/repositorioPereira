@@ -47,11 +47,10 @@ cp .env.example .env
 
 ---
 
-> Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado) >
+> Nota: tienes la posibilidad de editar ".env" con tus propios valores(recomendado).
 
----
 
-> Para funcionamiento inmediato y evitar conclictos, se recomienda: >
+> Para funcionamiento inmediato y evitar conclictos, se recomienda: 
 
 ```bash
 APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
@@ -64,11 +63,11 @@ APP_ADMIN_EMAIL, APP_ADMIN_PASSWORD, APP_ADMIN_NOMBRE
 
 ## Paso 3. Levantar el proyecto
 
-# Con Docker Compose V2 (Docker moderno)
+### Con Docker Compose V2 (Docker moderno)
 ```bash
 docker compose --env-file .env up -d
 ```
-# O con Docker Compose clásico
+### O con Docker Compose clásico
 ```bash
 docker-compose --env-file .env up -d
 ```
