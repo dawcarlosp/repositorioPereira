@@ -4,9 +4,7 @@
   </a>
 </div>
 
----
-> Probar en lÍnea: [Pincha aquí](https://tfg.dawcarlosp.com/)
----
+
 
 # 🐳 Guía de instalación de LocuVentas con Docker
 
