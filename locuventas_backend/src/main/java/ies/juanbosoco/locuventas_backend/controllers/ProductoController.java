@@ -10,6 +10,8 @@ import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
 import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
 import ies.juanbosoco.locuventas_backend.repositories.VentaProductoRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
+import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
 import ies.juanbosoco.locuventas_backend.wrapper.CrearProductoRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -49,6 +51,10 @@ public class ProductoController {
     private CategoriaRepository categoriaRepository;
     @Autowired
     private FotoService fotoProductoService;
+    @Autowired
+    private FileNameGenerator fileNameGenerator;
+    @Autowired
+    private FileValidator fileValidator;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -163,8 +169,8 @@ public class ProductoController {
         }
 
         try {
-            fotoProductoService.validarArchivo(foto);
-            String fotoNombre = fotoProductoService.generarNombreUnico(foto);
+            fileValidator.validarArchivo(foto);
+            String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
             fotoProductoService.guardarImagen(foto, fotoNombre, "productos");
 
             Producto producto = Producto.builder()
@@ -277,8 +283,8 @@ public class ProductoController {
                     fotoProductoService.eliminarImagen(producto.getFoto(), "productos");
                 }
 
-                fotoProductoService.validarArchivo(foto);
-                String fotoNombre = fotoProductoService.generarNombreUnico(foto);
+                fileValidator.validarArchivo(foto);
+                String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
                 fotoProductoService.guardarImagen(foto, fotoNombre, "productos");
                 producto.setFoto(fotoNombre);
             }

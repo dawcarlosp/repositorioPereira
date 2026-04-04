@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.services;
 
+import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,34 +21,8 @@ public class FotoService {
 
     @Autowired
     private ImageService imageService;
-
-    public void validarArchivo(MultipartFile archivo) {
-        if (archivo == null || archivo.isEmpty()) {
-            throw new IllegalArgumentException("El archivo no ha sido seleccionado o está vacío.");
-        }
-        if (!TIPOS_PERMITIDOS.contains(archivo.getContentType())) {
-            throw new IllegalArgumentException("El tipo de archivo no es permitido: " + archivo.getContentType());
-        }
-        if (archivo.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("El archivo es demasiado grande. Máximo permitido: 10 MB.");
-        }
-    }
-
-    public String generarNombreUnico(MultipartFile archivo) {
-        if (archivo.getOriginalFilename() == null || archivo.getOriginalFilename().isEmpty()) {
-            throw new IllegalArgumentException("El archivo seleccionado no tiene un nombre válido.");
-        }
-        String extension = obtenerExtensionArchivo(archivo.getOriginalFilename());
-        return UUID.randomUUID().toString() + extension;
-    }
-
-    private String obtenerExtensionArchivo(String nombreArchivo) {
-        int index = nombreArchivo.lastIndexOf('.');
-        if (index == -1) {
-            throw new IllegalArgumentException("El archivo no tiene extensión válida.");
-        }
-        return nombreArchivo.substring(index); // incluye el punto, ej: ".png"
-    }
+    @Autowired
+    private FileNameGenerator fileNameGenerator;
 
     public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto, String subdirectorio) {
         Path directorioPath = (subdirectorio != null && !subdirectorio.isBlank())
@@ -64,17 +39,13 @@ public class FotoService {
 
         try {
             byte[] contenido = archivo.getBytes();
-            String extension = obtenerExtensionArchivo(nuevoNombreFoto).substring(1); // sin el punto
+            String extension = fileNameGenerator.obtenerExtensionArchivo(nuevoNombreFoto).substring(1); // sin el punto
             byte[] contenidoRedimensionado = imageService.resizeImage(contenido, 1000, extension);
             Files.write(rutaDestino, contenidoRedimensionado);
             logger.info("Imagen guardada exitosamente en: {}", rutaDestino);
         } catch (IOException e) {
             throw new RuntimeException("Error al guardar el archivo: " + archivo.getOriginalFilename(), e);
         }
-    }
-
-    public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto) {
-        guardarImagen(archivo, nuevoNombreFoto, null);
     }
 
     public void eliminarImagen(String nombreArchivo, String subdirectorio) {
@@ -100,9 +71,5 @@ public class FotoService {
             logger.error("Error al eliminar la imagen: {}", rutaArchivo, e);
             throw new RuntimeException("Error al eliminar la imagen: " + nombreArchivo, e);
         }
-    }
-
-    public void eliminarImagen(String nombreArchivo) {
-        eliminarImagen(nombreArchivo, null);
     }
 }

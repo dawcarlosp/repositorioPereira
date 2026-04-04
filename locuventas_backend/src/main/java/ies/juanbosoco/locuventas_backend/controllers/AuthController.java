@@ -10,6 +10,8 @@ import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
+import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
 import ies.juanbosoco.locuventas_backend.wrapper.EditarPerfilRequest;
 import ies.juanbosoco.locuventas_backend.wrapper.RegisterRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,6 +52,10 @@ public class AuthController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private FotoService fotoVendedorService;
+    @Autowired
+    private FileValidator fileValidator;
+    @Autowired
+    private FileNameGenerator fileNameGenerator;
     @Operation(
             summary = "Registro de nuevo usuario",
             description = "Permite registrar un usuario nuevo con nombre, email, contraseña y una foto de perfil.",
@@ -82,8 +88,8 @@ public class AuthController {
 
         try {
             // Validar y guardar la foto
-            fotoVendedorService.validarArchivo(foto);
-            String fotoNombre = fotoVendedorService.generarNombreUnico(foto);
+            fileValidator.validarArchivo(foto);
+            String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
             fotoVendedorService.guardarImagen(foto, fotoNombre, "vendedores");
 
             // Guardar el usuario
@@ -368,8 +374,8 @@ public class AuthController {
                 }
             }
             // Guardar la nueva
-            fotoVendedorService.validarArchivo(foto);
-            String nuevoNombreFoto = fotoVendedorService.generarNombreUnico(foto);
+            fileValidator.validarArchivo(foto);
+            String nuevoNombreFoto = fileNameGenerator.generarNombreUnico(foto);
             fotoVendedorService.guardarImagen(foto, nuevoNombreFoto, "vendedores");
             usuario.setFoto(nuevoNombreFoto);
         }
