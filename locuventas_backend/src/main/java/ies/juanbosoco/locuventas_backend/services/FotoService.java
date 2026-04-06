@@ -1,51 +1,52 @@
 package ies.juanbosoco.locuventas_backend.services;
 
 import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
+import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.*;
 
 @Service
 public class FotoService {
 
     private static final Logger logger = LoggerFactory.getLogger(FotoService.class);
-    private static final List<String> TIPOS_PERMITIDOS = List.of("image/jpeg", "image/png", "image/gif", "image/avif", "image/webp", "image/jpg");
-    private static final long MAX_FILE_SIZE = 10_000_000;
     private static final Path BASE_UPLOADS_PATH = Paths.get("uploads").toAbsolutePath();
 
-    @Autowired
-    private ImageService imageService;
-    @Autowired
-    private FileNameGenerator fileNameGenerator;
+    private final ImageService imageService;
+    private final FileNameGenerator fileNameGenerator;
+    private final FileValidator fileValidator;
 
-    public void guardarImagen(MultipartFile archivo, String nuevoNombreFoto, String subdirectorio) {
-        Path directorioPath = (subdirectorio != null && !subdirectorio.isBlank())
-                ? BASE_UPLOADS_PATH.resolve(subdirectorio)
-                : BASE_UPLOADS_PATH;
+    public FotoService(ImageService imageService,
+                       FileNameGenerator fileNameGenerator,
+                       FileValidator fileValidator) {
+        this.imageService = imageService;
+        this.fileNameGenerator = fileNameGenerator;
+        this.fileValidator = fileValidator;
+    }
+    public String guardarFotoProducto(MultipartFile archivo) {
+        return guardarFoto(archivo, "productos");
+    }
 
-        try {
-            Files.createDirectories(directorioPath);
-        } catch (IOException e) {
-            throw new RuntimeException("Error al crear el directorio de subidas: " + directorioPath, e);
-        }
+    public String guardarFotoVendedor(MultipartFile archivo) {
+        return guardarFoto(archivo, "vendedores");
+    }
 
-        Path rutaDestino = directorioPath.resolve(nuevoNombreFoto);
+    // MÉTODO DE ALTO NIVEL (el que usarán otros métodos)
+    public String guardarFoto(MultipartFile archivo, String subdirectorio) {
 
-        try {
-            byte[] contenido = archivo.getBytes();
-            String extension = fileNameGenerator.obtenerExtensionArchivo(nuevoNombreFoto).substring(1); // sin el punto
-            byte[] contenidoRedimensionado = imageService.resizeImage(contenido, 1000, extension);
-            Files.write(rutaDestino, contenidoRedimensionado);
-            logger.info("Imagen guardada exitosamente en: {}", rutaDestino);
-        } catch (IOException e) {
-            throw new RuntimeException("Error al guardar el archivo: " + archivo.getOriginalFilename(), e);
-        }
+        // 1. Validar archivo
+        fileValidator.validarArchivo(archivo);
+
+        // 2. Generar nombre único
+        String nombreArchivo = fileNameGenerator.generarNombreUnico(archivo);
+
+        // 3. Guardar físicamente
+        guardarEnDisco(archivo, nombreArchivo, subdirectorio);
+
+        return nombreArchivo;
     }
 
     public void eliminarImagen(String nombreArchivo, String subdirectorio) {
@@ -54,11 +55,7 @@ public class FotoService {
             return;
         }
 
-        Path directorioPath = (subdirectorio != null && !subdirectorio.isBlank())
-                ? BASE_UPLOADS_PATH.resolve(subdirectorio)
-                : BASE_UPLOADS_PATH;
-
-        Path rutaArchivo = directorioPath.resolve(nombreArchivo);
+        Path rutaArchivo = construirRuta(nombreArchivo, subdirectorio);
 
         try {
             if (Files.exists(rutaArchivo)) {
@@ -71,5 +68,46 @@ public class FotoService {
             logger.error("Error al eliminar la imagen: {}", rutaArchivo, e);
             throw new RuntimeException("Error al eliminar la imagen: " + nombreArchivo, e);
         }
+    }
+
+    // =====================
+    // MÉTODOS PRIVADOS
+    // =====================
+
+    private void guardarEnDisco(MultipartFile archivo, String nombreArchivo, String subdirectorio) {
+        Path directorioPath = construirDirectorio(subdirectorio);
+
+        try {
+            Files.createDirectories(directorioPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al crear el directorio: " + directorioPath, e);
+        }
+
+        Path rutaDestino = directorioPath.resolve(nombreArchivo);
+
+        try {
+            byte[] contenido = archivo.getBytes();
+            String extension = fileNameGenerator.obtenerExtensionArchivo(nombreArchivo).substring(1);
+
+            byte[] contenidoRedimensionado =
+                    imageService.resizeImage(contenido, 1000, extension);
+
+            Files.write(rutaDestino, contenidoRedimensionado);
+
+            logger.info("Imagen guardada en: {}", rutaDestino);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Error al guardar archivo: " + archivo.getOriginalFilename(), e);
+        }
+    }
+
+    private Path construirDirectorio(String subdirectorio) {
+        return (subdirectorio != null && !subdirectorio.isBlank())
+                ? BASE_UPLOADS_PATH.resolve(subdirectorio)
+                : BASE_UPLOADS_PATH;
+    }
+
+    private Path construirRuta(String nombreArchivo, String subdirectorio) {
+        return construirDirectorio(subdirectorio).resolve(nombreArchivo);
     }
 }

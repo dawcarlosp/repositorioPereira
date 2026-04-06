@@ -9,6 +9,7 @@ import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
+import ies.juanbosoco.locuventas_backend.services.AuthService;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
 import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
 import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
@@ -42,6 +43,10 @@ import java.util.stream.Collectors;
 
 @RestController
 public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
     @Autowired
     private UserEntityRepository userRepository;
     @Autowired
@@ -73,56 +78,27 @@ public class AuthController {
             }
     )
     @PostMapping(value = "/auth/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String, String>> save(
+    public ResponseEntity<?> register(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,
             @RequestPart(value = "foto", required = false) MultipartFile foto,
-            BindingResult result) {
+            BindingResult result
+    ) {
+        if (result.hasErrors()) {
+            Map<String, String> errors = new HashMap<>();
+            result.getFieldErrors().forEach(error ->
+                    errors.put(error.getField(), error.getDefaultMessage())
+            );
+            return ResponseEntity.badRequest().body(errors);
+        }
 
-        // 1. Si hay errores de validación del DTO, los devuelve Spring automáticamente,
-        // 2. Validar la foto SOLO si el DTO es válido (no hace falta comprobar result.hasErrors())
         if (foto == null || foto.isEmpty()) {
-            // El único error posible es el de la foto
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("foto", "Debes seleccionar una foto."));
+            throw new IllegalArgumentException("Debes seleccionar una foto.");
         }
 
-        try {
-            // Validar y guardar la foto
-            fileValidator.validarArchivo(foto);
-            String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
-            fotoVendedorService.guardarImagen(foto, fotoNombre, "vendedores");
+        authService.register(userDTO, foto);
 
-            // Guardar el usuario
-            Vendedor userEntity = this.userRepository.save(
-                    Vendedor.builder()
-                            .password(passwordEncoder.encode(userDTO.getPassword()))
-                            .email(userDTO.getEmail())
-                            .authorities(List.of(Roles.USER))
-                            .foto(fotoNombre)
-                            .nombre(userDTO.getNombre())
-                            .build());
-
-            return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(Map.of("email", userEntity.getEmail()));
-
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("email", "Email ya utilizado"));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("foto", e.getMessage()));
-        } catch (Exception e) {
-            // Si es error de archivo/foto, mándalo bajo la clave 'foto' si tiene sentido
-            if (e.getMessage() != null &&
-                    (e.getMessage().toLowerCase().contains("foto")
-                            || e.getMessage().toLowerCase().contains("multipart"))) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("foto", e.getMessage()));
-            }
-            // Otros errores inesperados
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", e.getMessage()));
-        }
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(Map.of("message", "Usuario creado correctamente"));
     }
 
 
@@ -376,7 +352,7 @@ public class AuthController {
             // Guardar la nueva
             fileValidator.validarArchivo(foto);
             String nuevoNombreFoto = fileNameGenerator.generarNombreUnico(foto);
-            fotoVendedorService.guardarImagen(foto, nuevoNombreFoto, "vendedores");
+            fotoVendedorService.guardarFotoVendedor(foto);
             usuario.setFoto(nuevoNombreFoto);
         }
 

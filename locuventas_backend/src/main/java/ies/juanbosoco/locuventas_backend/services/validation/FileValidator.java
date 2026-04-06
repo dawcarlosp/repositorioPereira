@@ -15,7 +15,6 @@ public class FileValidator {
     private static final Logger logger = LoggerFactory.getLogger(FileValidator.class);
     private static final List<String> TIPOS_PERMITIDOS = List.of("image/jpeg", "image/png", "image/gif", "image/avif", "image/webp", "image/jpg");
     private static final long MAX_FILE_SIZE = 10_000_000;
-    private static final Path BASE_UPLOADS_PATH = Paths.get("uploads").toAbsolutePath();
 
     public void validarArchivo(MultipartFile archivo) {
         if (archivo == null || archivo.isEmpty()) {
