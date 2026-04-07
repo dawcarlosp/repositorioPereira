@@ -170,8 +170,8 @@ public class ProductoController {
 
         try {
             fileValidator.validarArchivo(foto);
-            String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
-            fotoProductoService.guardarFotoProducto(foto);
+            String fotoNombre = fotoProductoService.prepararNombre(foto);
+            fotoProductoService.guardarFotoProducto(foto, fotoNombre);
 
             Producto producto = Producto.builder()
                     .nombre(dto.getNombre())
@@ -284,8 +284,8 @@ public class ProductoController {
                 }
 
                 fileValidator.validarArchivo(foto);
-                String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
-                fotoProductoService.guardarFotoProducto(foto);
+                String fotoNombre = fotoProductoService.prepararNombre(foto);
+                fotoProductoService.guardarFotoProducto(foto, fotoNombre);
                 producto.setFoto(fotoNombre);
             }
 

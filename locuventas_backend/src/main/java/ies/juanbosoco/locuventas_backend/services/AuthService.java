@@ -12,7 +12,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.transaction.support.*;
 
 import java.util.List;
 import java.util.Map;
@@ -29,39 +32,34 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private FotoService fotoVendedorService;
-    @Autowired
-    private FileValidator fileValidator;
-    @Autowired
-    private FileNameGenerator fileNameGenerator;
-
+    @Transactional(rollbackFor = Exception.class)
     public Map<String, String> register(UserRegisterDTO userDTO, MultipartFile foto) {
-
-        // Validar que haya foto
-        if (foto == null || foto.isEmpty()) {
-            throw new IllegalArgumentException("Debes seleccionar una foto.");
+        // Validación de negocio
+        if (userRepository.existsByEmail(userDTO.getEmail())) {
+            throw new IllegalArgumentException("El email ya está registrado.");
         }
 
-        // Validar y guardar la foto de perfil del usuario
-        fileValidator.validarArchivo(foto);
-        String fotoNombre = fileNameGenerator.generarNombreUnico(foto);
-        fotoVendedorService.guardarFotoVendedor(foto);
+        String nombreArchivo = fotoVendedorService.prepararNombre(foto);
 
-        try {
             // Crear y guardar usuario
             Vendedor userEntity = userRepository.save(
                     Vendedor.builder()
                             .password(passwordEncoder.encode(userDTO.getPassword()))
                             .email(userDTO.getEmail())
                             .authorities(List.of(Roles.USER))
-                            .foto(fotoNombre)
+                            .foto(nombreArchivo)
                             .nombre(userDTO.getNombre())
                             .build()
             );
 
-            return Map.of("email", userEntity.getEmail());
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    // Este código SOLO corre si la transacción de arriba fue exitosa
+                    fotoVendedorService.guardarFotoVendedor(foto, nombreArchivo);
+                }
+            });
 
-        } catch (DataIntegrityViolationException e) {
-            throw new IllegalArgumentException("Email ya utilizado");
-        }
+            return Map.of("email", userEntity.getEmail());
     }
 }

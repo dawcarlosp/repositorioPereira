@@ -26,27 +26,19 @@ public class FotoService {
         this.fileNameGenerator = fileNameGenerator;
         this.fileValidator = fileValidator;
     }
-    public String guardarFotoProducto(MultipartFile archivo) {
-        return guardarFoto(archivo, "productos");
+    public void guardarFotoProducto(MultipartFile archivo, String nombreArchivo) {
+        guardarFoto(archivo, "productos", nombreArchivo);
     }
 
-    public String guardarFotoVendedor(MultipartFile archivo) {
-        return guardarFoto(archivo, "vendedores");
+    public void guardarFotoVendedor(MultipartFile archivo, String nombreArchivo) {
+        guardarFoto(archivo, "vendedores", nombreArchivo);
     }
 
     // MÉTODO DE ALTO NIVEL (el que usarán otros métodos)
-    public String guardarFoto(MultipartFile archivo, String subdirectorio) {
+    public void guardarFoto(MultipartFile archivo, String subdirectorio, String nombreArchivo) {
 
-        // 1. Validar archivo
-        fileValidator.validarArchivo(archivo);
-
-        // 2. Generar nombre único
-        String nombreArchivo = fileNameGenerator.generarNombreUnico(archivo);
-
-        // 3. Guardar físicamente
+        //Guardar físicamente
         guardarEnDisco(archivo, nombreArchivo, subdirectorio);
-
-        return nombreArchivo;
     }
 
     public void eliminarImagen(String nombreArchivo, String subdirectorio) {
@@ -109,5 +101,13 @@ public class FotoService {
 
     private Path construirRuta(String nombreArchivo, String subdirectorio) {
         return construirDirectorio(subdirectorio).resolve(nombreArchivo);
+    }
+    public String prepararNombre(MultipartFile archivo) {
+        // Validar que haya foto
+        if (archivo == null || archivo.isEmpty()) {
+            throw new IllegalArgumentException("Debes seleccionar una foto.");
+        }
+        fileValidator.validarArchivo(archivo);
+        return fileNameGenerator.generarNombreUnico(archivo);
     }
 }

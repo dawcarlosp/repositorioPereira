@@ -4,8 +4,10 @@ import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
 import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserEditDTO;
 import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
+import ies.juanbosoco.locuventas_backend.controllers.docs.AuthApi;
 import ies.juanbosoco.locuventas_backend.entities.Pais;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
@@ -42,7 +44,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
-public class AuthController {
+public class AuthController implements AuthApi {
 
     @Autowired
     private AuthService authService;
@@ -61,44 +63,16 @@ public class AuthController {
     private FileValidator fileValidator;
     @Autowired
     private FileNameGenerator fileNameGenerator;
-    @Operation(
-            summary = "Registro de nuevo usuario",
-            description = "Permite registrar un usuario nuevo con nombre, email, contraseña y una foto de perfil.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = RegisterRequest.class)
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Usuario creado correctamente"),
-                    @ApiResponse(responseCode = "400", description = "Datos inválidos o email ya usado"),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-            }
-    )
+
     @PostMapping(value = "/auth/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> register(
+    public ResponseEntity<ApiResponseDTO<Map<String, String>>> register(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,
-            @RequestPart(value = "foto", required = false) MultipartFile foto,
-            BindingResult result
+            @RequestPart(value = "foto") MultipartFile foto
     ) {
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(error ->
-                    errors.put(error.getField(), error.getDefaultMessage())
-            );
-            return ResponseEntity.badRequest().body(errors);
-        }
 
-        if (foto == null || foto.isEmpty()) {
-            throw new IllegalArgumentException("Debes seleccionar una foto.");
-        }
+        Map<String, String> data =  authService.register(userDTO, foto);
 
-        authService.register(userDTO, foto);
-
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(Map.of("message", "Usuario creado correctamente"));
+        return ApiResponseDTO.success("Usuario creado correctamente", data, HttpStatus.CREATED);
     }
 
 
@@ -352,7 +326,7 @@ public class AuthController {
             // Guardar la nueva
             fileValidator.validarArchivo(foto);
             String nuevoNombreFoto = fileNameGenerator.generarNombreUnico(foto);
-            fotoVendedorService.guardarFotoVendedor(foto);
+            fotoVendedorService.guardarFotoVendedor(foto, nuevoNombreFoto);
             usuario.setFoto(nuevoNombreFoto);
         }
 

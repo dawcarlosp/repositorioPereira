@@ -1,3 +1,4 @@
+
 package ies.juanbosoco.locuventas_backend.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -26,13 +27,13 @@ import org.slf4j.LoggerFactory;
 public class DataInitializer implements CommandLineRunner {
 
 
-    @Value("${app.admin.email}")
+    @Value("admin@empresa.com")
     private String adminEmail;
 
-    @Value("${app.admin.password}")
+    @Value("AdminSeguro1234")
     private String adminPassword;
 
-    @Value("${app.admin.nombre}")
+    @Value("Administrador Principal\n")
     private String adminNombre;
 
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
@@ -52,11 +53,12 @@ public class DataInitializer implements CommandLineRunner {
     private ProductoRepository productoRepository;
 
     @Override
+
     public void run(String... args) throws Exception {
-        initAdminAndVendedor();
-        initCategorias();
-        initPaises();
-        initProductos();
+        //initAdminAndVendedor();
+        //initCategorias();
+        //initPaises();
+        //initProductos();
     }
 
     private void initAdminAndVendedor() {
