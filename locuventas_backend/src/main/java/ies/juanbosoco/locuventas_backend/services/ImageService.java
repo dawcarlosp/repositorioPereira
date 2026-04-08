@@ -11,7 +11,9 @@ import java.io.*;
 @Service
 public class ImageService {
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
-
+    static{
+        ImageIO.scanForPlugins();
+    }
     public ImageService() {
         // Esto fuerza el registro de TwelveMonkeys nada más arrancar el servicio
         ImageIO.scanForPlugins();
@@ -37,13 +39,16 @@ public class ImageService {
 
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 // Si la extensión es jfif o jpeg, usamos "jpg" que es el estándar de ImageIO
-                String formatName = extension.equalsIgnoreCase("jfif") || extension.equalsIgnoreCase("jpeg")
-                        ? "jpg" : extension;
+                String newFormatName = "jpg";
 
-                boolean wrote = ImageIO.write(resizedImage, formatName, outputStream);
+            if(extension.equalsIgnoreCase("webp") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("jfif")){
+                newFormatName = "jpg";
+                }
+
+                boolean wrote = ImageIO.write(resizedImage, newFormatName, outputStream);
 
                 if (!wrote) {
-                    throw new IOException("No se encontró un escritor para el formato: " + formatName);
+                    throw new IOException("No se encontró un escritor para el formato: " + newFormatName);
                 }
 
                 return outputStream.toByteArray();
