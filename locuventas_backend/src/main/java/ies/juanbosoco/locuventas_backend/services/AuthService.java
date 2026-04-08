@@ -32,6 +32,7 @@ public class AuthService {
     private AuthenticationManager authenticationManager;
     @Autowired
     private FotoService fotoVendedorService;
+
     @Transactional(rollbackFor = Exception.class)
     public Map<String, String> register(UserRegisterDTO userDTO, MultipartFile foto) {
         // Validación de negocio
@@ -40,26 +41,25 @@ public class AuthService {
         }
 
         String nombreArchivo = fotoVendedorService.prepararNombre(foto);
+        fotoVendedorService.guardarFotoVendedor(foto, nombreArchivo);
+        try{
+    // Crear y guardar usuario
+    Vendedor userEntity = userRepository.save(
+            Vendedor.builder()
+                    .password(passwordEncoder.encode(userDTO.getPassword()))
+                    .email(userDTO.getEmail())
+                    .authorities(List.of(Roles.USER))
+                    .foto(nombreArchivo)
+                    .nombre(userDTO.getNombre())
+                    .build()
+    );
 
-            // Crear y guardar usuario
-            Vendedor userEntity = userRepository.save(
-                    Vendedor.builder()
-                            .password(passwordEncoder.encode(userDTO.getPassword()))
-                            .email(userDTO.getEmail())
-                            .authorities(List.of(Roles.USER))
-                            .foto(nombreArchivo)
-                            .nombre(userDTO.getNombre())
-                            .build()
-            );
-
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    // Este código SOLO corre si la transacción de arriba fue exitosa
-                    fotoVendedorService.guardarFotoVendedor(foto, nombreArchivo);
-                }
-            });
-
-            return Map.of("email", userEntity.getEmail());
+            return Map.of("email",userEntity.getEmail());
+        }catch (Exception e) {
+        // 3. Si la DB falla, borramos la foto que acabamos de subir para no dejar basura
+        fotoVendedorService.eliminarImagen(nombreArchivo, "vendedores");
+        throw e;
+    }
     }
 }
+

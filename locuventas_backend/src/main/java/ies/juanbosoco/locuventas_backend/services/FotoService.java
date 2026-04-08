@@ -81,6 +81,10 @@ public class FotoService {
             byte[] contenido = archivo.getBytes();
             String extension = fileNameGenerator.obtenerExtensionArchivo(nombreArchivo).substring(1);
 
+            if (extension.equals("jfif") || extension.equals("jpeg")) {
+                extension = "jpg";
+            }
+
             byte[] contenidoRedimensionado =
                     imageService.resizeImage(contenido, 1000, extension);
 
@@ -89,6 +93,7 @@ public class FotoService {
             logger.info("Imagen guardada en: {}", rutaDestino);
 
         } catch (IOException e) {
+            logger.error("Error detallado al guardar archivo: ", e);
             throw new RuntimeException("Error al guardar archivo: " + archivo.getOriginalFilename(), e);
         }
     }
