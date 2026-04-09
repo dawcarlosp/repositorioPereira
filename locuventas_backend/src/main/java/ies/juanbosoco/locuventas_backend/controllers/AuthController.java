@@ -77,56 +77,11 @@ public class AuthController implements AuthApi {
 
 
     @PostMapping("/auth/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginDTO) {
-        try {
-            UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword());
+    public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO loginDTO) {
 
-            Authentication auth = authenticationManager.authenticate(authToken);
-            Vendedor user = (Vendedor) auth.getPrincipal();
+        LoginResponseDTO data = authService.login(loginDTO);
 
-            // Extraer roles en forma de List<String>
-            List<String> roles = user.getAuthorities().stream()
-                    .map(granted -> granted.getAuthority())
-                    .toList();
-
-            // Verificar si es vendedor o admin
-            boolean esVendedor = roles.contains(Roles.VENDEDOR);
-            boolean esAdmin = roles.contains(Roles.ADMIN);
-
-            if (!esVendedor && !esAdmin) {
-                // NO es vendedor ni admin: rechaza login y manda mensaje
-                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(
-                        Map.of(
-                                "message", "Su cuenta aún no ha sido habilitada como vendedor. Espere a que un administrador le otorgue permisos.",
-                                "path", "/auth/login",
-                                "timestamp", new Date()
-                        )
-                );
-            }
-
-            // Generar el token y devolver todo lo necesario
-            String token = tokenProvider.generateToken(auth);
-
-            LoginResponseDTO responseDTO = new LoginResponseDTO(
-                    user.getUsername(),  // email
-                    token,
-                    user.getNombre(),
-                    user.getFoto(),
-                    roles
-            );
-
-            return ResponseEntity.ok(responseDTO);
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
-                    Map.of(
-                            "path", "/auth/login",
-                            "message", "Credenciales erróneas",
-                            "timestamp", new Date()
-                    )
-            );
-        }
+        return ApiResponseDTO.success("Login realizado con éxito", data, HttpStatus.OK);
     }
 
 

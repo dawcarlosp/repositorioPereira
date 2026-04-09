@@ -1,7 +1,12 @@
 package ies.juanbosoco.locuventas_backend;
 
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
+import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.errors.InsufficientPermissionsException;
 import ies.juanbosoco.locuventas_backend.errors.UserAlreadyExistsException;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import ies.juanbosoco.locuventas_backend.services.AuthService;
@@ -10,12 +15,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,6 +42,12 @@ public class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JwtTokenProvider tokenProvider;
 
     @InjectMocks
     private AuthService authService; // Inyecta los mocks de arriba automáticamente
@@ -90,20 +106,142 @@ public class AuthServiceTest {
     }
 
     @Test
-    @DisplayName("Debe limpiar la foto si ocurre un error al guardar en base de datos")
-    void register_DatabaseError_DeletesPhoto() {
+    @DisplayName("Debe encriptar la contraseña y asignar el rol USER correctamente")
+    void register_DataMapping_Success() {
         // GIVEN
-        String nombreArchivo = "foto-a-borrar.jpg";
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(fotoVendedorService.prepararNombre(any())).thenReturn("uuid-foto.jpg");
+        when(passwordEncoder.encode(anyString())).thenReturn("contraseñaEncriptada");
+
+        // WHEN
+        authService.register(userDTO, foto);
+
+        // THEN
+        ArgumentCaptor<Vendedor> vendedorCaptor = ArgumentCaptor.forClass(Vendedor.class);
+        verify(userRepository).save(vendedorCaptor.capture());
+
+        Vendedor vendedorGuardado = vendedorCaptor.getValue();
+        assertEquals("contraseñaEncriptada", vendedorGuardado.getPassword());
+
+        // AQUÍ ESTÁ EL CAMBIO: Comparamos contra lo que definiste en el setUp
+        assertEquals(userDTO.getEmail(), vendedorGuardado.getEmail());
+
+        assertTrue(vendedorGuardado.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals(Roles.USER)));
+    }
+
+    @Test
+    @DisplayName("Debe lanzar UserAlreadyExistsException si el email ya está en uso")
+    void register_UserExists_ThrowsException() {
+        // GIVEN
+        when(userRepository.existsByEmail(userDTO.getEmail())).thenReturn(true);
+
+        // WHEN & THEN
+        assertThrows(UserAlreadyExistsException.class, () -> authService.register(userDTO, foto));
+
+        // Verificamos que no se intentó guardar nada
+        verify(userRepository, never()).save(any());
+        verify(fotoVendedorService, never()).guardarFotoVendedor(any(), any());
+    }
+
+    @Test
+    @DisplayName("Debe eliminar la imagen si el guardado en base de datos falla (Rollback manual)")
+    void register_DatabaseFail_DeletesImage() {
+        // GIVEN
+        String nombreArchivo = "foto-temporal.jpg";
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
         when(fotoVendedorService.prepararNombre(any())).thenReturn(nombreArchivo);
 
-        // Simulamos que la base de datos explota
-        when(userRepository.save(any())).thenThrow(new RuntimeException("DB Error"));
+        // Simulamos que el save falla lanzando una excepción genérica
+        when(userRepository.save(any())).thenThrow(new RuntimeException("Error fatal de DB"));
 
         // WHEN & THEN
         assertThrows(RuntimeException.class, () -> authService.register(userDTO, foto));
 
-        // VERIFICACIÓN CRÍTICA: ¿Se llamó a eliminarImagen tras el fallo?
+        // VERIFICACIÓN DE ORO: Se debe haber llamado a eliminarImagen
         verify(fotoVendedorService).eliminarImagen(nombreArchivo, "vendedores");
+    }
+
+    @Test
+    @DisplayName("No debe guardar en DB si la validación o guardado de la foto falla")
+    void register_ImageError_NoDatabaseInsert() {
+        // GIVEN
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(fotoVendedorService.prepararNombre(any())).thenReturn("foto.jpg");
+
+        // doThrow se usa para métodos que devuelven 'void'
+        doThrow(new RuntimeException("Error al escribir en disco"))
+                .when(fotoVendedorService).guardarFotoVendedor(any(), anyString());
+
+        // WHEN & THEN
+        assertThrows(RuntimeException.class, () -> authService.register(userDTO, foto));
+
+        // Verificamos que nunca se llamó al save
+        verify(userRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Login exitoso: Debe devolver el DTO con el token cuando las credenciales y roles son correctos")
+    void login_Success() {
+        // GIVEN
+        LoginRequestDTO loginDTO = new LoginRequestDTO("test@example.com", "Password123!");
+
+        // Simulamos el usuario que devuelve Spring Security
+        Vendedor vendedor = Vendedor.builder()
+                .email("test@example.com")
+                .nombre("Juan Perez")
+                .authorities(List.of(Roles.VENDEDOR)) // Tiene el rol necesario
+                .build();
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(vendedor);
+        when(authenticationManager.authenticate(any())).thenReturn(auth);
+        when(tokenProvider.generateToken(auth)).thenReturn("jwt-token-generado");
+
+        // WHEN
+        LoginResponseDTO response = authService.login(loginDTO);
+
+        // THEN
+        assertNotNull(response);
+        assertEquals("jwt-token-generado", response.getToken());
+        assertEquals("test@example.com", response.getEmail());
+        assertTrue(response.getRoles().contains(Roles.VENDEDOR));
+    }
+
+    @Test
+    @DisplayName("Login fallido: Debe lanzar InsufficientPermissionsException si no es Vendedor ni Admin")
+    void login_InsufficientPermissions_ThrowsException() {
+        // GIVEN
+        LoginRequestDTO loginDTO = new LoginRequestDTO("test@example.com", "Password123!");
+
+        // Usuario autenticado pero solo con rol USER (no habilitado para ventas)
+        Vendedor vendedor = Vendedor.builder()
+                .email("test@example.com")
+                .authorities(List.of(Roles.USER))
+                .build();
+
+        Authentication auth = mock(Authentication.class);
+        when(auth.getPrincipal()).thenReturn(vendedor);
+        when(authenticationManager.authenticate(any())).thenReturn(auth);
+
+        // WHEN & THEN
+        assertThrows(InsufficientPermissionsException.class, () -> authService.login(loginDTO));
+
+        // Verificamos que NUNCA se generó el token por falta de permisos
+        verify(tokenProvider, never()).generateToken(any());
+    }
+
+    @Test
+    @DisplayName("Login fallido: Debe propagar BadCredentialsException si la autenticación falla")
+    void login_BadCredentials_ThrowsException() {
+        // GIVEN
+        LoginRequestDTO loginDTO = new LoginRequestDTO("mal@example.com", "wrong-pass");
+
+        // Simulamos que el AuthenticationManager de Spring Security lanza el error
+        when(authenticationManager.authenticate(any()))
+                .thenThrow(new BadCredentialsException("Credenciales inválidas"));
+
+        // WHEN & THEN
+        assertThrows(BadCredentialsException.class, () -> authService.login(loginDTO));
     }
 }

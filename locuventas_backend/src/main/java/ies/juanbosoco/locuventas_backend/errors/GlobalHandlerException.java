@@ -4,6 +4,7 @@ import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -18,7 +19,22 @@ import java.util.Map;
 @RestControllerAdvice // Mejor que @ControllerAdvice para APIs REST
 public class GlobalHandlerException {
 
+    @ExceptionHandler(InsufficientPermissionsException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleInsufficientPermissions(InsufficientPermissionsException ex) {
+        return ApiResponseDTO.error(
+                ex.getMessage(),
+                HttpStatus.FORBIDDEN
+        );
+    }
 
+    // También es vital capturar el error de login de Spring Security aquí
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleBadCredentials(BadCredentialsException ex) {
+        return ApiResponseDTO.error(
+                "Credenciales erróneas. Por favor, revise su email y contraseña.",
+                HttpStatus.UNAUTHORIZED
+        );
+    }
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleBusinessExceptions(BusinessException ex) {
         return ApiResponseDTO.error(ex.getMessage(), ex.getStatus());
