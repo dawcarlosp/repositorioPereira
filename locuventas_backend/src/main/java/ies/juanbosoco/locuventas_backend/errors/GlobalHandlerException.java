@@ -18,6 +18,11 @@ import java.util.Map;
 @RestControllerAdvice // Mejor que @ControllerAdvice para APIs REST
 public class GlobalHandlerException {
 
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleBusinessExceptions(BusinessException ex) {
+        return ApiResponseDTO.error(ex.getMessage(), ex.getStatus());
+    }
     // 1. Errores de Validación (El más importante)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponseDTO<Map<String, String>>> handleValidation(MethodArgumentNotValidException ex) {

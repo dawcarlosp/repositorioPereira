@@ -1,54 +1,56 @@
 package ies.juanbosoco.locuventas_backend.services;
 
+import ies.juanbosoco.locuventas_backend.errors.FormatoImagenInvalidoException;
 import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 @Service
 public class ImageService {
     private static final Logger logger = LoggerFactory.getLogger(ImageService.class);
-    static{
-        ImageIO.scanForPlugins();
-    }
-    public ImageService() {
-        // Esto fuerza el registro de TwelveMonkeys nada más arrancar el servicio
+
+    static {
+        // Registro manual para asegurar que TwelveMonkeys tome el control de los formatos extra
         ImageIO.scanForPlugins();
     }
 
     public byte[] resizeImage(byte[] imageBytes, int targetWidth, String extension) throws IOException {
+        // 1. Limpiamos la extensión (quitamos el punto si existe)
+        String format = extension.replace(".", "").toLowerCase();
 
-        // LOG TEMPORAL: Imprime esto para ver si "webp" aparece en la lista
-        String[] formatos = ImageIO.getWriterFormatNames();
-        logger.info("Formatos de escritura disponibles: {}", String.join(", ", formatos));
+        // Mapeo de casos especiales: jfif/jpeg -> jpg (ImageIO prefiere "jpg")
+        if (format.equals("jpeg") || format.equals("jfif")) {
+            format = "jpg";
+        }
 
         try (ByteArrayInputStream inputStream = new ByteArrayInputStream(imageBytes)) {
             BufferedImage originalImage = ImageIO.read(inputStream);
 
             if (originalImage == null) {
-                throw new IOException("No se pudo leer la imagen. Formato '" + extension + "' no soportado.");
+                throw new FormatoImagenInvalidoException(extension);
             }
 
+            // 2. Redimensionamiento con Thumbnailator
             BufferedImage resizedImage = Thumbnails.of(originalImage)
                     .width(targetWidth)
                     .keepAspectRatio(true)
                     .asBufferedImage();
 
+            // 3. Escritura dinámica según el formato original
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                // Si la extensión es jfif o jpeg, usamos "jpg" que es el estándar de ImageIO
-                String newFormatName = "jpg";
-
-            if(extension.equalsIgnoreCase("webp") || extension.equalsIgnoreCase("jpeg") || extension.equalsIgnoreCase("jfif")){
-                newFormatName = "jpg";
-                }
-
-                boolean wrote = ImageIO.write(resizedImage, newFormatName, outputStream);
+                boolean wrote = ImageIO.write(resizedImage, format, outputStream);
 
                 if (!wrote) {
-                    throw new IOException("No se encontró un escritor para el formato: " + newFormatName);
+                    // Fallback: Si no hay un escritor para el formato (ej. webp fallando),
+                    // intentamos con el formato estándar JPG para no perder el archivo.
+                    logger.warn("No se encontró escritor para '{}', reintentando con jpg", format);
+                    ImageIO.write(resizedImage, "jpg", outputStream);
                 }
 
                 return outputStream.toByteArray();
@@ -56,4 +58,3 @@ public class ImageService {
         }
     }
 }
-
