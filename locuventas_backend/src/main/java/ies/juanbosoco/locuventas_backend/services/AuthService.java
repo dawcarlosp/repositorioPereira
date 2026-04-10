@@ -6,10 +6,12 @@ import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.errors.BusinessException;
 import ies.juanbosoco.locuventas_backend.errors.InsufficientPermissionsException;
 import ies.juanbosoco.locuventas_backend.errors.UserAlreadyExistsException;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -97,5 +99,30 @@ public class AuthService {
                 .roles(roles)
                 .build();
     }
+
+    public void asignarRolVendedor(Long idDestino, String emailAdmin) {
+        // 1. Buscamos al Admin
+        Vendedor admin = userRepository.findByEmail(emailAdmin)
+                .orElseThrow(() -> new BusinessException("Administrador no encontrado", HttpStatus.UNAUTHORIZED));
+
+        // 2. Regla: No auto-asignación (403 Forbidden)
+        if (admin.getId().equals(idDestino)) {
+            throw new BusinessException("No puedes asignarte el rol de vendedor a ti mismo", HttpStatus.FORBIDDEN);
+        }
+
+        // 3. Buscamos al usuario destino (404 Not Found)
+        Vendedor usuario = userRepository.findById(idDestino)
+                .orElseThrow(() -> new BusinessException("Usuario no encontrado", HttpStatus.NOT_FOUND));
+
+        // 4. Regla: No duplicar roles (400 Bad Request)
+        if (usuario.getAuthoritiesRaw().contains(Roles.VENDEDOR)) {
+            throw new BusinessException("El usuario ya tiene el rol de VENDEDOR", HttpStatus.BAD_REQUEST);
+        }
+
+        // 5. Acción y guardado
+        usuario.getAuthoritiesRaw().add(Roles.VENDEDOR);
+        userRepository.save(usuario);
+    }
+
 }
 

@@ -82,16 +82,7 @@ public class AuthController implements AuthApi {
         LoginResponseDTO data = authService.login(loginDTO);
 
         return ApiResponseDTO.success("Login realizado con éxito", data, HttpStatus.OK);
-    }
 
-
-    private PaisResponseDTO mapToDTO(Pais pais) {
-        return new PaisResponseDTO(
-                pais.getId(),
-                pais.getNombre(),
-                pais.getCodigo(),
-                pais.getEnlaceFoto()
-        );
     }
 
 
@@ -99,66 +90,15 @@ public class AuthController implements AuthApi {
      * Asigna el rol ROLE_VENDEDOR a un usuario ajeno al ADMIN que invoca.
      * Solo puede accederlo ADMIN.
      */
-    @SecurityRequirement(name = "bearerAuth")
+    @Override
     @PutMapping("/usuarios/{id}/asignar-rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> asignarRolVendedor(@PathVariable Long id) {
-        // Recuperamos el Authentication del contexto (el filtro JWT ya lo habrá llenado)
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            // Si no hay Authentication, devolvemos 401
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Debes iniciar sesión como admin."));
-        }
+    public ResponseEntity<ApiResponseDTO<Void>> asignarRolVendedor(@PathVariable Long id, Principal principal) {
 
-        // Extraemos el username/email del principal.
-        // Puede venir como String (username) o como UserDetails.
-        String emailAdmin;
-        Object principalObj = auth.getPrincipal();
-        if (principalObj instanceof UserDetails) {
-            emailAdmin = ((UserDetails) principalObj).getUsername();
-        } else if (principalObj instanceof String) {
-            emailAdmin = (String) principalObj;
-        } else {
-            // Si no es ninguno de los dos, devolvemos 401
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Debes iniciar sesión como admin."));
-        }
+        // principal.getName() nos da el email (el 'subject' del token JWT)
+        authService.asignarRolVendedor(id, principal.getName());
 
-        // Buscamos en BD al administrador real
-        Vendedor currentUser = userRepository.findByEmail(emailAdmin).orElse(null);
-        if (currentUser == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Administrador no encontrado."));
-        }
-
-        // Evitamos que el ADMIN se asigne el rol a sí mismo → 403 Forbidden
-        if (currentUser.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                    .body(Map.of("error", "No puedes asignarte el rol a ti mismo."));
-        }
-
-        // Buscamos al usuario destino (el que recibimos en la URL)
-        Optional<Vendedor> optional = userRepository.findById(id);
-        if (optional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado."));
-        }
-        Vendedor user = optional.get();
-
-        // Si ese usuario ya tiene ROLE_VENDEDOR, devolvemos 400 Bad Request
-        boolean yaEsVendedor = user.getAuthorities().stream()
-                .anyMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR));
-        if (yaEsVendedor) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", "El usuario ya tiene el rol de VENDEDOR."));
-        }
-
-        // Asignamos el rol y guardamos
-        user.getAuthoritiesRaw().add(Roles.VENDEDOR);
-        userRepository.save(user);
-
-        return ResponseEntity.ok(Map.of("message", "Rol VENDEDOR asignado correctamente."));
+        return ApiResponseDTO.success("Rol VENDEDOR asignado correctamente", null, HttpStatus.OK);
     }
 
     /**

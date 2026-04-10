@@ -11,14 +11,18 @@
     import io.swagger.v3.oas.annotations.media.Schema;
     import io.swagger.v3.oas.annotations.parameters.RequestBody;
     import io.swagger.v3.oas.annotations.responses.ApiResponse;
+    import io.swagger.v3.oas.annotations.security.SecurityRequirement;
     import io.swagger.v3.oas.annotations.tags.Tag;
     import jakarta.validation.Valid;
     import org.springframework.http.MediaType;
     import org.springframework.http.ResponseEntity;
+    import org.springframework.web.bind.annotation.PathVariable;
     import org.springframework.web.bind.annotation.PostMapping;
+    import org.springframework.web.bind.annotation.PutMapping;
     import org.springframework.web.bind.annotation.RequestPart;
     import org.springframework.web.multipart.MultipartFile;
 
+    import java.security.Principal;
     import java.util.Map;
 
     @Tag(name = "Autenticación", description = "Endpoints para la gestión de usuarios")
@@ -94,4 +98,18 @@
         )
         @PostMapping("/auth/login")
         public ResponseEntity<ApiResponseDTO<LoginResponseDTO>> login(@Valid @RequestBody LoginRequestDTO loginDTO);
+
+        @Operation(
+                summary = "Asignar rol de vendedor",
+                description = "Permite a un administrador habilitar a un usuario para vender. No permite la auto-asignación.",
+                security = @SecurityRequirement(name = "bearerAuth"),
+                responses = {
+                        @ApiResponse(responseCode = "200", description = "Rol asignado con éxito"),
+                        @ApiResponse(responseCode = "403", description = "No tienes permisos de ADMIN o intentas auto-asignarte"),
+                        @ApiResponse(responseCode = "404", description = "El usuario destino no existe"),
+                        @ApiResponse(responseCode = "400", description = "El usuario ya era vendedor")
+                }
+        )
+        @PutMapping("/usuarios/{id}/asignar-rol")
+        ResponseEntity<ApiResponseDTO<Void>> asignarRolVendedor(@PathVariable Long id, Principal principal);
     }

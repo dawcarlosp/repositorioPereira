@@ -6,6 +6,7 @@ import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.errors.BusinessException;
 import ies.juanbosoco.locuventas_backend.errors.InsufficientPermissionsException;
 import ies.juanbosoco.locuventas_backend.errors.UserAlreadyExistsException;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
@@ -19,6 +20,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -243,5 +245,14 @@ public class AuthServiceTest {
 
         // WHEN & THEN
         assertThrows(BadCredentialsException.class, () -> authService.login(loginDTO));
+    }
+
+    @Test
+    void asignarRol_SelfAssignment_ThrowsException() {
+        // ... setup mocks ...
+        BusinessException ex = assertThrows(BusinessException.class,
+                () -> authService.asignarRolVendedor(1L, "admin@test.com"));
+
+        assertEquals(HttpStatus.FORBIDDEN, ex.getStatus());
     }
 }
