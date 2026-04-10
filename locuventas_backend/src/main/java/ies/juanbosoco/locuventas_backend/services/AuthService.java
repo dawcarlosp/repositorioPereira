@@ -1,15 +1,16 @@
 package ies.juanbosoco.locuventas_backend.services;
 
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.*;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.Vendedor;
 import ies.juanbosoco.locuventas_backend.errors.BusinessException;
 import ies.juanbosoco.locuventas_backend.errors.InsufficientPermissionsException;
 import ies.juanbosoco.locuventas_backend.errors.UserAlreadyExistsException;
+import ies.juanbosoco.locuventas_backend.errors.UserNotFoundException;
 import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +28,8 @@ import java.util.Map;
 
 @Service
 public class AuthService {
+
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
     @Autowired
     private UserEntityRepository userRepository;
     @Autowired
@@ -123,6 +126,90 @@ public class AuthService {
         usuario.getAuthoritiesRaw().add(Roles.VENDEDOR);
         userRepository.save(usuario);
     }
+    public List<UserResponseDTO> getBasicUsers() {
+        return userRepository.findByAuthoritiesNotContaining(Roles.ADMIN, Roles.VENDEDOR)
+                .stream()
+                .map(this::mapToResponseDTO)
+                .toList();
+    }
 
+    @Transactional
+    public UserResponseDTO editarPerfil(String emailActual, UserEditDTO dto, MultipartFile foto) {
+        // 1. Recuperar usuario
+        Vendedor usuario = userRepository.findByEmail(emailActual)
+                .orElseThrow(() -> new UserNotFoundException("Usuario no encontrado"));
+
+        // 2. Validar Email si ha cambiado
+        if (!usuario.getEmail().equals(dto.getEmail())) {
+            if (userRepository.existsByEmail(dto.getEmail())) {
+                throw new BusinessException("El email ya está en uso por otro usuario", HttpStatus.BAD_REQUEST);
+            }
+            usuario.setEmail(dto.getEmail());
+        }
+
+        // 3. Actualizar campos básicos
+        usuario.setNombre(dto.getNombre());
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            usuario.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
+        // 4. Gestión de Foto (Usando tu nuevo FotoService)
+        if (foto != null && !foto.isEmpty()) {
+            String fotoAnterior = usuario.getFoto();
+
+            // Usamos tu método 'prepararNombre' que ya valida y genera el UUID
+            String nuevoNombreFoto = fotoVendedorService.prepararNombre(foto);
+
+            // Guardamos la nueva
+            fotoVendedorService.guardarFotoVendedor(foto, nuevoNombreFoto);
+            usuario.setFoto(nuevoNombreFoto);
+
+            // Borramos la antigua si no era la default (opcional)
+            if (fotoAnterior != null && !fotoAnterior.equals("default.jpg")) {
+                try {
+                    fotoVendedorService.eliminarImagen(fotoAnterior, "vendedores");
+                } catch (Exception e) {
+                    // Logueamos pero no frenamos la edición por un error de borrado
+                }
+            }
+        }
+
+        Vendedor actualizado = userRepository.save(usuario);
+
+        // 5. Devolvemos el DTO usando el mapper que ya tienes
+        return mapToResponseDTO(actualizado);
+    }
+
+    @Transactional
+    public void eliminarUsuario(Long id) {
+        // 1. Buscar el usuario o lanzar nuestra excepción personalizada
+        Vendedor usuario = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("No se puede eliminar: Usuario no encontrado con ID " + id));
+
+        // 2. Gestionar la eliminación de la foto (si tiene)
+        if (usuario.getFoto() != null && !usuario.getFoto().isBlank() && !usuario.getFoto().equals("default.jpg")) {
+            try {
+                fotoVendedorService.eliminarImagen(usuario.getFoto(), "vendedores");
+            } catch (Exception e) {
+                // Logueamos el error pero permitimos que continúe el borrado del registro
+                log.error("Error al borrar el archivo físico del usuario {}: {}", id, e.getMessage());
+            }
+        }
+
+        // 3. Eliminar de la base de datos
+        userRepository.delete(usuario);
+    }
+
+    private UserResponseDTO mapToResponseDTO(Vendedor vendedor) {
+        return UserResponseDTO.builder()
+                .id(vendedor.getId())
+                .email(vendedor.getEmail())
+                .nombre(vendedor.getNombre())
+                .foto(vendedor.getFoto())
+                .roles(vendedor.getAuthoritiesRaw())
+                .createdAt(vendedor.getCreatedAt())
+                .build();
+    }
 }
 

@@ -3,6 +3,7 @@ package ies.juanbosoco.locuventas_backend.DTO.vendedor;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -12,16 +13,14 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @Setter
 public class UserEditDTO {
-    @Email(message = "El email no tiene el formato válido")
-    @Length(max = 100, message = "El email es demasiado largo")
+    @NotBlank(message = "El nombre no puede estar vacío")
+    private String nombre;
+
+    @NotBlank(message = "El email no puede estar vacío")
+    @Email(message = "El formato del email no es válido")
     private String email;
 
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&.])[A-Za-z\\d@$!%*?&.]{8,}$",
-            message = "La contraseña debe tener mínimo 8 caracteres, incluir mayúsculas, minúsculas, un número y un carácter especial")
-
+    // La contraseña es opcional en la edición
+    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
     private String password;
-
-    @Length(min = 3, max = 50, message = "El nombre requiere minimo tres caracteres y máximo 50")
-    @Pattern(regexp = "^[A-Za-zÁÉÍÓÚáéíóúÑñÜü ]+$", message = "El nombre solo puede contener letras y espacios")
-    private String nombre;
 }

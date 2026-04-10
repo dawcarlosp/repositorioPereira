@@ -1,4 +1,5 @@
 package ies.juanbosoco.locuventas_backend.config;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import jakarta.servlet.FilterChain;
@@ -32,26 +33,47 @@ public class JwtFilter extends OncePerRequestFilter{
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        // 1. Extraer el token de la cabecera 'Authorization'
         String token = this.extractToken(request);
 
-        if(token != null && tokenProvider.isValidToken(token)){
-            String username = this.tokenProvider.getUsernameFromToken(token);
+        try {
+            // 2. Validar que el token exista y sea íntegro (firma, expiración)
+            if (token != null && tokenProvider.isValidToken(token)) {
 
-            //UserDetails representa al usuario
-            UserDetails user = this.userDetailsService.loadUserByUsername(username); //Carga el usuario de la base de datos
+                // 3. Obtener la identidad del usuario desde el token
+                String username = this.tokenProvider.getEmailFromToken(token);
 
-            //Información sobre el usuario que se acaba de autenticar
-            Authentication auth = new UsernamePasswordAuthenticationToken(
-                    user.getUsername(),
-                    user.getPassword(),
-                    user.getAuthorities());
+                // 4. Cargar detalles del usuario desde la BD
+                // loadUserByUsername lanzará UsernameNotFoundException si no existe
+                UserDetails user = this.userDetailsService.loadUserByUsername(username);
 
-            //SecurityContext permite ver o establecer un usuario logeado
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                // 5. Crear el objeto de autenticación
+                // Es vital pasar 'user' como principal y sus roles (authorities)
+                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+                        user,
+                        null,
+                        user.getAuthorities()
+                );
+
+                // 6. Enlazar detalles de la petición (IP, sesión, etc.) a la autenticación
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // 7. Establecer al usuario en el contexto de seguridad de esta petición
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+        } catch (Exception e) {
+            // 8. Si algo falla (usuario borrado, token corrupto), limpiamos el contexto.
+            // Esto garantiza que la petición sea tratada como "Anónima" y
+            // Spring Security lance el 401 a través del EntryPoint.
+            SecurityContextHolder.clearContext();
+            logger.error("No se pudo establecer la autenticación del usuario: " + e.getMessage());
         }
 
-        //Reenviamos la petición a los siguientes filtros
+        // 9. Continuar siempre con la cadena de filtros (importante para que llegue al EntryPoint)
         filterChain.doFilter(request, response);
     }
 

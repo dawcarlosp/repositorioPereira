@@ -24,7 +24,7 @@ public class SwaggerConfig {
                         .version("1.0.0")
                         .contact(new Contact()
                                 .name("LocuVentas Team")
-                                .email("support@locuventas.com")))
+                                .email("dawcarlospereira@gmail.com")))
                 .servers(List.of(
                         new Server().url("http://localhost:8080").description("Desarrollo")))
                 .components(new Components()

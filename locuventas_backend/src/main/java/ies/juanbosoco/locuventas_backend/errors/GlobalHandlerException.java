@@ -19,6 +19,14 @@ import java.util.Map;
 @RestControllerAdvice // Mejor que @ControllerAdvice para APIs REST
 public class GlobalHandlerException {
 
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ApiResponseDTO<Void>> handleUserNotFound(UserNotFoundException ex) {
+        return ApiResponseDTO.error(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND
+        );
+    }
+
     @ExceptionHandler(InsufficientPermissionsException.class)
     public ResponseEntity<ApiResponseDTO<Void>> handleInsufficientPermissions(InsufficientPermissionsException ex) {
         return ApiResponseDTO.error(

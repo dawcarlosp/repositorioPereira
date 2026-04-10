@@ -1,9 +1,6 @@
 package ies.juanbosoco.locuventas_backend.controllers;
 import ies.juanbosoco.locuventas_backend.DTO.pais.PaisResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserEditDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.DTO.vendedor.*;
 import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
@@ -106,137 +103,34 @@ public class AuthController implements AuthApi {
      * Es decir, aquellos cuya única autoridad es ROLE_USER.
      * Solo puede accederlo ADMIN.
      */
-    @GetMapping("/usuarios/sinrol")
+    @GetMapping("/usuarios/sin-rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> listarUsuariosSoloUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Debes iniciar sesión como admin."));
-        }
-
-        // Obtiene todos los usuarios de la BD y filtra los que NO tienen ROLE_VENDEDOR ni ROLE_ADMIN
-        List<Vendedor> usuariosSoloUser = userRepository.findAll().stream()
-                .filter(u ->
-                        u.getAuthorities().stream()
-                                .noneMatch(gr -> gr.getAuthority().equals(Roles.VENDEDOR)
-                                        || gr.getAuthority().equals(Roles.ADMIN))
-                )
-                .collect(Collectors.toList());
-        return ResponseEntity.ok(usuariosSoloUser);
+    public ResponseEntity<ApiResponseDTO<List<UserResponseDTO>>> getBasicUsers() {
+        return ApiResponseDTO.success(
+                "Usuarios pendientes de habilitar recuperados",
+                authService.getBasicUsers(),
+                HttpStatus.OK
+        );
     }
-    @SecurityRequirement(name = "bearerAuth")
-    @DeleteMapping("/usuarios/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
-        Optional<Vendedor> optional = userRepository.findById(id);
-        if (optional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of("error", "Usuario no encontrado."));
-        }
-        Vendedor user = optional.get();
 
-        // Eliminar la foto si existe
-        if (user.getFoto() != null && !user.getFoto().isBlank()) {
-            try {
-                fotoVendedorService.eliminarImagen(user.getFoto(), "vendedores");
-            } catch (Exception e) {
-                // No impedimos la eliminación del usuario por error de archivo
-            }
-        }
-
-        userRepository.deleteById(id);
-        return ResponseEntity.ok(Map.of("message", "Usuario y foto eliminados correctamente."));
-    }
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(
-            summary = "Editar perfil del usuario autenticado",
-            description = "Permite editar nombre, email, contraseña y subir una nueva foto de perfil.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = EditarPerfilRequest.class)
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Perfil actualizado correctamente"),
-                    @ApiResponse(responseCode = "400", description = "Error en los datos enviados"),
-                    @ApiResponse(responseCode = "401", description = "No autenticado")
-            }
-    )
-    @PutMapping("/usuarios/editar-perfil")
+    @PutMapping(value = "/usuarios/editar-perfil", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")
-    public ResponseEntity<?> editarPerfil(
+    public ResponseEntity<ApiResponseDTO<UserResponseDTO>> editarPerfil(
             Principal principal,
             @RequestPart("user") @Valid UserEditDTO userEditDTO,
-            @RequestPart(value = "foto", required = false) MultipartFile foto,
-            BindingResult result
+            @RequestPart(value = "foto", required = false) MultipartFile foto
     ) {
-        // Recuperar usuario autenticado por email (desde el token)
-        String email = principal.getName();
-        Vendedor usuario = userRepository.findByEmail(email).orElse(null);
-        if (usuario == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "Usuario no autenticado"));
-        }
+        // El email viene del subject del token (Principal)
+        UserResponseDTO data = authService.editarPerfil(principal.getName(), userEditDTO, foto);
 
-        //  Validaciones de campos
-        if (result.hasErrors()) {
-            Map<String, String> errors = new HashMap<>();
-            result.getFieldErrors().forEach(fieldError ->
-                    errors.put(fieldError.getField(), fieldError.getDefaultMessage())
-            );
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
-        }
-
-        // Comprobar duplicidad de email si lo cambió
-        if (!usuario.getEmail().equals(userEditDTO.getEmail())) {
-            boolean emailEnUso = userRepository.findByEmail(userEditDTO.getEmail()).isPresent();
-            if (emailEnUso) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Map.of("email", "Ese email ya está en uso"));
-            }
-            usuario.setEmail(userEditDTO.getEmail());
-        }
-
-        // Cambiar nombre si lo cambia
-        usuario.setNombre(userEditDTO.getNombre());
-
-        // Cambiar contraseña si la introduce
-        if (userEditDTO.getPassword() != null && !userEditDTO.getPassword().isBlank()) {
-            usuario.setPassword(passwordEncoder.encode(userEditDTO.getPassword()));
-        }
-
-        // Cambiar la foto si la subió (y borrar la anterior)
-        if (foto != null && !foto.isEmpty()) {
-            // Borrar la anterior si existe
-            if (usuario.getFoto() != null && !usuario.getFoto().isBlank()) {
-                try {
-                    fotoVendedorService.eliminarImagen(usuario.getFoto(), "vendedores");
-                } catch (Exception e) {
-                    // Ignora errores de borrado de archivo
-                }
-            }
-            // Guardar la nueva
-            fileValidator.validarArchivo(foto);
-            String nuevoNombreFoto = fileNameGenerator.generarNombreUnico(foto);
-            fotoVendedorService.guardarFotoVendedor(foto, nuevoNombreFoto);
-            usuario.setFoto(nuevoNombreFoto);
-        }
-
-        userRepository.save(usuario);
-
-        // Respuesta
-        Map<String, Object> response = new HashMap<>();
-        response.put("nombre", usuario.getNombre());
-        response.put("email", usuario.getEmail());
-        response.put("foto", usuario.getFoto());
-        response.put("message", "Perfil actualizado correctamente.");
-
-        return ResponseEntity.ok(response);
+        return ApiResponseDTO.success("Perfil actualizado correctamente", data, HttpStatus.OK);
     }
 
-
+    @DeleteMapping("/usuarios/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponseDTO<Void>> eliminarUsuario(@PathVariable Long id) {
+        authService.eliminarUsuario(id);
+        return ApiResponseDTO.success("Usuario y archivos asociados eliminados correctamente", null, HttpStatus.OK);
+    }
 }
 
