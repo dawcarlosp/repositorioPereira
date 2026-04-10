@@ -4,12 +4,15 @@ import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
+import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.controllers.docs.ProductoApi;
 import ies.juanbosoco.locuventas_backend.entities.*;
 import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
 import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
 import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
 import ies.juanbosoco.locuventas_backend.repositories.VentaProductoRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.services.ProductoService;
 import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
 import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
 import ies.juanbosoco.locuventas_backend.wrapper.CrearProductoRequest;
@@ -40,7 +43,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/productos")
-public class ProductoController {
+public class ProductoController implements ProductoApi {
     @Autowired
     private VentaProductoRepository ventaProductosRepository;
     @Autowired
@@ -52,14 +55,24 @@ public class ProductoController {
     @Autowired
     private FotoService fotoProductoService;
     @Autowired
-    private FileNameGenerator fileNameGenerator;
-    @Autowired
     private FileValidator fileValidator;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
     private Validator validator;
+    @Autowired
+    private ProductoService productoService;
 
+    @Override
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
+    public ResponseEntity<ApiResponseDTO<PageDTO<ProductoResponseDTO>>> getAllProductos(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size
+    ) {
+        PageDTO<ProductoResponseDTO> data = productoService.getAllProductos(page, size);
+        return ApiResponseDTO.success("Productos recuperados correctamente", data, HttpStatus.OK);
+    }
     private ProductoResponseDTO toDto(Producto producto) {
         ProductoResponseDTO dto = new ProductoResponseDTO();
         dto.setId(producto.getId());
@@ -81,31 +94,6 @@ public class ProductoController {
         return dto;
     }
 
-    @Operation(
-            summary = "Listar productos",
-            description = "Devuelve una lista paginada de productos.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Lista de productos paginada")
-            }
-    )
-    @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
-    @GetMapping
-    public ResponseEntity<PageDTO<ProductoResponseDTO>> getAllProductos(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "12") int size
-    ) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("nombre"));
-        Page<Producto> productosPage = productoRepository.findAll(pageable);
-        Page<ProductoResponseDTO> dtos = productosPage.map(this::toDto);
-        PageDTO<ProductoResponseDTO> dto = new PageDTO<>(
-                dtos.getContent(),
-                dtos.getNumber(),
-                dtos.getTotalPages(),
-                dtos.getTotalElements()
-        );
-        return ResponseEntity.ok(dto);
-    }
     @Operation(
             summary = "Crear un nuevo producto",
             description = "Permite crear un producto nuevo incluyendo datos JSON y una imagen.",

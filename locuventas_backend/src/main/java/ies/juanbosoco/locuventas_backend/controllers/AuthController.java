@@ -46,21 +46,6 @@ public class AuthController implements AuthApi {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    private UserEntityRepository userRepository;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtTokenProvider tokenProvider;
-    @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
-    private FotoService fotoVendedorService;
-    @Autowired
-    private FileValidator fileValidator;
-    @Autowired
-    private FileNameGenerator fileNameGenerator;
-
     @PostMapping(value = "/auth/register", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ApiResponseDTO<Map<String, String>>> register(
             @Valid @RequestPart("user") UserRegisterDTO userDTO,
