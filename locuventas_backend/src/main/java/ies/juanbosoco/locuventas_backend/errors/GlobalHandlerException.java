@@ -1,6 +1,9 @@
 package ies.juanbosoco.locuventas_backend.errors;
 
-import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.errors.exceptions.InsufficientPermissionsException;
+import ies.juanbosoco.locuventas_backend.errors.exceptions.UserNotFoundException;
+import ies.juanbosoco.locuventas_backend.errors.exceptions.VentaNoEncontradaException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

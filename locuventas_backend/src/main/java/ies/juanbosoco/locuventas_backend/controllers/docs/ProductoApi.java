@@ -2,7 +2,7 @@ package ies.juanbosoco.locuventas_backend.controllers.docs;
 
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
-import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;

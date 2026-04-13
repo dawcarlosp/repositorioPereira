@@ -1,5 +1,5 @@
 package ies.juanbosoco.locuventas_backend.config;
-import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.entities.auth.Vendedor;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.apache.commons.lang3.StringUtils;

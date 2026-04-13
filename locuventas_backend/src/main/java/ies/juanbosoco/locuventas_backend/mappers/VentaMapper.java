@@ -2,8 +2,8 @@ package ies.juanbosoco.locuventas_backend.mappers;
 
 import ies.juanbosoco.locuventas_backend.DTO.venta.LineaVentaResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.venta.VentaResponseDTO;
-import ies.juanbosoco.locuventas_backend.entities.Venta;
-import ies.juanbosoco.locuventas_backend.entities.VentaProducto;
+import ies.juanbosoco.locuventas_backend.entities.venta.Venta;
+import ies.juanbosoco.locuventas_backend.entities.venta.VentaProducto;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;

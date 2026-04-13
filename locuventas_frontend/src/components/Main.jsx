@@ -29,7 +29,7 @@ export default function Main({ carga, agregarProducto }) {
         method: "GET",
       });
       console.log("Productos del backend:", datos);
-      setProductos(datos.content || []);
+      setProductos(datos.data.content || []);
       setTotalPages(datos.totalPages || 0);
       setPage(datos.pageNumber || 0);
     } catch (err) {

@@ -1,7 +1,7 @@
 package ies.juanbosoco.locuventas_backend.controllers.docs;
 
-import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
-import ies.juanbosoco.locuventas_backend.entities.Categoria;
+import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.entities.catalogo.Categoria;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;

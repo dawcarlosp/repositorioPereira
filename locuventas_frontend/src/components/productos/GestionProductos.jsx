@@ -66,11 +66,11 @@ export default function GestionProductos() {
         apiRequest("paises", null, { method: "GET" }),
         apiRequest("categorias", null, { method: "GET" }),
       ]);
-      setProductos(prodPage.content || []);
+      setProductos(prodPage.data.content || []);
       setTotalPages(prodPage.totalPages || 0);
       setPage(prodPage.pageNumber || 0);
-      setPaises(pais);
-      setCategorias(cat);
+      setPaises(pais.data);
+      setCategorias(data.cat);
     } catch {
       toast.error("Error cargando datos.");
     }
