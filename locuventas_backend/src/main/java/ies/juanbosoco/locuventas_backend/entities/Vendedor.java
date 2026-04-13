@@ -69,7 +69,11 @@
                     .map(SimpleGrantedAuthority::new)
                     .collect(Collectors.toList());
         }
-
+      public boolean isAdmin() {
+            return this.getAuthorities() != null &&
+                    this.getAuthorities().stream()
+                            .anyMatch(a -> a.getAuthority().equals("ROLE_ADMIN") || a.getAuthority().equals("ADMIN"));
+        }
         @Override
         public String getPassword() {
             return this.password;

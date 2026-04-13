@@ -37,6 +37,10 @@ public class Venta {
     @Builder.Default
     private List<Pago> pagos = new ArrayList<>();
 
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<VentaProducto> lineas = new ArrayList<>();
+
     public enum EstadoPago {
         PENDIENTE,
         PARCIAL,
