@@ -1,5 +1,5 @@
 package ies.juanbosoco.locuventas_backend.controllers;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
 import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
@@ -7,15 +7,8 @@ import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
 import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.controllers.docs.ProductoApi;
 import ies.juanbosoco.locuventas_backend.entities.*;
-import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
-import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
-import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
-import ies.juanbosoco.locuventas_backend.repositories.VentaProductoRepository;
-import ies.juanbosoco.locuventas_backend.services.FotoService;
 import ies.juanbosoco.locuventas_backend.services.ProductoService;
-import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
 import jakarta.validation.Valid;
-import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
