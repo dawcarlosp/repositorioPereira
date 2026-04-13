@@ -29,7 +29,7 @@ export default function Footer() {
         bottom: 0,
         left: 0,
         zIndex: 30,
-        maxWidth: "1000px",
+        maxWidth: "max",
         margin: "0 auto"
       }}
     >

@@ -10,7 +10,7 @@ import PrivateRoute from "@components/common/PrivateRoute";
 import VentasPagina from "@pages/VentasPagina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "@context/AuthProvider";
+import { AuthProvider } from "@context/auth.context";
 import SobreMiPage from "@pages/SobreMiPage";
 import VentasPendientesPagina from "@pages/VentasPendientesPagina";
 import LoginPage from "@pages/LoginPage";

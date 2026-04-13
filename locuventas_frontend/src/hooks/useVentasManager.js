@@ -1,125 +1,129 @@
-import { useState, useEffect } from "react";
-import { apiRequest } from "@services/api";
+import { useState, useEffect, useCallback } from "react";
+import { VentaService } from "@/services/venta.service";
 import { toast } from "react-toastify";
 
 export default function useVentasManager(initialPage = 0, size = 10) {
+  // --- ESTADOS ---
   const [ventas, setVentas] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(initialPage);
   const [totalPages, setTotalPages] = useState(0);
+  const [totalElements, setTotalElements] = useState(0);
 
   const [ventaDetalle, setVentaDetalle] = useState(null);
   const [detalleCargando, setDetalleCargando] = useState(false);
 
-  const [modalConfirmacion, setModalConfirmacion] = useState({
-    visible: false,
-    mensaje: "",
-    onConfirmar: null,
+  const [modalConfirmacion, setModalConfirmacion] = useState({ 
+    visible: false, 
+    mensaje: "", 
+    onConfirmar: null 
+  });
+  
+  const [modalPago, setModalPago] = useState({ 
+    visible: false, 
+    venta: null, 
+    totalPendiente: 0 
   });
 
-  const [modalPago, setModalPago] = useState({
-    visible: false,
-    venta: null,
-    totalPendiente: 0,
-  });
-
-  useEffect(() => {
-    fetchVentas(page, size);
-    // eslint-disable-next-line
-  }, [page]);
-
-  async function fetchVentas(p = page, s = size) {
+  // --- LOGICA DE CARGA ---
+  
+  // Usamos useCallback para poder llamarla desde otros sitios sin problemas de dependencias
+  const fetchVentas = useCallback(async () => {
     setLoading(true);
     try {
-      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, {
-        method: "GET",
-      });
-      setVentas(datos.content || []);
-      setTotalPages(datos.totalPages || 0);
-      setPage(datos.pageNumber || 0);
-    } catch {
-      toast.error("Error cargando ventas");
+      // El backend devuelve PageDTO directamente: { content: [], totalPages: X, ... }
+      const data = await VentaService.getAll({ page, size });
+      
+      setVentas(data.content || []);
+      setTotalPages(data.totalPages || 0);
+      setTotalElements(data.totalElements || 0);
+    } catch (error) {
+      toast.error(error.mensaje || "Error cargando ventas");
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }
+  }, [page, size]);
 
-  async function verDetalleVenta(venta) {
+  useEffect(() => {
+    fetchVentas();
+  }, [fetchVentas]);
+
+  // --- ACCIONES ---
+
+  const verDetalleVenta = async (venta) => {
     setDetalleCargando(true);
     try {
-      const data = await apiRequest(`ventas/${venta.id}`, null, {
-        method: "GET",
-      });
+      const data = await VentaService.getById(venta.id);
       setVentaDetalle(data);
-    } catch {
+    } catch (error) {
       toast.error("No se pudo cargar el detalle de la venta");
+    } finally {
+      setDetalleCargando(false);
     }
-    setDetalleCargando(false);
-  }
+  };
 
-  function solicitarCancelacion(ventaId) {
+  const solicitarCancelacion = (ventaId) => {
     setModalConfirmacion({
       visible: true,
       mensaje: "¿Seguro que quieres cancelar esta venta?",
       onConfirmar: async () => {
-        setModalConfirmacion((m) => ({ ...m, visible: false }));
         try {
-          await apiRequest(`ventas/${ventaId}/cancelar`, null, {
-            method: "PATCH",
-          });
+          await VentaService.cancelar(ventaId);
           toast.success("Venta cancelada");
-          fetchVentas();
-        } catch {
-          toast.error("No se pudo cancelar la venta");
+          fetchVentas(); // Recargamos la lista
+        } catch (error) {
+          toast.error(error.mensaje || "No se pudo cancelar la venta");
+        } finally {
+          setModalConfirmacion(m => ({ ...m, visible: false }));
         }
       },
     });
-  }
+  };
 
-  function abrirPago(venta) {
+  const abrirPago = (venta) => {
     setModalPago({
       visible: true,
       venta,
       totalPendiente: venta.saldo ?? (venta.total - (venta.montoPagado || 0)),
     });
-  }
+  };
 
-  async function confirmarPago(monto) {
+  const confirmarPago = async (monto) => {
     if (!modalPago.venta) return;
     try {
-      await apiRequest(
-        `ventas/${modalPago.venta.id}/pago`,
-        { monto },
-        { method: "POST" }
-      );
+      await VentaService.registrarPago(modalPago.venta.id, { monto });
       toast.success("Pago registrado");
       cerrarModalPago();
       fetchVentas();
-    } catch {
-      toast.error("Error registrando el pago");
+    } catch (error) {
+      toast.error(error.mensaje || "Error registrando el pago");
     }
-  }
+  };
 
-  function cerrarModalPago() {
+  const cerrarModalPago = () => {
     setModalPago({ visible: false, venta: null, totalPendiente: 0 });
-  }
+  };
+
+  const descargarTicket = async (ventaId) => {
+    try {
+      await VentaService.descargarTicketPDF(ventaId);
+      toast.info("Descargando ticket...");
+    } catch (error) {
+      toast.error("Error al descargar el ticket");
+    }
+  };
 
   return {
-    ventas,
-    loading,
-    page,
-    totalPages,
-    setPage,
-    modalPago,
-    abrirPago,
-    confirmarPago,
-    cerrarModalPago,
-    modalConfirmacion,
-    setModalConfirmacion,
-    solicitarCancelacion,
-    verDetalleVenta,
-    ventaDetalle,
-    setVentaDetalle,
-    detalleCargando,
-    fetchVentas,
+    // Estado de datos
+    ventas, loading, page, totalPages, totalElements, setPage,
+    ventaDetalle, setVentaDetalle, detalleCargando,
+    
+    // Modales y acciones
+    modalPago, abrirPago, confirmarPago, cerrarModalPago,
+    modalConfirmacion, setModalConfirmacion, solicitarCancelacion,
+    verDetalleVenta, descargarTicket,
+    
+    // Recarga manual
+    fetchVentas
   };
 }

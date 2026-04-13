@@ -1,6 +1,6 @@
 // Dashboard.jsx actualizado para que el footer no sea empujado y aside funcione bien
 import React, { useEffect, useState, useRef } from "react";
-import Header from "@components/Header";
+import Header from "@layout/Header";
 import Aside from "@components/Aside";
 import Main from "@components/Main";
 import Footer from "@components/Footer";
