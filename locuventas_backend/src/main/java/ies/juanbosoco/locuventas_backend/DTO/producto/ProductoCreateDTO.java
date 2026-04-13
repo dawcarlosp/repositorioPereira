@@ -26,5 +26,5 @@ public class ProductoCreateDTO {
     private Long paisId;
 
     @NotEmpty(message = "Debes seleccionar al menos una categoría")
-    private List<@NotNull(message = "ID de categoría inválido") Long> categoriaIds;
+    private List<Long> categoriaIds;
 }

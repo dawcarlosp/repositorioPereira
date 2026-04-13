@@ -49,7 +49,7 @@ public class AuthService {
         }
 
         String nombreArchivo = fotoVendedorService.prepararNombre(foto);
-
+        String rutaRelativa = "vendedores/" + nombreArchivo;
         try {
             fotoVendedorService.guardarFotoVendedor(foto, nombreArchivo);
 
@@ -57,7 +57,7 @@ public class AuthService {
                     .password(passwordEncoder.encode(userDTO.getPassword()))
                     .email(userDTO.getEmail())
                     .authorities(List.of(Roles.USER))
-                    .foto(nombreArchivo)
+                    .foto(rutaRelativa)
                     .nombre(userDTO.getNombre())
                     .build();
 

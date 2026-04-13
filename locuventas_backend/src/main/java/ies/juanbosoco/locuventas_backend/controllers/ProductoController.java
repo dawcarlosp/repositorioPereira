@@ -13,29 +13,14 @@ import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
 import ies.juanbosoco.locuventas_backend.repositories.VentaProductoRepository;
 import ies.juanbosoco.locuventas_backend.services.FotoService;
 import ies.juanbosoco.locuventas_backend.services.ProductoService;
-import ies.juanbosoco.locuventas_backend.services.utils.FileNameGenerator;
 import ies.juanbosoco.locuventas_backend.services.validation.FileValidator;
-import ies.juanbosoco.locuventas_backend.wrapper.CrearProductoRequest;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BeanPropertyBindingResult;
-import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -44,22 +29,6 @@ import java.util.*;
 @RestController
 @RequestMapping("/productos")
 public class ProductoController implements ProductoApi {
-    @Autowired
-    private VentaProductoRepository ventaProductosRepository;
-    @Autowired
-    private ProductoRepository productoRepository;
-    @Autowired
-    private PaisRepository paisRepository;
-    @Autowired
-    private CategoriaRepository categoriaRepository;
-    @Autowired
-    private FotoService fotoProductoService;
-    @Autowired
-    private FileValidator fileValidator;
-    @Autowired
-    private ObjectMapper objectMapper;
-    @Autowired
-    private Validator validator;
     @Autowired
     private ProductoService productoService;
 
@@ -73,254 +42,36 @@ public class ProductoController implements ProductoApi {
         PageDTO<ProductoResponseDTO> data = productoService.getAllProductos(page, size);
         return ApiResponseDTO.success("Productos recuperados correctamente", data, HttpStatus.OK);
     }
-    private ProductoResponseDTO toDto(Producto producto) {
-        ProductoResponseDTO dto = new ProductoResponseDTO();
-        dto.setId(producto.getId());
-        dto.setNombre(producto.getNombre());
-        dto.setPrecio(producto.getPrecio());
-        dto.setFoto(producto.getFoto());
-        dto.setIva(producto.getIva());
-        if (producto.getPais() != null) {
-            dto.setPaisNombre(producto.getPais().getNombre());
-            dto.setPaisFoto(producto.getPais().getEnlaceFoto());
-        }
-        dto.setCategorias(
-                producto.getCategorias() != null ?
-                        producto.getCategorias().stream()
-                                .map(rel -> rel.getCategoria().getNombre())
-                                .toList()
-                        : List.of()
-        );
-        return dto;
-    }
 
-    @Operation(
-            summary = "Crear un nuevo producto",
-            description = "Permite crear un producto nuevo incluyendo datos JSON y una imagen.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = CrearProductoRequest.class)
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "Producto creado correctamente"),
-                    @ApiResponse(responseCode = "400", description = "Datos inválidos o imagen faltante"),
-                    @ApiResponse(responseCode = "404", description = "País o categoría no encontrados"),
-                    @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-            }
-    )
-    @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasAnyRole('ADMIN')")
+    @Override
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> crearProductoConFoto(
-            @RequestPart("producto") String productoJson,
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponseDTO<ProductoResponseDTO>> crearProducto(
+            @RequestPart("producto") @Valid ProductoCreateDTO dto,
             @RequestPart("foto") MultipartFile foto
     ) {
-        ProductoCreateDTO dto;
-        try {
-            dto = objectMapper.readValue(productoJson, ProductoCreateDTO.class);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(Map.of("error", "JSON mal formado: " + ex.getMessage()));
-        }
-
-        BindingResult result = new BeanPropertyBindingResult(dto, "productoCreateDTO");
-        Set<ConstraintViolation<ProductoCreateDTO>> violations = validator.validate(dto);
-        for (ConstraintViolation<ProductoCreateDTO> violation : violations) {
-            result.addError(new FieldError("productoCreateDTO", violation.getPropertyPath().toString(), violation.getMessage()));
-        }
-
-        if (foto == null || foto.isEmpty()) {
-            result.addError(new FieldError("productoCreateDTO", "foto", "La foto no puede estar vacía"));
-        }
-
-        if (result.hasErrors()) {
-            Map<String, String> errores = new HashMap<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errores.put(error.getField(), error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errores);
-        }
-
-        Optional<Pais> paisOptional = paisRepository.findById(dto.getPaisId());
-        if (paisOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("paisId", "País no encontrado"));
-        }
-
-        List<Categoria> categorias = categoriaRepository.findAllById(dto.getCategoriaIds());
-        List<Long> categoriasEncontradas = categorias.stream().map(Categoria::getId).toList();
-        List<Long> categoriasNoEncontradas = new ArrayList<>(dto.getCategoriaIds());
-        categoriasNoEncontradas.removeAll(categoriasEncontradas);
-        if (!categoriasNoEncontradas.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("categoriaIds", "No se encontraron las siguientes categorías: " + categoriasNoEncontradas));
-        }
-
-        try {
-            fileValidator.validarArchivo(foto);
-            String fotoNombre = fotoProductoService.prepararNombre(foto);
-            fotoProductoService.guardarFotoProducto(foto, fotoNombre);
-
-            Producto producto = Producto.builder()
-                    .nombre(dto.getNombre())
-                    .precio(dto.getPrecio())
-                    .pais(paisOptional.get())
-                    .iva(dto.getIva())
-                    .foto(fotoNombre)
-                    .build();
-
-            List<ProductoCategoria> relaciones = categorias.stream()
-                    .map(cat -> ProductoCategoria.builder()
-                            .producto(producto)
-                            .categoria(cat)
-                            .id(new ProductoCategoriaId())
-                            .build())
-                    .toList();
-
-            producto.setCategorias(relaciones);
-            Producto guardado = productoRepository.save(producto);
-            return ResponseEntity.status(HttpStatus.CREATED).body(toDto(guardado));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
-        }
+        ProductoResponseDTO nuevoProducto = productoService.crearProducto(dto, foto);
+        return ApiResponseDTO.success("Producto creado correctamente", nuevoProducto, HttpStatus.CREATED);
     }
 
-    @Operation(
-            summary = "Editar un producto existente",
-            description = "Permite actualizar datos de un producto y cambiar su imagen si se desea.",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = CrearProductoRequest.class)
-                    )
-            ),
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Producto actualizado correctamente"),
-                    @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-                    @ApiResponse(responseCode = "404", description = "Producto o país no encontrado")
-            }
-    )
-    @SecurityRequirement(name = "bearerAuth")
+    @Override
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    public ResponseEntity<?> editarProducto(
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponseDTO<ProductoResponseDTO>> editarProducto(
             @PathVariable Long id,
-            @RequestPart("producto") String productoJson,
+            @RequestPart("producto") @Valid ProductoUpdateDTO dto,
             @RequestPart(value = "foto", required = false) MultipartFile foto
     ) {
-        ProductoUpdateDTO dto;
-        try {
-            dto = objectMapper.readValue(productoJson, ProductoUpdateDTO.class);
-        } catch (Exception ex) {
-            return ResponseEntity.badRequest().body(Map.of("error", "JSON mal formado: " + ex.getMessage()));
-        }
-
-        Set<ConstraintViolation<ProductoUpdateDTO>> violations = validator.validate(dto);
-        if (!violations.isEmpty()) {
-            Map<String, String> errores = new HashMap<>();
-            for (ConstraintViolation<ProductoUpdateDTO> violation : violations) {
-                errores.put(violation.getPropertyPath().toString(), violation.getMessage());
-            }
-            return ResponseEntity.badRequest().body(errores);
-        }
-
-        Optional<Producto> productoOptional = productoRepository.findById(id);
-        if (productoOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Producto no encontrado"));
-        }
-
-        Optional<Pais> paisOptional = paisRepository.findById(dto.getPaisId());
-        if (paisOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("paisId", "País no encontrado"));
-        }
-
-        List<Categoria> categorias = categoriaRepository.findAllById(dto.getCategoriaIds());
-        List<Long> categoriasEncontradas = categorias.stream().map(Categoria::getId).toList();
-        List<Long> categoriasNoEncontradas = new ArrayList<>(dto.getCategoriaIds());
-        categoriasNoEncontradas.removeAll(categoriasEncontradas);
-        if (!categoriasNoEncontradas.isEmpty()) {
-            return ResponseEntity.badRequest().body(Map.of("categoriaIds", "No se encontraron las siguientes categorías: " + categoriasNoEncontradas));
-        }
-
-        try {
-            Producto producto = productoOptional.get();
-            producto.setNombre(dto.getNombre());
-            producto.setPrecio(dto.getPrecio());
-            producto.setIva(dto.getIva());
-            producto.setPais(paisOptional.get());
-
-            producto.getCategorias().clear();
-            List<ProductoCategoria> nuevasRelaciones = new ArrayList<>();
-            for (Categoria cat : categorias) {
-                ProductoCategoria relacion = ProductoCategoria.builder()
-                        .producto(producto)
-                        .categoria(cat)
-                        .id(new ProductoCategoriaId(producto.getId(), cat.getId()))
-                        .build();
-                nuevasRelaciones.add(relacion);
-            }
-            producto.getCategorias().addAll(nuevasRelaciones);
-
-            if (foto != null && !foto.isEmpty()) {
-                // 🧹 Eliminar la imagen anterior si ya existía
-                if (producto.getFoto() != null && !producto.getFoto().isBlank()) {
-                    fotoProductoService.eliminarImagen(producto.getFoto(), "productos");
-                }
-
-                fileValidator.validarArchivo(foto);
-                String fotoNombre = fotoProductoService.prepararNombre(foto);
-                fotoProductoService.guardarFotoProducto(foto, fotoNombre);
-                producto.setFoto(fotoNombre);
-            }
-
-            Producto guardado = productoRepository.save(producto);
-            return ResponseEntity.ok(toDto(guardado));
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage(), "exception", e.toString()));
-        }
+        ProductoResponseDTO actualizado = productoService.editarProducto(id, dto, foto);
+        return ApiResponseDTO.success("Producto actualizado correctamente", actualizado, HttpStatus.OK);
     }
 
-    @Operation(
-            summary = "Eliminar un producto",
-            description = "Elimina un producto por ID, siempre que no haya sido vendido previamente.",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "Producto eliminado"),
-                    @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
-                    @ApiResponse(responseCode = "409", description = "Producto no se puede eliminar por ventas asociadas")
-            }
-    )
-    @SecurityRequirement(name = "bearerAuth")
-    @PreAuthorize("hasAnyRole('ADMIN')")
-    @Parameter(description = "ID del producto a eliminar", required = true)
+    @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> eliminarProducto(@PathVariable Long id) {
-        Optional<Producto> productoOptional = productoRepository.findById(id);
-        if (productoOptional.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Producto no encontrado"));
-        }
-        Producto producto = productoOptional.get();
-
-        boolean enVenta = ventaProductosRepository.existsByProducto_Id(id);
-        if (enVenta) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of("error", "No se puede eliminar el producto porque ya ha sido vendido.", "razon", "EN_VENTA"));
-        }
-
-        if (producto.getFoto() != null && !producto.getFoto().isBlank()) {
-            fotoProductoService.eliminarImagen(producto.getFoto(), "productos");
-        }
-
-        productoRepository.deleteById(id);
-        return ResponseEntity.ok(Map.of("mensaje", "Producto eliminado"));
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponseDTO<Void>> eliminarProducto(@PathVariable Long id) {
+        productoService.eliminarProducto(id);
+        return ApiResponseDTO.success("Producto eliminado correctamente", null, HttpStatus.OK);
     }
-
 
 }

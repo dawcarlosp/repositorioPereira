@@ -31,4 +31,11 @@ public class ProductoCategoria {
     // Ejemplo de metadatos adicionales
     //private Integer prioridad;
     //private LocalDate fechaAsignacion;
+
+    public ProductoCategoria(Producto producto, Categoria categoria) {
+        this.producto = producto;
+        this.categoria = categoria;
+        // IMPORTANTE: Sincronizar el ID embebido con los objetos
+        this.id = new ProductoCategoriaId(producto.getId(), categoria.getId());
+    }
 }
