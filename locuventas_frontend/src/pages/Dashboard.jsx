@@ -1,10 +1,10 @@
 // Dashboard.jsx actualizado para que el footer no sea empujado y aside funcione bien
 import React, { useEffect, useState, useRef } from "react";
 import Header from "@layout/Header";
-import Aside from "@components/Aside";
-import Main from "@components/Main";
-import Footer from "@components/Footer";
-import { apiRequest } from "@services/api";
+import Aside from "@layout/Aside";
+import Main from "@layout/Main";
+import Footer from "@layout/Footer";
+import { apiRequest } from "@services/api.config";
 import ModalPago from "@components/ventas/ModalPago";
 import { toast } from "react-toastify";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
@@ -121,7 +121,6 @@ function Dashboard() {
     }
   }
 
-  const maxWidth = "max-w-[1400px] mx-auto";
 
   return (
     <div className="min-h-screen flex flex-col bg-zinc-900">
@@ -139,7 +138,7 @@ function Dashboard() {
 
       <div style={{ height: headerHeight || 100 }} />
 
-      <div className={`${maxWidth} flex flex-col md:flex-row flex-1 min-h-0 w-full`}>
+      <div className={`flex flex-col md:flex-row flex-1 min-h-0 w-full`}>
         <main className="flex-1 flex flex-col overflow-auto min-h-0">
           <Main carga={carga} agregarProducto={agregarProducto} />
         </main>
@@ -166,11 +165,7 @@ function Dashboard() {
           />
         </aside>
       </div>
-
-      <div className={`w-full ${maxWidth} mt-auto`}>
         <Footer />
-      </div>
-
       {modalAbierto && ventaEnCurso && (
         <ModalPago
           totalPendiente={

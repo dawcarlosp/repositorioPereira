@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import ProductoSimpleCard from "@components/productos/ProductoSimpleCard";
 import Paginacion from "@components/common/Paginacion";
 

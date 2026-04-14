@@ -3,7 +3,7 @@ import React from "react";
 
 function Boton({ children, disabled, onClick }) {
   const baseStyle = `
-    w-full max-w-xs px-4 py-2 font-semibold rounded-xl transition-all duration-300 
+    w-full px-4 py-2 font-semibold rounded-xl transition-all duration-300 
     text-white bg-zinc-900 tracking-wide cursor-pointer
   `;
 

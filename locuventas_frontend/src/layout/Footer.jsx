@@ -7,53 +7,46 @@ export default function Footer() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Comprobación de rutas activas
-  const isDashboard = location.pathname === "/dashboard";
-  const isVentas = location.pathname === "/ventas" && !location.pathname.includes("pendientes");
-  const isPendientes = location.pathname.includes("/ventas/pendientes");
+  const menuItems = [
+    { 
+      label: "Nueva venta", 
+      path: "/dashboard", 
+      active: location.pathname === "/dashboard" 
+    },
+    { 
+      label: "Todas las ventas", 
+      path: "/ventas", 
+      active: location.pathname === "/ventas" && !location.pathname.includes("pendientes") 
+    },
+    { 
+      label: "Pendientes de pago", 
+      path: "/ventas/pendientes", 
+      active: location.pathname.includes("/ventas/pendientes") 
+    },
+  ];
 
   return (
-    <footer
-      className="
-        w-full
-        bg-black flex flex-col md:flex-row justify-center items-center
-        gap-2 md:gap-8
-        px-4 py-4
-        border-t border-zinc-800
-        shadow-xl
-        mt-auto
-        rounded-xl
-      "
-      style={{
-        position: "sticky",
-        bottom: 0,
-        left: 0,
-        zIndex: 30,
-        maxWidth: "max",
-        margin: "0 auto"
-      }}
-    >
-      <div className="w-full md:max-w-xs">
-        {isDashboard ? (
-          <Boton disabled={true} className="w-full">Nueva venta</Boton>
-        ) : (
-          <BotonClaro onClick={() => navigate("/dashboard")} className="w-full">Nueva venta</BotonClaro>
-        )}
-      </div>
-      <div className="w-full md:max-w-xs">
-        {isVentas ? (
-          <Boton disabled={true} className="w-full">Todas las ventas</Boton>
-        ) : (
-          <BotonClaro onClick={() => navigate("/ventas")} className="w-full">Todas las ventas</BotonClaro>
-        )}
-      </div>
-      <div className="w-full md:max-w-xs">
-        {isPendientes ? (
-          <Boton disabled={true} className="w-full">Pendientes de pago</Boton>
-        ) : (
-          <BotonClaro onClick={() => navigate("/ventas/pendientes")} className="w-full">Pendientes de pago</BotonClaro>
-        )}
-      </div>
-    </footer>
+    // Contenedor de la animación
+    <div className="w-full animated-border-container mt-auto rounded-t-2xl shadow-2xl">
+      
+      {/* Contenido real del Footer */}
+      <footer className="footer-content flex flex-col md:flex-row justify-center items-center gap-2 md:gap-8 px-4 py-6 rounded-t-2xl border-t border-orange-900/30">
+        
+        {menuItems.map((item) => (
+          <div key={item.path} className="w-full md:max-w-xs">
+            {item.active ? (
+              <Boton disabled={true} className="w-full opacity-80 ring-1 ring-orange-500/50">
+                {item.label}
+              </Boton>
+            ) : (
+              <BotonClaro onClick={() => navigate(item.path)} className="w-full">
+                {item.label}
+              </BotonClaro>
+            )}
+          </div>
+        ))}
+
+      </footer>
+    </div>
   );
 }

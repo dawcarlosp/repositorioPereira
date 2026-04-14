@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import BotonClaro from "@components/common/BotonClaro";
 import Boton from "@components/common/Boton";
-import { descargarTicketPDF } from "@services/tickets";
+import { VentaService } from "@services/venta.service";
 
 export default function ModalDetalleVenta({ venta, onClose }) {
   if (!venta) return null;
@@ -49,7 +49,7 @@ export default function ModalDetalleVenta({ venta, onClose }) {
         {/* Botones fijos abajo */}
         <div className="p-5 border-t border-zinc-700 flex flex-col gap-2 items-center">
           <Boton
-            onClick={() => descargarTicketPDF(venta.id)}
+            onClick={() => VentaService.descargarTicketPDF(venta.id)}
             className="w-full text-base py-3 rounded-xl bg-orange-500 hover:bg-orange-600"
           >
             Descargar ticket
