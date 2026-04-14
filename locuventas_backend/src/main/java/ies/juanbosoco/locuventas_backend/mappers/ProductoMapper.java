@@ -1,6 +1,6 @@
 package ies.juanbosoco.locuventas_backend.mappers;
 
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Producto;
 import org.springframework.stereotype.Component;
 

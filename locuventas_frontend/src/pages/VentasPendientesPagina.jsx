@@ -98,7 +98,6 @@ export default function VentasPendientesPagina() {
   return (
     <div className="flex flex-col min-h-screen bg-zinc-900">
       <Header />
-      <div style={{ height: 80 }} />
       <main className="flex-1 max-w-5xl mx-auto p-2 pt-8 w-full">
         <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">
           Pendientes de pago

@@ -127,7 +127,7 @@ function Dashboard() {
    
         <Header/>
 
-      <div className={`flex flex-col md:flex-row flex-1 min-h-0 w-full overflow-hidden`}>
+      <div className={`flex flex-col justify-between md:flex-row flex-1 min-h-0 w-full overflow-hidden py-2 px-2`}>
           <Main carga={carga} agregarProducto={agregarProducto} />
 
           <Aside

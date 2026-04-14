@@ -37,13 +37,11 @@ export default function VentasPagina() {
     return () => window.removeEventListener("resize", fn);
   }, []);
 
-  const maxWidth = "max-w-[1400px] mx-auto";
 
   return (
     <div className="flex flex-col min-h-screen bg-zinc-900">
       <Header />
-      <div style={{ height: 80 }} />
-      <main className={`flex-1 w-full ${maxWidth} p-2 pt-8`}>
+      <main className={`flex-1 w-full p-2 pt-8`}>
         <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">
           Ventas
         </h1>
@@ -101,9 +99,7 @@ export default function VentasPagina() {
         )}
       </main>
 
-      <div className={`w-full ${maxWidth} mt-auto`}>
-        <Footer />
-      </div>
+      <Footer />
 
       {/* Modal Pago */}
       {modalPago.visible && modalPago.venta && (

@@ -1,9 +1,9 @@
 package ies.juanbosoco.locuventas_backend.services.catalogo;
 
 import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoCreateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoUpdateDTO;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.*;
 import ies.juanbosoco.locuventas_backend.errors.BusinessException;
 import ies.juanbosoco.locuventas_backend.errors.exceptions.UserNotFoundException;

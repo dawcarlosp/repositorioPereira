@@ -1,7 +1,7 @@
 package ies.juanbosoco.locuventas_backend;
 
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoCreateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Categoria;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Pais;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Producto;

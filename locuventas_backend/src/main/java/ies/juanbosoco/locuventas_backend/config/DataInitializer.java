@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 
 @Component
+
 public class DataInitializer implements CommandLineRunner {
 
 
@@ -56,10 +57,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
 
     public void run(String... args) throws Exception {
-        //initAdminAndVendedor();
-        //initCategorias();
-        //initPaises();
-        //initProductos();
+        initAdminAndVendedor();
+        initCategorias();
+        initPaises();
+        initProductos();
     }
 
     private void initAdminAndVendedor() {
