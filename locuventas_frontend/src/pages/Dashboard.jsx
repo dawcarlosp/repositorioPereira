@@ -1,27 +1,33 @@
-// Dashboard.jsx actualizado para que el footer no sea empujado y aside funcione bien
-import React, { useEffect, useState, useRef } from "react";
-import Header from "@layout/Header";
+import React, { useState } from "react";
+import AppLayout from "@layout/AppLayout";
 import Aside from "@layout/Aside";
 import Main from "@layout/Main";
-import Footer from "@layout/Footer";
-import { apiRequest } from "@services/api.config";
+import CatalogoProductos from "../components/productos/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
-import { toast } from "react-toastify";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
+import { apiRequest } from "@services/api.config";
+import { toast } from "react-toastify";
 
 function Dashboard() {
-  const headerRef = useRef();
-  const [headerHeight, setHeaderHeight] = useState(0);
+  // --- Estados ---
   const [carga, setCarga] = useState([]);
   const [modalAbierto, setModalAbierto] = useState(false);
   const [ventaEnCurso, setVentaEnCurso] = useState(null);
   const [ventaFinalizada, setVentaFinalizada] = useState(null);
 
-  useEffect(() => {
-    if (headerRef.current) {
-      setHeaderHeight(headerRef.current.offsetHeight);
-    }
-  }, []);
+  // --- Lógica del Carrito ---
+  function agregarProducto(prod) {
+    setCarga((prev) => {
+      const idx = prev.findIndex((item) => item.producto.id === prod.id);
+      if (idx >= 0) {
+        const newCarga = [...prev];
+        newCarga[idx] = { ...newCarga[idx], cantidad: newCarga[idx].cantidad + 1 };
+        return newCarga;
+      } else {
+        return [...prev, { producto: prod, cantidad: 1 }];
+      }
+    });
+  }
 
   function quitarProducto(id) {
     setCarga((prev) => {
@@ -31,33 +37,15 @@ function Dashboard() {
         return prev.filter((item) => item.producto.id !== id);
       } else {
         const newCarga = [...prev];
-        newCarga[idx] = {
-          ...newCarga[idx],
-          cantidad: newCarga[idx].cantidad - 1,
-        };
+        newCarga[idx] = { ...newCarga[idx], cantidad: newCarga[idx].cantidad - 1 };
         return newCarga;
       }
     });
   }
 
-  function agregarProducto(prod) {
-    setCarga((prev) => {
-      const idx = prev.findIndex((item) => item.producto.id === prod.id);
-      if (idx >= 0) {
-        const newCarga = [...prev];
-        newCarga[idx] = {
-          ...newCarga[idx],
-          cantidad: newCarga[idx].cantidad + 1,
-        };
-        return newCarga;
-      } else {
-        return [...prev, { producto: prod, cantidad: 1 }];
-      }
-    });
-  }
-
-  async function guardarVentaSinCobrar() {
-    const lineas = carga.map((item) => {
+  // --- Lógica de Negocio (Backend) ---
+  const prepararLineas = () => {
+    return carga.map((item) => {
       const precio = Number(item.producto.precio);
       const iva = Number(item.producto.iva || 0);
       const precioConIva = precio * (1 + iva / 100);
@@ -67,7 +55,11 @@ function Dashboard() {
         subtotal: +(precioConIva * item.cantidad).toFixed(2),
       };
     });
+  };
 
+  async function guardarVentaSinCobrar() {
+    if (carga.length === 0) return toast.warning("La carga está vacía");
+    const lineas = prepararLineas();
     try {
       const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
       setCarga([]);
@@ -79,17 +71,8 @@ function Dashboard() {
   }
 
   async function finalizarYCobrar() {
-    const lineas = carga.map((item) => {
-      const precio = Number(item.producto.precio);
-      const iva = Number(item.producto.iva || 0);
-      const precioConIva = precio * (1 + iva / 100);
-      return {
-        productoId: item.producto.id,
-        cantidad: item.cantidad,
-        subtotal: +(precioConIva * item.cantidad).toFixed(2),
-      };
-    });
-
+    if (carga.length === 0) return toast.warning("La carga está vacía");
+    const lineas = prepararLineas();
     try {
       const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
       setVentaEnCurso({
@@ -105,7 +88,6 @@ function Dashboard() {
   async function confirmarPago(importe) {
     setModalAbierto(false);
     if (!ventaEnCurso) return;
-
     try {
       const actualizada = await apiRequest(
         `ventas/${ventaEnCurso.id}/pago`,
@@ -114,30 +96,42 @@ function Dashboard() {
       );
       setCarga([]);
       setVentaEnCurso(null);
-      toast.success("Pago registrado correctamente");
       setVentaFinalizada(actualizada);
+      toast.success("Pago registrado correctamente");
     } catch {
       toast.error("Error al registrar el pago");
     }
   }
 
-
+  // --- Renderizado ---
   return (
-    <div className="h-screen flex flex-col bg-zinc-900">
-   
-        <Header/>
+    <AppLayout
+      aside={
+        <Aside
+          carga={carga}
+          quitarProducto={quitarProducto}
+          onGuardarVenta={guardarVentaSinCobrar}
+          onFinalizarYCobrar={finalizarYCobrar}
+        />
+      }
+    >
+      <Main>
+        <header className="mb-8">
+          <h2 className="text-3xl font-extrabold text-white tracking-tight">
+            Venta Nueva
+          </h2>
+          <p className="text-zinc-400 mt-1">
+            Gestiona la carga actual de productos para generar una venta.
+          </p>
+        </header>
 
-      <div className={`flex flex-col justify-between md:flex-row flex-1 min-h-0 w-full overflow-hidden py-2 px-2`}>
-          <Main carga={carga} agregarProducto={agregarProducto} />
+        <CatalogoProductos 
+          carga={carga} 
+          agregarProducto={agregarProducto} 
+        />
+      </Main>
 
-          <Aside
-            carga={carga}
-            quitarProducto={quitarProducto}
-            onGuardarVenta={guardarVentaSinCobrar}
-            onFinalizarYCobrar={finalizarYCobrar}
-          />
-      </div>
-        <Footer />
+      {/* --- Capa de Modales --- */}
       {modalAbierto && ventaEnCurso && (
         <ModalPago
           totalPendiente={
@@ -157,7 +151,7 @@ function Dashboard() {
           onClose={() => setVentaFinalizada(null)}
         />
       )}
-    </div>
+    </AppLayout>
   );
 }
 
