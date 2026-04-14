@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.controllers.catalogo;
 
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.CategoriaResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.controllers.docs.CategoriaApi;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Categoria;
@@ -22,8 +23,8 @@ public class CategoriaController implements CategoriaApi {
 
     @Override
     @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
-    public ResponseEntity<ApiResponseDTO<List<Categoria>>> getAllCategorias() {
-        List<Categoria> data = categoriaService.findAll();
+    public ResponseEntity<ApiResponseDTO<List<CategoriaResponseDTO>>> getAllCategorias() {
+        List<CategoriaResponseDTO> data = categoriaService.findAll();
         return ApiResponseDTO.success("Categorías recuperadas correctamente", data, HttpStatus.OK);
     }
 }

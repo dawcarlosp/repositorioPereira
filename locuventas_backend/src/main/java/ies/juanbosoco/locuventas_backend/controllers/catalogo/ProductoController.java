@@ -1,9 +1,9 @@
 package ies.juanbosoco.locuventas_backend.controllers.catalogo;
 
 import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoUpdateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoCreateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoUpdateDTO;
 import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
 import ies.juanbosoco.locuventas_backend.controllers.docs.ProductoApi;
 import ies.juanbosoco.locuventas_backend.services.catalogo.ProductoService;

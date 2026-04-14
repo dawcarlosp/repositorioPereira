@@ -1,5 +1,6 @@
 package ies.juanbosoco.locuventas_backend.services.catalogo;
 
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.CategoriaResponseDTO;
 import ies.juanbosoco.locuventas_backend.entities.catalogo.Categoria;
 import ies.juanbosoco.locuventas_backend.repositories.catalogo.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,11 @@ public class CategoriaService {
     private final CategoriaRepository categoriaRepository;
 
     @Transactional(readOnly = true)
-    public List<Categoria> findAll() {
+    public List<CategoriaResponseDTO> findAll() {
         // Ordenamos por nombre para que el combo en el front sea legible
-        return categoriaRepository.findAll(Sort.by(Sort.Direction.ASC, "nombre"));
+        return categoriaRepository.findAll(Sort.by(Sort.Direction.ASC, "nombre"))
+                .stream()
+                .map(c -> new CategoriaResponseDTO(c.getId(), c.getNombre()))
+                .toList();
     }
 }

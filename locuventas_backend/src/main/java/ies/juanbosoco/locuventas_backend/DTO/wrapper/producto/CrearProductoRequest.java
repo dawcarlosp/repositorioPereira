@@ -1,6 +1,6 @@
 package ies.juanbosoco.locuventas_backend.DTO.wrapper.producto;
 
-import ies.juanbosoco.locuventas_backend.DTO.producto.ProductoCreateDTO;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoCreateDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.web.multipart.MultipartFile;
 

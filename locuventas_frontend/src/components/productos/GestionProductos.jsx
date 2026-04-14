@@ -70,7 +70,7 @@ export default function GestionProductos() {
       setTotalPages(prodPage.totalPages || 0);
       setPage(prodPage.pageNumber || 0);
       setPaises(pais.data);
-      setCategorias(data.cat);
+      setCategorias(cat.data);
     } catch {
       toast.error("Error cargando datos.");
     }

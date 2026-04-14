@@ -1,15 +1,13 @@
-package ies.juanbosoco.locuventas_backend.DTO.producto;
+package ies.juanbosoco.locuventas_backend.DTO.catalogo;
 
 import jakarta.validation.constraints.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Getter
-@Setter
-public class ProductoUpdateDTO {
+@Data
+public class ProductoCreateDTO {
 
     @NotBlank(message = "El nombre es obligatorio")
     @Size(max = 100, message = "El nombre no puede superar los 100 caracteres")
@@ -27,7 +25,6 @@ public class ProductoUpdateDTO {
     @NotNull(message = "El país es obligatorio")
     private Long paisId;
 
-    @NotNull(message = "Debes seleccionar al menos una categoría")
-    @Size(min = 1, message = "Debes seleccionar al menos una categoría")
-    private List<@NotNull(message = "ID de categoría inválido") Long> categoriaIds;
+    @NotEmpty(message = "Debes seleccionar al menos una categoría")
+    private List<Long> categoriaIds;
 }

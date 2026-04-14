@@ -1,4 +1,4 @@
-package ies.juanbosoco.locuventas_backend.DTO.pais;
+package ies.juanbosoco.locuventas_backend.DTO.catalogo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

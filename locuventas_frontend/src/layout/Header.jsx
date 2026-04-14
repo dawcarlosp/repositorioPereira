@@ -69,10 +69,9 @@ export default function Header() {
   };
 
   const neonButtonClass = `
-    px-4 py-2 text-white font-semibold rounded-xl bg-zinc-900
-    ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
-    hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]
-    transition-all duration-300
+    px-4 py-2 text-orange-400 font-bold rounded-xl bg-zinc-900/50
+  border border-orange-500/30 transition-all duration-300
+  hover:bg-orange-500 hover:text-white hover:shadow-[0_0_15px_rgba(249,115,22,0.4)]
   `;
 
   const handleClickVendedores = () => {
@@ -111,10 +110,10 @@ export default function Header() {
     >
       <div
         className="
-        max-w-7xl mx-auto px-6 py-4 flex items-center justify-between
-        rounded-b-2xl shadow-lg backdrop-blur-md
-        bg-gradient-to-r from-blue-500 via-white to-purple-500/90
-        border-b border-white/20
+      max-w-full mx-auto px-6 py-4 flex items-center justify-between
+    rounded-b-2xl shadow-[0_4px_20px_-5px_rgba(249,115,22,0.1)] 
+    backdrop-blur-xl bg-gradient-to-b from-zinc-900 to-black
+    border-b-2 border-orange-500/50
       "
       >
         <Link
@@ -237,9 +236,9 @@ export default function Header() {
                     </BotonClaro>
                     {isVendedoresMobileOpen && (
                       <div className="flex flex-col space-y-1 pl-2 pr-2 mt-1">
-                         <button  className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
+                        <button className="w-full py-2 rounded-lg font-semibold text-white hover:bg-zinc-800 transition"
                           style={{ background: "none", border: "none" }}
-                         onClick={() => toast.dark("Gestión de vendedores, llegará próximamente!")}>Gestionar vendedores</button>
+                          onClick={() => toast.dark("Gestión de vendedores, llegará próximamente!")}>Gestionar vendedores</button>
                         <Link
                           to="/vendedores/pendientes"
                           onClick={() => setMenuOpen(false)}
@@ -251,7 +250,7 @@ export default function Header() {
                       </div>
                     )}
                   </div>
-                    <BotonClaro className="w-full" onClick={() => toast.dark("Gestión de categorías, llegará próximamente!")}>Categorías</BotonClaro>
+                  <BotonClaro className="w-full" onClick={() => toast.dark("Gestión de categorías, llegará próximamente!")}>Categorías</BotonClaro>
                   <Link to="/productos/gestion" onClick={() => setMenuOpen(false)}>
                     <BotonClaro className="w-full">Productos</BotonClaro>
                   </Link>
