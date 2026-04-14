@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import { apiRequest } from "@/services/api";
+import { apiRequest } from "@/services/api.config";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import Boton from "@components/common/Boton";
 import ProductoCard from "@components/productos/ProductoCard";

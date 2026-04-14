@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import defaultAvatar from "@/assets/default-avatar.png";
 import BotonClaro from "@components/common/BotonClaro";
 import Boton from "@components/common/Boton";

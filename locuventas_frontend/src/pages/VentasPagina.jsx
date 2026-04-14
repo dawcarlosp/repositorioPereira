@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import Header from "@components/Header";
-import Footer from "@components/Footer";
+import Header from "@layout/Header";
+import Footer from "@layout/Footer";
 import TablaVentas from "@components/ventas/TablaVentas";
 import VentaCard from "@components/ventas/VentaCard";
 import ModalPago from "@components/ventas/ModalPago";

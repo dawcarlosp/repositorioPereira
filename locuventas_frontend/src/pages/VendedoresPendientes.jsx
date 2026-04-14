@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import defaultAvatar from "@assets/default-avatar.png";
 import BotonClaro from "@components/common/BotonClaro";
 import Boton from "@components/common/Boton";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import { useAuth } from "@context/useAuth";
-import Header from "@components/Header";
+import Header from "@layout/Header";
 
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";

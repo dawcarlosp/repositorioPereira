@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import Boton from "@components/common/Boton";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { toast } from "react-toastify";
 import { useAuth } from "@context/useAuth";
-import { validateUser } from "@/services/validateUser";
+import { validateUser } from "@/utils/user.validator";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 
 function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {

@@ -1,6 +1,6 @@
 import Boton from "@components/common/Boton";
 import BotonClaro from "@components/common/BotonClaro";
-import { normalizaMultiValor } from "@services/normalizaMultiValor";
+import { normalizaMultiValor } from "@utils/normalizaMultiValor";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
