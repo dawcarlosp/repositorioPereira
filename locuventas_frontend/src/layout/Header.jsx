@@ -104,7 +104,7 @@ export default function Header() {
     <header
       ref={headerRef}
       className={`
-        w-full fixed top-0 left-0 z-50
+        w-full top-0 left-0 z-50
         transition-all duration-700 ease-out transform
         ${showHeader ? "translate-y-0 opacity-100" : "-translate-y-10 opacity-0"}
       `}

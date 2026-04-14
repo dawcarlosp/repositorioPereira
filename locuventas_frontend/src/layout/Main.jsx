@@ -72,7 +72,8 @@ export default function Main({ carga, agregarProducto }) {
   );
 
   return (
-    <div className="p-4 max-w-5xl mx-auto h-80">
+    <main className="flex-1 overflow-y-auto p-4 w-full h-full custom-scrollbar">
+      <div className="max-w-5xl mx-auto">
       <h2 className="text-2xl font-bold mb-6 text-center text-white">
         Selecciona productos
       </h2>
@@ -90,6 +91,7 @@ export default function Main({ carga, agregarProducto }) {
       {totalPages > 1 && (
         <Paginacion page={page} totalPages={totalPages} onPageChange={setPage} />
       )}
-    </div>
+      </div>
+    </main>
   );
 }
