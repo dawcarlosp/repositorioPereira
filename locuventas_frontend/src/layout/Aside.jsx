@@ -33,9 +33,9 @@ export default function Aside({
   const total = base + ivaTotal;
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-white">
+    <aside className="w-full md:w-96 bg-white flex flex-col h-full border-l border-zinc-200">
       {/* Top - Info */}
-      <div className="px-4 pt-4 pb-2 border-b bg-white">
+      <div className="px-4 pt-4 pb-2 border-b bg-white rounded-xl">
         <div className="flex justify-between text-base font-normal text-zinc-900">
           <span>{fecha}</span>
           <span>
@@ -102,6 +102,6 @@ export default function Aside({
           <Boton onClick={onFinalizarYCobrar}>Finalizar y cobrar</Boton>
         </div>
       </div>
-    </div>
+    </aside>
   );
 }

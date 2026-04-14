@@ -123,47 +123,19 @@ function Dashboard() {
 
 
   return (
-    <div className="min-h-screen flex flex-col bg-zinc-900">
-      <div
-        style={{
-          position: "fixed",
-          width: "100%",
-          zIndex: 50,
-          top: 0,
-          left: 0,
-        }}
-      >
-        <Header ref={headerRef} />
-      </div>
+    <div className="h-screen flex flex-col bg-zinc-900">
+   
+        <Header/>
 
-      <div style={{ height: headerHeight || 100 }} />
-
-      <div className={`flex flex-col md:flex-row flex-1 min-h-0 w-full`}>
-        <main className="flex-1 flex flex-col overflow-auto min-h-0">
+      <div className={`flex flex-col md:flex-row flex-1 min-h-0 w-full overflow-hidden`}>
           <Main carga={carga} agregarProducto={agregarProducto} />
-        </main>
 
-        <aside
-          className="w-full md:w-[370px] flex flex-col min-h-0"
-          style={{
-            maxHeight: `calc(75vh - ${headerHeight}px)`,
-            position: "sticky",
-            top: headerHeight || 100,
-            background: "#fff",
-            border: "2px solid orange",
-            borderLeft: "none",
-            borderTopLeftRadius: 0,
-            borderTopRightRadius: 0,
-            overflow: "hidden",
-          }}
-        >
           <Aside
             carga={carga}
             quitarProducto={quitarProducto}
             onGuardarVenta={guardarVentaSinCobrar}
             onFinalizarYCobrar={finalizarYCobrar}
           />
-        </aside>
       </div>
         <Footer />
       {modalAbierto && ventaEnCurso && (
