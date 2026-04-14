@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import Header from "@layout/Header";
-import Footer from "@layout/Footer";
-import TablaVentas from "@components/ventas/TablaVentas";
-import VentaCard from "@components/ventas/VentaCard";
+import AppLayout from "@layout/AppLayout";
+import Main from "@layout/Main";
+import ContenedorVentas from "@components/ventas/ContenedorVentas";
+import useVentasManager from "@hooks/useVentasManager";
+
+// Modales
 import ModalPago from "@components/ventas/ModalPago";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
-import Paginacion from "@components/common/Paginacion";
-import useVentasManager from "@hooks/useVentasManager";
 
 export default function VentasPagina() {
+  // --- Hook de Gestión de Ventas ---
   const {
     ventas,
     loading,
@@ -29,79 +30,50 @@ export default function VentasPagina() {
     detalleCargando,
   } = useVentasManager();
 
+  // --- Lógica de Responsive ---
   const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
 
   useEffect(() => {
-    const fn = () => setIsMobile(window.innerWidth < 640);
-    window.addEventListener("resize", fn);
-    return () => window.removeEventListener("resize", fn);
+    const handleResize = () => setIsMobile(window.innerWidth < 640);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-
   return (
-    <div className="flex flex-col min-h-screen bg-zinc-900">
-      <Header />
-      <main className={`flex-1 w-full p-2 pt-8`}>
-        <h1 className="text-2xl font-bold mb-6 text-center text-white drop-shadow">
-          Ventas
-        </h1>
+    <AppLayout>
+      <Main>
+        {/* Cabecera de la sección */}
+        <header className="mb-8">
+          <h1 className="text-3xl font-extrabold text-white tracking-tight">
+            Historial de Ventas
+          </h1>
+          <p className="text-zinc-400 mt-1">
+            Consulta y gestiona las transacciones realizadas.
+          </p>
+        </header>
 
+        {/* Estado de carga o Lista de ventas */}
         {loading ? (
-          <div className="text-center text-gray-500 py-10">
-            Cargando ventas...
+          <div className="text-center text-orange-500 py-20 animate-pulse font-medium">
+            Cargando historial de ventas...
           </div>
         ) : (
-          <>
-            {!isMobile && (
-              <>
-                <TablaVentas
-                  ventas={ventas}
-                  onVerDetalle={verDetalleVenta}
-                  onCancelarVenta={(venta) => solicitarCancelacion(venta.id)}
-                  onCobrarResto={abrirPago}
-                />
-                {totalPages > 1 && (
-                  <Paginacion
-                    page={page}
-                    totalPages={totalPages}
-                    onPageChange={setPage}
-                  />
-                )}
-              </>
-            )}
-
-            {isMobile && (
-              <div className="flex flex-col gap-4 pb-20">
-                {ventas.length === 0 && (
-                  <div className="py-8 text-center text-gray-400 bg-white rounded-xl shadow-lg">
-                    No hay ventas
-                  </div>
-                )}
-                {ventas.map((venta) => (
-                  <VentaCard
-                    key={venta.id}
-                    venta={venta}
-                    onDetalle={verDetalleVenta}
-                    onCancelar={(venta) => solicitarCancelacion(venta.id)}
-                    onCobrarResto={abrirPago}
-                  />
-                ))}
-                {totalPages > 1 && (
-                  <Paginacion
-                    page={page}
-                    totalPages={totalPages}
-                    onPageChange={setPage}
-                  />
-                )}
-              </div>
-            )}
-          </>
+          <ContenedorVentas
+            ventas={ventas}
+            isMobile={isMobile}
+            onVerDetalle={verDetalleVenta}
+            onCancelar={(v) => solicitarCancelacion(v.id)}
+            onCobrar={abrirPago}
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         )}
-      </main>
+      </Main>
 
-      <Footer />
-
-      {/* Modal Pago */}
+      {/* --- Capa de Modales (Copiada íntegramente de tu versión original) --- */}
+      
+      {/* 1. Modal Pago */}
       {modalPago.visible && modalPago.venta && (
         <ModalPago
           totalPendiente={modalPago.totalPendiente}
@@ -111,7 +83,7 @@ export default function VentasPagina() {
         />
       )}
 
-      {/* Modal Confirmación */}
+      {/* 2. Modal Confirmación de Cancelación */}
       {modalConfirmacion.visible && (
         <ModalConfirmacion
           mensaje={modalConfirmacion.mensaje}
@@ -123,7 +95,7 @@ export default function VentasPagina() {
         />
       )}
 
-      {/* Modal Detalle */}
+      {/* 3. Modal Detalle de Venta */}
       {ventaDetalle && (
         <ModalDetalleVenta
           venta={ventaDetalle}
@@ -131,6 +103,6 @@ export default function VentasPagina() {
           onClose={() => setVentaDetalle(null)}
         />
       )}
-    </div>
+    </AppLayout>
   );
 }
