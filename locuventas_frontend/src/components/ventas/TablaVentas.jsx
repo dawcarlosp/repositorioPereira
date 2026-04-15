@@ -1,6 +1,7 @@
 import React from "react";
 import Boton from "@components/common/Boton";
 import BotonClaro from "@components/common/BotonClaro";
+import Paginacion from "@components/common/Paginacion";
 
 export default function TablaVentas({
   ventas,
@@ -9,13 +10,11 @@ export default function TablaVentas({
   onCobrarResto,
   paginaActual = 0,
   totalPaginas = 1,
-  onPrevPage,
-  onNextPage,
+  onPageChange
 }) {
-  const showPaginador =
-    typeof onPrevPage === "function" &&
-    typeof onNextPage === "function" &&
-    totalPaginas > 1;
+ 
+  // El paginador se muestra solo si hay más de una página
+  const showPaginador = totalPaginas > 1;
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-zinc-800/50 border border-zinc-700/50 rounded-2xl shadow-2xl">
@@ -142,26 +141,12 @@ export default function TablaVentas({
 
       {/* Paginador Inferior */}
       {showPaginador && (
-        <div className="flex items-center justify-between px-6 py-4 bg-zinc-800/80 border-t border-zinc-700/50 backdrop-blur-md">
-          <span className="text-xs text-zinc-400 font-medium uppercase tracking-widest">
-            Página <span className="text-white">{paginaActual + 1}</span> de <span className="text-white">{totalPaginas}</span>
-          </span>
-          <div className="flex gap-2">
-            <button
-              disabled={paginaActual === 0}
-              onClick={onPrevPage}
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-700 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-20 disabled:pointer-events-none"
-            >
-              Anterior
-            </button>
-            <button
-              disabled={paginaActual + 1 >= totalPaginas}
-              onClick={onNextPage}
-              className="px-3 py-1.5 rounded-lg bg-zinc-900 text-zinc-300 border border-zinc-700 hover:bg-orange-500 hover:text-white transition-all disabled:opacity-20 disabled:pointer-events-none"
-            >
-              Siguiente
-            </button>
-          </div>
+        <div className="flex-none px-6 py-2 bg-zinc-800/80 border-t border-zinc-700/50 backdrop-blur-md">
+          <Paginacion 
+            page={paginaActual} 
+            totalPages={totalPaginas} 
+            onPageChange={onPageChange} 
+          />
         </div>
       )}
     </div>

@@ -7,7 +7,7 @@ import { es } from "date-fns/locale";
 
 export default function TarjetaVendedor({ usuario, onAprobar, onDenegar }) {
   const fotoUrl = usuario.foto
-    ? `${import.meta.env.VITE_API_URL}/imagenes/vendedores/${usuario.foto}`
+    ? `${import.meta.env.VITE_API_URL}/imagenes/${usuario.foto}`
     : defaultAvatar;
 
   return (
