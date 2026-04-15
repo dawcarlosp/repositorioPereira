@@ -6,6 +6,7 @@ export default function useHeaderManager() {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const headerRef = useRef(null);
+  const [isPendientesOpen, setIsPendientesOpen] = useState(false);
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null); // 'gestion', 'vendedores', 'avatar', null
@@ -31,12 +32,15 @@ export default function useHeaderManager() {
 
   const closeAll = () => {
     setActiveDropdown(null);
+    setIsPendientesOpen(false);
     setMenuOpen(false);
   };
 
   return {
     auth, headerRef, menuOpen, setMenuOpen,
     activeDropdown, setActiveDropdown,
+    isPendientesOpen, 
+    setIsPendientesOpen,
     modalEditar, setModalEditar,
     mostrarConfirmacionLogout, setMostrarConfirmacionLogout,
     handleLogout, closeAll
