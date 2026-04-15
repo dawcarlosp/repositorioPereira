@@ -37,3 +37,15 @@
   width: 100%;
   height: 100%;
 }
+/* La capa interna para tapar el centro y que solo se vea el borde */
+.animated-border-inner {
+  position: relative;
+  background: #18181b; /* zinc-900 */
+  border-radius: inherit;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}
