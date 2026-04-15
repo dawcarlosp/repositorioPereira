@@ -17,7 +17,7 @@ export default function useVentasManager(tipo = "todas", pageInitial = 0) {
     setLoading(true);
     try {
       // Siempre pedimos al mismo endpoint según tu JSON
-      const datos = await apiRequest(`ventas?page=${p}&size=10`, null, { method: "GET" });
+      const datos = await apiRequest(`ventas?page=${p}&size=6`, null, { method: "GET" });
       
       let listaVentas = datos.content || [];
 

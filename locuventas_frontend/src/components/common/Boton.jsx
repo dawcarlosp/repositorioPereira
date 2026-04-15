@@ -1,9 +1,9 @@
 // src/components/common/Boton.jsx
 import React from "react";
 
-function Boton({ children, disabled, onClick }) {
+function Boton({ children, disabled, onClick, className = "" }) {
   const baseStyle = `
-    w-full px-4 py-2 font-semibold rounded-xl transition-all duration-300 
+    px-4 py-2 font-semibold rounded-xl transition-all duration-300 
     text-white bg-zinc-900 tracking-wide cursor-pointer
   `;
 
@@ -22,7 +22,7 @@ function Boton({ children, disabled, onClick }) {
     <button 
       onClick={onClick}
       disabled={disabled}
-      className={`${baseStyle} ${disabled ? disabledStyle : enabledStyle}`}
+      className={`${baseStyle} ${disabled ? disabledStyle : enabledStyle} ${className}`}
     >
       {children}
     </button>
