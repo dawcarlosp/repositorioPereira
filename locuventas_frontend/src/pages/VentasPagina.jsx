@@ -28,6 +28,8 @@ export default function VentasPagina() {
     ventaDetalle,
     setVentaDetalle,
     detalleCargando,
+    size,
+    setSize
   } = useVentasManager();
 
   // --- Lógica de Responsive ---
@@ -53,13 +55,10 @@ export default function VentasPagina() {
         </header>
 
         {/* Estado de carga o Lista de ventas */}
-        {loading ? (
-          <div className="text-center text-orange-500 py-20 animate-pulse font-medium">
-            Cargando historial de ventas...
-          </div>
-        ) : (
+  
           <ContenedorVentas
             ventas={ventas}
+            loading={loading}
             isMobile={isMobile}
             onVerDetalle={verDetalleVenta}
             onCancelar={(v) => solicitarCancelacion(v.id)}
@@ -67,8 +66,10 @@ export default function VentasPagina() {
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}
+            size={size}
+            onSizeChange={setSize}
           />
-        )}
+  
       </Main>
 
       {/* --- Capa de Modales (Copiada íntegramente de tu versión original) --- */}

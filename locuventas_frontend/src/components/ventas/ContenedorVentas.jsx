@@ -1,18 +1,21 @@
 // src/components/ventas/ContenedorVentas.jsx
 import React from "react";
 import TablaVentas from "./TablaVentas";
-import VentaCard from "./VentaCard";
+import VentaCard from "@/components/ventas/VentaCard";
 import Paginacion from "@components/common/Paginacion";
 
 export default function ContenedorVentas({ 
-  ventas, 
+  ventas,
+  loading, 
   isMobile, 
   onVerDetalle, 
   onCancelar, 
   onCobrar, 
   page, 
   totalPages, 
-  onPageChange 
+  onPageChange,
+  size,
+  onSizeChange 
 }) {
   if (ventas.length === 0) {
     return (
@@ -39,14 +42,16 @@ export default function ContenedorVentas({
       ) : (
         <TablaVentas
           ventas={ventas}
+          loading={loading}
           onVerDetalle={onVerDetalle}
           onCancelarVenta={onCancelar}
           onCobrarResto={onCobrar}
+          paginaActual={page}
+          totalPaginas={totalPages}
+          onPageChange={onPageChange}
+          size={size}         
+          onSizeChange={onSizeChange}
         />
-      )}
-
-      {totalPages > 1 && (
-        <Paginacion page={page} totalPages={totalPages} onPageChange={onPageChange} />
       )}
     </div>
   );
