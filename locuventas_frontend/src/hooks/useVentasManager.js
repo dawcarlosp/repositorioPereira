@@ -7,17 +7,17 @@ export default function useVentasManager(tipo = "todas", pageInitial = 0) {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(pageInitial);
   const [totalPages, setTotalPages] = useState(0);
-
+  const [size, setSize] = useState(6);
   const [modalPago, setModalPago] = useState({ visible: false, totalPendiente: 0, venta: null });
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, mensaje: "", onConfirmar: null });
   const [ventaDetalle, setVentaDetalle] = useState(null);
   const [detalleCargando, setDetalleCargando] = useState(false);
 
-  const fetchVentas = useCallback(async (p = page) => {
+  const fetchVentas = useCallback(async (p = page, s = size) => {
     setLoading(true);
     try {
       // Siempre pedimos al mismo endpoint según tu JSON
-      const datos = await apiRequest(`ventas?page=${p}&size=6`, null, { method: "GET" });
+      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, { method: "GET" });
       
       let listaVentas = datos.content || [];
 
@@ -34,12 +34,16 @@ export default function useVentasManager(tipo = "todas", pageInitial = 0) {
     } finally {
       setLoading(false);
     }
-  }, [page, tipo]);
+  }, [page, tipo, size]);
 
   useEffect(() => {
     fetchVentas();
   }, [fetchVentas]);
 
+useEffect(() => {
+  setPage(0);
+}, [size]);
+  
   // --- Funciones de acción (se mantienen igual que antes) ---
   const verDetalleVenta = async (venta) => {
     setDetalleCargando(true);
@@ -82,7 +86,7 @@ export default function useVentasManager(tipo = "todas", pageInitial = 0) {
   };
 
   return {
-    ventas, loading, page, totalPages, setPage,
+    ventas, loading, page, totalPages, setPage, size, setSize,
     modalPago, abrirPago, confirmarPago, cerrarModalPago,
     modalConfirmacion, setModalConfirmacion, solicitarCancelacion,
     verDetalleVenta, ventaDetalle, setVentaDetalle, detalleCargando

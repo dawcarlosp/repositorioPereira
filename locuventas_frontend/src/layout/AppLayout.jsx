@@ -1,7 +1,7 @@
 // src/layout/AppLayout.jsx
 import React from "react";
-import Header from "./Header/Header";
-import Footer from "./Footer";
+import Header from "@layout/Header/Header";
+import Footer from "@layout/Footer";
 
 export default function AppLayout({ children, aside }) {
   return (
