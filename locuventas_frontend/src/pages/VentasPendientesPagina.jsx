@@ -28,6 +28,8 @@ export default function VentasPendientesPagina() {
     ventaDetalle,
     setVentaDetalle,
     detalleCargando,
+    size,
+    setSize
   } = useVentasManager("pendientes"); // <--- El parámetro mágico
 
   // --- Lógica de Responsive (se mantiene para el ContenedorVentas) ---
@@ -58,6 +60,7 @@ export default function VentasPendientesPagina() {
         ) : (
           <ContenedorVentas
             ventas={ventas}
+            loading={loading}
             isMobile={isMobile}
             onVerDetalle={verDetalleVenta}
             onCancelar={(v) => solicitarCancelacion(v.id)}
@@ -65,6 +68,8 @@ export default function VentasPendientesPagina() {
             page={page}
             totalPages={totalPages}
             onPageChange={setPage}
+            size={size}
+            onSizeChange={setSize}
           />
         )}
       </Main>
