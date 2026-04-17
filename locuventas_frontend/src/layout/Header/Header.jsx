@@ -4,8 +4,8 @@ import { Menu, X } from "lucide-react";
 import useHeaderManager from "@hooks/useHeaderManager";
 
 // Sub-componentes que extraeremos
-import NavDesktop from "./NavDesktop";
-import NavMobile from "./NavMobile";
+import NavDesktop from "@layout/Header/NavDesktop";
+import NavMobile from "@layout/Header/NavMobile";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
 

@@ -1,26 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react'
-import Header from '@layout/Header/Header'
-import GestionProductos from '@components/productos/GestionProductos'
+import React, { useEffect, useState, useRef } from "react";
+import Header from "@layout/Header/Header";
+import AppLayout from "@layout/AppLayout";
+import Main from "@layout/Main";
+import GestionProductos from "@components/productos/GestionProductos";
 
 function GestionProductosPagina() {
-  // Para la altura dinámica del header
-  const [headerHeight, setHeaderHeight] = useState(0)
-  const headerRef = useRef()
-
-  useEffect(() => {
-    if (headerRef.current) {
-      setHeaderHeight(headerRef.current.offsetHeight)
-    }
-  }, [])
-
   return (
-    <>
-      <Header ref={headerRef} />
-      <main style={{ paddingTop: headerHeight }}>
+    <AppLayout>
+      <Main>
         <GestionProductos />
-      </main>
-    </>
-  )
+      </Main>
+    </AppLayout>
+  );
 }
 
-export default GestionProductosPagina
+export default GestionProductosPagina;
