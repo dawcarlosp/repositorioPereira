@@ -124,7 +124,7 @@ export default function Header() {
             bg-zinc-900 p-2 rounded-xl
           "
         >
-          Locu<span className="text-orange-400">Ventas</span>
+          Locu<span className="text-purple-400">Ventas</span>
         </Link>
 
         {/* === Menú Desktop: Admin y Vendedor === */}

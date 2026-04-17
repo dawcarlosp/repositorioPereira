@@ -1,21 +1,21 @@
 // src/components/ventas/ContenedorVentas.jsx
 import React from "react";
-import TablaVentas from "./TablaVentas";
+import TablaVentas from "@components/ventas/TablaVentas";
 import VentaCard from "@/components/ventas/VentaCard";
 import Paginacion from "@components/common/Paginacion";
 
-export default function ContenedorVentas({ 
+export default function ContenedorVentas({
   ventas,
-  loading, 
-  isMobile, 
-  onVerDetalle, 
-  onCancelar, 
-  onCobrar, 
-  page, 
-  totalPages, 
+  loading,
+  isMobile,
+  onVerDetalle,
+  onCancelar,
+  onCobrar,
+  page,
+  totalPages,
   onPageChange,
   size,
-  onSizeChange 
+  onSizeChange,
 }) {
   if (ventas.length === 0) {
     return (
@@ -28,14 +28,14 @@ export default function ContenedorVentas({
   return (
     <div className="space-y-6">
       {isMobile ? (
-        <div className="flex flex-col gap-4 pb-10">
+        <div className="flex flex-col items-center gap-2 pb-10">
           {ventas.map((v) => (
-            <VentaCard 
-              key={v.id} 
-              venta={v} 
-              onDetalle={onVerDetalle} 
-              onCancelar={onCancelar} 
-              onCobrarResto={onCobrar} 
+            <VentaCard
+              key={v.id}
+              venta={v}
+              onDetalle={onVerDetalle}
+              onCancelar={onCancelar}
+              onCobrarResto={onCobrar}
             />
           ))}
         </div>
@@ -49,10 +49,17 @@ export default function ContenedorVentas({
           paginaActual={page}
           totalPaginas={totalPages}
           onPageChange={onPageChange}
-          size={size}         
+          size={size}
           onSizeChange={onSizeChange}
         />
       )}
+      <Paginacion
+        page={page}
+        totalPages={totalPages}
+        onPageChange={onPageChange}
+        size={size}
+        onSizeChange={onSizeChange}
+      />
     </div>
   );
 }
