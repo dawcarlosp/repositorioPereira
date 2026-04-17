@@ -4,11 +4,12 @@ package ies.juanbosoco.locuventas_backend.config;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
-import ies.juanbosoco.locuventas_backend.entities.*;
-import ies.juanbosoco.locuventas_backend.repositories.CategoriaRepository;
-import ies.juanbosoco.locuventas_backend.repositories.PaisRepository;
-import ies.juanbosoco.locuventas_backend.repositories.ProductoRepository;
-import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
+import ies.juanbosoco.locuventas_backend.entities.auth.Vendedor;
+import ies.juanbosoco.locuventas_backend.entities.catalogo.*;
+import ies.juanbosoco.locuventas_backend.repositories.catalogo.CategoriaRepository;
+import ies.juanbosoco.locuventas_backend.repositories.catalogo.PaisRepository;
+import ies.juanbosoco.locuventas_backend.repositories.catalogo.ProductoRepository;
+import ies.juanbosoco.locuventas_backend.repositories.auth.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 
 
 @Component
+
 public class DataInitializer implements CommandLineRunner {
 
 
@@ -55,10 +57,10 @@ public class DataInitializer implements CommandLineRunner {
     @Override
 
     public void run(String... args) throws Exception {
-        //initAdminAndVendedor();
-        //initCategorias();
-        //initPaises();
-        //initProductos();
+        initAdminAndVendedor();
+        initCategorias();
+        initPaises();
+        initProductos();
     }
 
     private void initAdminAndVendedor() {

@@ -10,7 +10,7 @@ import PrivateRoute from "@components/common/PrivateRoute";
 import VentasPagina from "@pages/VentasPagina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { AuthProvider } from "@context/AuthProvider";
+import { AuthProvider } from "@context/auth.context";
 import SobreMiPage from "@pages/SobreMiPage";
 import VentasPendientesPagina from "@pages/VentasPendientesPagina";
 import LoginPage from "@pages/LoginPage";
@@ -20,7 +20,6 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <div className="flex flex-col items-center">
           <Routes>
             <Route
               path="/"
@@ -92,7 +91,6 @@ function App() {
             toastClassName="bg-white/30 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-lg border border-white/40"
             bodyClassName="text-sm font-medium"
           />
-        </div>
       </BrowserRouter>
     </AuthProvider>
   );

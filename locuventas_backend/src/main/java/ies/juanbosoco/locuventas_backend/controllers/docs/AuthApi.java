@@ -1,7 +1,7 @@
     package ies.juanbosoco.locuventas_backend.controllers.docs;
 
-    import ies.juanbosoco.locuventas_backend.DTO.vendedor.*;
-    import ies.juanbosoco.locuventas_backend.common.ApiResponseDTO;
+    import ies.juanbosoco.locuventas_backend.DTO.auth.*;
+    import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
     import io.swagger.v3.oas.annotations.Operation;
     import io.swagger.v3.oas.annotations.media.Content;
     import io.swagger.v3.oas.annotations.media.Encoding;

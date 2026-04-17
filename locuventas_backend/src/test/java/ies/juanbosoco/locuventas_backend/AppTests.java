@@ -1,14 +1,9 @@
 package ies.juanbosoco.locuventas_backend;
 
-import ies.juanbosoco.locuventas_backend.entities.Vendedor;
-import ies.juanbosoco.locuventas_backend.entities.Venta;
-import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
-import ies.juanbosoco.locuventas_backend.repositories.VentaRepository;
-import org.junit.jupiter.api.Test;
+import ies.juanbosoco.locuventas_backend.repositories.auth.UserEntityRepository;
+import ies.juanbosoco.locuventas_backend.repositories.venta.VentaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 class AppTests {

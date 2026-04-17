@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
-import { apiRequest } from "@/services/api";
+import { apiRequest } from "@/services/api.config";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import Boton from "@components/common/Boton";
 import ProductoCard from "@components/productos/ProductoCard";
@@ -66,11 +66,11 @@ export default function GestionProductos() {
         apiRequest("paises", null, { method: "GET" }),
         apiRequest("categorias", null, { method: "GET" }),
       ]);
-      setProductos(prodPage.content || []);
+      setProductos(prodPage.data.content || []);
       setTotalPages(prodPage.totalPages || 0);
       setPage(prodPage.pageNumber || 0);
-      setPaises(pais);
-      setCategorias(cat);
+      setPaises(pais.data);
+      setCategorias(cat.data);
     } catch {
       toast.error("Error cargando datos.");
     }

@@ -1,1 +1,51 @@
 @import "tailwindcss";
+@keyframes rotate-border {
+    
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animated-border-container {
+  position: relative;
+  overflow: hidden;
+  padding: 2px; /* Grosor del borde iluminado */
+}
+
+.animated-border-container::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: conic-gradient(
+    transparent,
+    rgba(154, 52, 18, 0.1), /* orange-900 con transparencia */
+    #9a3412,                /* orange-800 */
+    #f97316,                /* orange-500 */
+    #9a3412,                /* orange-800 */
+    transparent
+  );
+  animation: rotate-border 4s linear infinite;
+  z-index: 0;
+}
+
+.footer-content {
+  position: relative;
+  z-index: 10;
+  background: black; /* Para tapar el centro del gradiente */
+  width: 100%;
+  height: 100%;
+}
+/* La capa interna para tapar el centro y que solo se vea el borde */
+.animated-border-inner {
+  position: relative;
+  background: #18181b; /* zinc-900 */
+  border-radius: inherit;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}

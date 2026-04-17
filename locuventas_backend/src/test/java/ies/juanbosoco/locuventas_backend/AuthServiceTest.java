@@ -1,17 +1,17 @@
 package ies.juanbosoco.locuventas_backend;
 
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginRequestDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.LoginResponseDTO;
-import ies.juanbosoco.locuventas_backend.DTO.vendedor.UserRegisterDTO;
+import ies.juanbosoco.locuventas_backend.DTO.auth.LoginRequestDTO;
+import ies.juanbosoco.locuventas_backend.DTO.auth.LoginResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.auth.UserRegisterDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
-import ies.juanbosoco.locuventas_backend.entities.Vendedor;
+import ies.juanbosoco.locuventas_backend.entities.auth.Vendedor;
 import ies.juanbosoco.locuventas_backend.errors.BusinessException;
-import ies.juanbosoco.locuventas_backend.errors.InsufficientPermissionsException;
-import ies.juanbosoco.locuventas_backend.errors.UserAlreadyExistsException;
-import ies.juanbosoco.locuventas_backend.repositories.UserEntityRepository;
-import ies.juanbosoco.locuventas_backend.services.AuthService;
-import ies.juanbosoco.locuventas_backend.services.FotoService;
+import ies.juanbosoco.locuventas_backend.errors.exceptions.InsufficientPermissionsException;
+import ies.juanbosoco.locuventas_backend.errors.exceptions.UserAlreadyExistsException;
+import ies.juanbosoco.locuventas_backend.repositories.auth.UserEntityRepository;
+import ies.juanbosoco.locuventas_backend.services.auth.AuthService;
+import ies.juanbosoco.locuventas_backend.services.media.FotoService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

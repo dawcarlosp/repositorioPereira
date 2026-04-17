@@ -1,4 +1,4 @@
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import { useAuth } from "@context/useAuth";
 import Boton from "@components/common/Boton";
 import InputFieldset from "@components/common/InputFieldset";
@@ -26,13 +26,13 @@ function FormVendedorLogin({ setIsOpen }) {
     try {
       const result = await apiRequest("auth/login", { email, password });
 
-      if (result.token) {
-        const roles = result.roles || [];
+      if (result.data.token) {
+        const roles = result.data.roles || [];
         setAuth({
-          token: result.token,
-          nombre: result.nombre,
-          foto: result.foto,
-          email: result.email,
+          token: result.data.token,
+          nombre: result.data.nombre,
+          foto: result.data.foto,
+          email: result.data.email,
           roles,
         });
         navigate("/dashboard");

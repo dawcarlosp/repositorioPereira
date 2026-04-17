@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import Header from '@components/Header'
+import Header from '@layout/Header/Header'
 import GestionProductos from '@components/productos/GestionProductos'
 
 function GestionProductosPagina() {

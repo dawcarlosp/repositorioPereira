@@ -5,7 +5,7 @@ export default function VentaCard({
   venta,
   onDetalle,
   onCancelar,
-  onCobrarResto // <-- Añade esto como prop
+  onCobrarResto 
 }) {
   return (
     <div

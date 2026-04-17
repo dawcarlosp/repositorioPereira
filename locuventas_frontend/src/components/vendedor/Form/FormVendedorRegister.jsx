@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { apiRequest } from "@services/api";
+import { apiRequest } from "@services/api.config";
 import Boton from "@components/common/Boton";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { toast } from "react-toastify";
 import BotonCerrar from "@components/common/BotonCerrar";
-import { validateUser } from "@/services/validateUser";
+import { validateUser } from "@/utils/user.validator";
 
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);

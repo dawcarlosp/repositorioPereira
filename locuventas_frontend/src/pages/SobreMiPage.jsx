@@ -1,6 +1,6 @@
 // src/pages/SobreMiPage.jsx
 import FooterLogin from "@/components/FooterLogin";
-import SobreMi from "@/components/SobreMi";
+import SobreMi from "@/pages/SobreMi";
 export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col bg-[#18181b]">
