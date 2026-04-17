@@ -8,66 +8,95 @@ export default function useVentasManager(tipo = "todas", pageInitial = 0) {
   const [page, setPage] = useState(pageInitial);
   const [totalPages, setTotalPages] = useState(0);
   const [size, setSize] = useState(6);
-  const [modalPago, setModalPago] = useState({ visible: false, totalPendiente: 0, venta: null });
-  const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false, mensaje: "", onConfirmar: null });
+  const [modalPago, setModalPago] = useState({
+    visible: false,
+    totalPendiente: 0,
+    venta: null,
+  });
+  const [modalConfirmacion, setModalConfirmacion] = useState({
+    visible: false,
+    mensaje: "",
+    onConfirmar: null,
+  });
   const [ventaDetalle, setVentaDetalle] = useState(null);
   const [detalleCargando, setDetalleCargando] = useState(false);
 
-  const fetchVentas = useCallback(async (p = page, s = size) => {
-    setLoading(true);
-    try {
-      // Siempre pedimos al mismo endpoint según tu JSON
-      const datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, { method: "GET" });
-      
-      let listaVentas = datos.content || [];
+  const fetchVentas = useCallback(
+    async (p = page, s = size) => {
+      setLoading(true);
+      let datos;
+      try {
+        if (tipo === "pendientes") {
+          datos = await apiRequest(
+            `ventas/pendientes?page=${p}&size=${s}`,
+            null,
+            {
+              method: "GET",
+            },
+          );
+        } else {
+          datos = await apiRequest(`ventas?page=${p}&size=${s}`, null, {
+            method: "GET",
+          });
+        }
+        let listaVentas = datos.content || [];
 
-      // FILTRO DINÁMICO: Si el usuario pidió pendientes, filtramos por saldo
-      if (tipo === "pendientes") {
-        listaVentas = listaVentas.filter(v => v.saldo > 0 && !v.cancelada);
+        setVentas(listaVentas);
+        setTotalPages(datos.totalPages || 0);
+        setPage(datos.pageNumber || 0);
+      } catch {
+        toast.error("Error al obtener las ventas");
+      } finally {
+        setLoading(false);
       }
-
-      setVentas(listaVentas);
-      setTotalPages(datos.totalPages || 0);
-      setPage(datos.pageNumber || 0);
-    } catch {
-      toast.error("Error al obtener las ventas");
-    } finally {
-      setLoading(false);
-    }
-  }, [page, tipo, size]);
+    },
+    [page, tipo, size],
+  );
 
   useEffect(() => {
     fetchVentas();
   }, [fetchVentas]);
 
-useEffect(() => {
-  setPage(0);
-}, [size]);
-  
+  useEffect(() => {
+    setPage(0);
+  }, [size]);
+
   // --- Funciones de acción (se mantienen igual que antes) ---
   const verDetalleVenta = async (venta) => {
     setDetalleCargando(true);
     try {
-      const data = await apiRequest(`ventas/${venta.id}`, null, { method: "GET" });
+      const data = await apiRequest(`ventas/${venta.id}`, null, {
+        method: "GET",
+      });
       setVentaDetalle(data);
-    } catch { toast.error("Error al cargar detalle"); }
-    finally { setDetalleCargando(false); }
+    } catch {
+      toast.error("Error al cargar detalle");
+    } finally {
+      setDetalleCargando(false);
+    }
   };
 
   const abrirPago = (venta) => {
     setModalPago({ visible: true, totalPendiente: venta.saldo, venta });
   };
 
-  const cerrarModalPago = () => setModalPago({ visible: false, totalPendiente: 0, venta: null });
+  const cerrarModalPago = () =>
+    setModalPago({ visible: false, totalPendiente: 0, venta: null });
 
   const confirmarPago = async (importe) => {
     if (!modalPago.venta) return;
     try {
-      await apiRequest(`ventas/${modalPago.venta.id}/pago`, { monto: importe }, { method: "POST" });
+      await apiRequest(
+        `ventas/${modalPago.venta.id}/pago`,
+        { monto: importe },
+        { method: "POST" },
+      );
       toast.success("Pago registrado");
       cerrarModalPago();
-      fetchVentas(); 
-    } catch { toast.error("Error en el pago"); }
+      fetchVentas();
+    } catch {
+      toast.error("Error en el pago");
+    }
   };
 
   const solicitarCancelacion = (ventaId) => {
@@ -76,19 +105,37 @@ useEffect(() => {
       mensaje: "¿Seguro que quieres cancelar esta venta?",
       onConfirmar: async () => {
         try {
-          await apiRequest(`ventas/${ventaId}/cancelar`, null, { method: "PATCH" });
+          await apiRequest(`ventas/${ventaId}/cancelar`, null, {
+            method: "PATCH",
+          });
           toast.success("Venta cancelada");
           setModalConfirmacion({ visible: false });
           fetchVentas();
-        } catch { toast.error("Error al cancelar"); }
-      }
+        } catch {
+          toast.error("Error al cancelar");
+        }
+      },
     });
   };
 
   return {
-    ventas, loading, page, totalPages, setPage, size, setSize,
-    modalPago, abrirPago, confirmarPago, cerrarModalPago,
-    modalConfirmacion, setModalConfirmacion, solicitarCancelacion,
-    verDetalleVenta, ventaDetalle, setVentaDetalle, detalleCargando
+    ventas,
+    loading,
+    page,
+    totalPages,
+    setPage,
+    size,
+    setSize,
+    modalPago,
+    abrirPago,
+    confirmarPago,
+    cerrarModalPago,
+    modalConfirmacion,
+    setModalConfirmacion,
+    solicitarCancelacion,
+    verDetalleVenta,
+    ventaDetalle,
+    setVentaDetalle,
+    detalleCargando,
   };
 }
