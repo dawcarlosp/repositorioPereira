@@ -3,6 +3,7 @@ import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
 import ContenedorVentas from "@components/ventas/ContenedorVentas";
 import useVentasManager from "@hooks/useVentasManager";
+import useBreakpoint from "@hooks/useBreakpoint";
 
 // Modales
 import ModalPago from "@components/ventas/ModalPago";
@@ -10,6 +11,8 @@ import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
 
 export default function VentasPagina() {
+  const bp = useBreakpoint();
+  const isMobile = bp === 'xs';
   // --- Hook de Gestión de Ventas ---
   const {
     ventas,
@@ -32,17 +35,9 @@ export default function VentasPagina() {
     setSize
   } = useVentasManager();
 
-  // --- Lógica de Responsive ---
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 640);
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 640);
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
   return (
-    <AppLayout>
+    <AppLayout
+    isMobile={isMobile}>
       <Main>
         {/* Cabecera de la sección */}
         <header className="mb-8">

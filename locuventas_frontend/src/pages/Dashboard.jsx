@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AppLayout from "@layout/AppLayout";
 import Aside from "@layout/Aside";
 import Main from "@layout/Main";
-import CatalogoProductos from "../components/productos/CatalogoProductos";
+import CatalogoProductos from "@components/productos/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
 import { apiRequest } from "@services/api.config";
+import useBreakpoint from "@hooks/useBreakpoint";
 import { toast } from "react-toastify";
 
 function Dashboard() {
@@ -103,9 +104,14 @@ function Dashboard() {
     }
   }
 
+  //Responsive
+  const bp = useBreakpoint();
+  const isMobile = bp === 'xs';
+
   // --- Renderizado ---
   return (
     <AppLayout
+    isMobile={isMobile}
       aside={
         <Aside
           carga={carga}
