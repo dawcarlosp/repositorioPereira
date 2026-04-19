@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "@layout/AppLayout";
 import Aside from "@layout/Aside";
 import Main from "@layout/Main";
+import CarritoVenta from "@components/ventas/CarritoVentas";
 import CatalogoProductos from "@components/productos/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
@@ -111,29 +112,22 @@ function Dashboard() {
   // --- Renderizado ---
   return (
     <AppLayout
-    isMobile={isMobile}
+      isMobile={isMobile}
       aside={
-        <Aside
-          carga={carga}
-          quitarProducto={quitarProducto}
-          onGuardarVenta={guardarVentaSinCobrar}
-          onFinalizarYCobrar={finalizarYCobrar}
-        />
-      }
+    <Aside>
+      <CarritoVenta
+        carga={carga}
+        quitarProducto={quitarProducto}
+        onGuardar={guardarVentaSinCobrar}
+        onCobrar={finalizarYCobrar}
+      />
+    </Aside>
+  }
     >
       <Main>
-        <header className="mb-8">
-          <h2 className="text-3xl font-extrabold text-white tracking-tight">
-            Venta Nueva
-          </h2>
-          <p className="text-zinc-400 mt-1">
-            Gestiona la carga actual de productos para generar una venta.
-          </p>
-        </header>
-
-        <CatalogoProductos 
-          carga={carga} 
-          agregarProducto={agregarProducto} 
+        <CatalogoProductos
+          carga={carga}
+          agregarProducto={agregarProducto}
         />
       </Main>
 

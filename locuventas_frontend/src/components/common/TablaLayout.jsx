@@ -26,14 +26,6 @@ export default function TablaLayout({
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-zinc-800/50 border border-zinc-700/50 rounded-2xl shadow-2xl">
-      <style>
-        {`
-          .custom-scrollbar::-webkit-scrollbar { width: 8px; height: 8px; }
-          .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-          .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-          .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #f59e0b; }
-        `}
-      </style>
 
       {/* Area de Paginación */}
       {showPaginador && (
