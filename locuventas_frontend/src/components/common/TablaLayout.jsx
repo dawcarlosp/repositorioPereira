@@ -1,5 +1,5 @@
 import React from "react";
-import Paginacion from "@components/common/Paginacion";
+
 
 // Componente interno para la fila animada
 const FilaSkeleton = ({ cols }) => (
@@ -26,19 +26,6 @@ export default function TablaLayout({
 
   return (
     <div className="flex flex-col h-full overflow-hidden bg-zinc-800/50 border border-zinc-700/50 rounded-2xl shadow-2xl">
-
-      {/* Area de Paginación */}
-      {showPaginador && (
-        <div className="backdrop-blur-md self-end">
-          <Paginacion
-            page={paginaActual}
-            totalPages={totalPaginas}
-            onPageChange={onPageChange}
-            size={size}
-            onSizeChange={onSizeChange}
-          />
-        </div>
-      )}
 
        {/* Overlay sutil de carga sobre toda la tabla */}
       {loading && (

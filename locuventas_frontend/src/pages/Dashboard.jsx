@@ -17,13 +17,25 @@ function Dashboard() {
   const [ventaEnCurso, setVentaEnCurso] = useState(null);
   const [ventaFinalizada, setVentaFinalizada] = useState(null);
 
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [size, setSize] = useState(12);
+
+  const handleSizeChange = (newSize) => {
+  setSize(newSize);
+  setPage(0); // Volvemos a la primera página siempre
+};
+
   // --- Lógica del Carrito ---
   function agregarProducto(prod) {
     setCarga((prev) => {
       const idx = prev.findIndex((item) => item.producto.id === prod.id);
       if (idx >= 0) {
         const newCarga = [...prev];
-        newCarga[idx] = { ...newCarga[idx], cantidad: newCarga[idx].cantidad + 1 };
+        newCarga[idx] = {
+          ...newCarga[idx],
+          cantidad: newCarga[idx].cantidad + 1,
+        };
         return newCarga;
       } else {
         return [...prev, { producto: prod, cantidad: 1 }];
@@ -32,14 +44,17 @@ function Dashboard() {
   }
 
   function quitarProducto(id) {
-    setCarga((prev) => {
+    setCarga((prev) => {  
       const idx = prev.findIndex((item) => item.producto.id === id);
       if (idx === -1) return prev;
       if (prev[idx].cantidad === 1) {
         return prev.filter((item) => item.producto.id !== id);
       } else {
         const newCarga = [...prev];
-        newCarga[idx] = { ...newCarga[idx], cantidad: newCarga[idx].cantidad - 1 };
+        newCarga[idx] = {
+          ...newCarga[idx],
+          cantidad: newCarga[idx].cantidad - 1,
+        };
         return newCarga;
       }
     });
@@ -94,7 +109,7 @@ function Dashboard() {
       const actualizada = await apiRequest(
         `ventas/${ventaEnCurso.id}/pago`,
         { monto: importe },
-        { method: "POST" }
+        { method: "POST" },
       );
       setCarga([]);
       setVentaEnCurso(null);
@@ -107,27 +122,33 @@ function Dashboard() {
 
   //Responsive
   const bp = useBreakpoint();
-  const isMobile = bp === 'xs';
+  const isMobile = bp === "xs";
 
   // --- Renderizado ---
   return (
     <AppLayout
       isMobile={isMobile}
       aside={
-    <Aside>
-      <CarritoVenta
-        carga={carga}
-        quitarProducto={quitarProducto}
-        onGuardar={guardarVentaSinCobrar}
-        onCobrar={finalizarYCobrar}
-      />
-    </Aside>
-  }
+        <Aside>
+          <CarritoVenta
+            carga={carga}
+            quitarProducto={quitarProducto}
+            onGuardar={guardarVentaSinCobrar}
+            onCobrar={finalizarYCobrar}
+          />
+        </Aside>
+      }
     >
       <Main>
         <CatalogoProductos
           carga={carga}
           agregarProducto={agregarProducto}
+          page={page}
+          totalPages={totalPages}
+          setTotalPages={setTotalPages}
+          onPageChange={setPage}
+          size={size}
+          onSizeChange={handleSizeChange}
         />
       </Main>
 
