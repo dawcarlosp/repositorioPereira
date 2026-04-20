@@ -3,6 +3,7 @@ import { Menu, X } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@context/useAuth";
 
+import LogoNegocio from "@components/common/LogoNegocio";
 import BotonClaro from "@components/common/BotonClaro";
 import Boton from "@components/common/Boton";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
@@ -116,16 +117,7 @@ export default function Header() {
     border-b-2 border-orange-500/50
       "
       >
-        <Link
-          to="/dashboard"
-          className="
-            text-2xl font-extrabold text-white tracking-wide hover:scale-105
-            transition-transform duration-200 drop-shadow-sm
-            bg-zinc-900 p-2 rounded-xl
-          "
-        >
-          Locu<span className="text-purple-400">Ventas</span>
-        </Link>
+        <LogoNegocio/>
 
         {/* === Menú Desktop: Admin y Vendedor === */}
         {(esAdmin || esVendedor) && (
