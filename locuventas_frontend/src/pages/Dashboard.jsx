@@ -7,9 +7,15 @@ import CatalogoProductos from "@components/productos/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
 import { apiRequest } from "@services/api.config";
+import { useCarrito } from "@hooks/useCarrito";
+import DrawerCarrito from "@components/ventas/DrawerCarrito";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { toast } from "react-toastify";
-
+import FAB from "@components/common/FAB";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { faClock } from "@fortawesome/free-solid-svg-icons";
+import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 function Dashboard() {
   // --- Estados ---
   const [carga, setCarga] = useState([]);
@@ -20,6 +26,9 @@ function Dashboard() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [size, setSize] = useState(12);
+
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const { total } = useCarrito(carga);
 
   const handleSizeChange = (newSize) => {
   setSize(newSize);
@@ -124,9 +133,18 @@ function Dashboard() {
   const bp = useBreakpoint();
   const isMobile = bp === "xs";
 
+  // Sumamos todas las cantidades de la carga
+const totalItems = carga.reduce((acc, item) => acc + item.cantidad, 0);
+const totalVenta = carga.reduce((acc, item) => {
+  const precio = Number(item.producto.precio);
+  const iva = Number(item.producto.iva || 0);
+  const precioConIva = precio * (1 + iva / 100);
+  return acc + (precioConIva * item.cantidad);
+}, 0);
   // --- Renderizado ---
   return (
     <AppLayout
+
       isMobile={isMobile}
       aside={
         <Aside>
@@ -150,7 +168,51 @@ function Dashboard() {
           size={size}
           onSizeChange={handleSizeChange}
         />
+{(bp == "xs" || bp == "sm") && (
+        <>
+    {/* 0. EL CARRITO (Base - Color Neutro) */}
+    <FAB 
+      index={0} 
+      icon={<FontAwesomeIcon icon={faShoppingCart} />} 
+      title="Ver Carrito" 
+      onClick={() => setIsDrawerOpen(true)}
+      label={totalVenta > 0 ? `${totalVenta.toFixed(2)}€` : null}
+    />
+
+    {/* 1. GUARDAR EN ESPERA (Intermedio - Color Alerta) */}
+    <FAB 
+      index={1} 
+      variant="!bg-amber-500" 
+      icon={<FontAwesomeIcon icon={faClock} />} 
+
+      title="Poner venta en espera"
+     
+    />
+
+    {/* 2. FINALIZAR Y COBRAR (Cima - Color Éxito) */}
+    <FAB 
+      index={2} 
+      variant="!bg-green-600" 
+      icon={<FontAwesomeIcon icon={faHandHoldingDollar} />} 
+      title="Finalizar y Cobrar"
+      
+    />
+  </>
+         
+)}
       </Main>
+
+      {/* EL DRAWER PARA MÓVIL */}
+      {(bp === "xs" || bp === "sm") && (
+        <DrawerCarrito 
+          isOpen={isDrawerOpen} 
+          onClose={() => setIsDrawerOpen(false)}
+          carga={carga}
+          quitarProducto={quitarProducto}
+          onGuardar={guardarVentaSinCobrar}
+          onCobrar={finalizarYCobrar}
+        />
+      )}
 
       {/* --- Capa de Modales --- */}
       {modalAbierto && ventaEnCurso && (
