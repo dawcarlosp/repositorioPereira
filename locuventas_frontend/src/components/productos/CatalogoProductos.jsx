@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { apiRequest } from "@services/api.config";
 import ProductoSimpleCard from "./ProductoSimpleCard";
 import Paginacion from "@components/common/Paginacion";
-
+import FAB from "@components/common/FAB";
 export default function CatalogoProductos({ carga, agregarProducto,
   page,
   totalPages,
@@ -49,7 +49,7 @@ export default function CatalogoProductos({ carga, agregarProducto,
 
   return (
     <div className="w-full">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:6 gap-6">
+      <div className="grid w-full justify-items-center grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 2xl:6 gap-6">
         {productos.map((prod) => (
           <ProductoSimpleCard
             key={prod.id}

@@ -6,7 +6,7 @@ import Boton from "@components/common/Boton";
 import ProductoCard from "@components/productos/ProductoCard";
 import TablaProductos from "@components/productos/TablaProductos";
 import ModalProductoForm from "@components/productos/ModalProductoForm";
-import FabAgregarProducto from "@components/productos/FabAgregarProducto";
+import FAB from "@components/common/FAB";
 import Paginacion from "@components/common/Paginacion";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -210,7 +210,8 @@ export default function GestionProductos() {
   }
 
   const botonFlotanteMobile = isMobile ? (
-    <FabAgregarProducto onClick={abrirNuevo} />
+    <FAB onClick={abrirNuevo} title="Nuevo Producto"
+  icon={"+"} />
   ) : null;
 
   return (
