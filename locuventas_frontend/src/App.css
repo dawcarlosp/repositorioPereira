@@ -79,6 +79,11 @@
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #f59e0b;
 }
+.custom-scrollbar.scrolling::-webkit-scrollbar-thumb {
+  background: #f59e0b;
+}
+
+
 @keyframes bounce-short {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-3px); }

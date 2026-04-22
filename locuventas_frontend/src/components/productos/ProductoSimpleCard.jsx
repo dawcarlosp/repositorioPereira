@@ -65,38 +65,48 @@ export default function ProductoSimpleCard({ producto, cantidad, onAdd }) {
         {/* Overlay de hover sutil */}
         <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/5 transition-colors" />
       </div>
+{/* 4. Info Inferior */}
+      <div className="flex flex-col mt-auto pt-2 border-t border-zinc-800/50">
+  
+  {/* Fila 1: Categorías (Ocupa todo el ancho arriba del precio) */}
+  {producto.categorias?.length > 0 && (
+    <div className="mb-1">
+      <span 
+        className="text-[10px] text-zinc-500 block truncate" 
+        title={producto.categorias.join(", ")}
+      >
+        {producto.categorias[0]} {producto.categorias.length > 1 && `+${producto.categorias.length - 1}`}
+      </span>
+    </div>
+  )}
 
-      {/* 4. Info Inferior */}
-      <div className="flex flex-col justify-end flex-1 gap-1">
-        <div className="flex justify-between items-end">
-          <div className="flex flex-col">
-             {producto.categorias?.length > 0 && (
-               <span className="text-[10px] text-zinc-500 truncate max-w-[120px]" title={producto.categorias.join(", ")}>
-                 {producto.categorias.join(", ")}
-               </span>
-             )}
-             <span className="text-xl font-black text-white">
-               {producto.precio}<span className="text-sm text-orange-500 ml-0.5">€</span>
-             </span>
-          </div>
+  {/* Fila 2: Precio y País (Distribución extremos) */}
+  <div className="flex justify-between items-end gap-2">
+    <div className="flex flex-col">
+      <span className="text-xl font-black text-white whitespace-nowrap">
+        {producto.precio.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+        <span className="text-sm text-orange-500 ml-0.5">€</span>
+      </span>
+    </div>
 
-          {/* País */}
-          {producto.paisNombre && (
-            <div className="flex items-center gap-1.5 bg-zinc-800 px-2 py-1 rounded-md border border-zinc-700">
-              {producto.paisFoto && (
-                <img
-                  src={producto.paisFoto}
-                  alt={producto.paisNombre}
-                  className="w-4 h-2.5 object-cover rounded-sm"
-                />
-              )}
-              <span className="text-zinc-400 text-[10px] font-medium uppercase tracking-tighter" title={producto.paisNombre}>
-                {producto.paisNombre.substring(0, 3)}
-              </span>
-            </div>
-          )}
-        </div>
+    {/* País (Tamaño fijo para que no baile) */}
+    {producto.paisNombre && (
+      <div className="flex items-center gap-1.5 bg-zinc-800/80 px-2 py-1 rounded-md border border-zinc-700 shrink-0">
+        {producto.paisFoto && (
+          <img
+            src={producto.paisFoto}
+            alt={producto.paisNombre}
+            className="w-4 h-2.5 object-cover rounded-sm"
+          />
+        )}
+        <span className="text-zinc-400 text-[9px] font-bold uppercase" title={producto.paisNombre}>
+          {producto.paisNombre.substring(0, 3)}
+        </span>
       </div>
+    )}
+  </div>
+</div>
+
     </div>
   );
 }

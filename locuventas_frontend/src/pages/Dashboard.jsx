@@ -12,8 +12,8 @@ import DrawerCarrito from "@components/ventas/DrawerCarrito";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { toast } from "react-toastify";
 import FAB from "@components/common/FAB";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { faClock } from "@fortawesome/free-solid-svg-icons";
 import { faHandHoldingDollar } from "@fortawesome/free-solid-svg-icons";
 function Dashboard() {
@@ -31,9 +31,9 @@ function Dashboard() {
   const { total } = useCarrito(carga);
 
   const handleSizeChange = (newSize) => {
-  setSize(newSize);
-  setPage(0); // Volvemos a la primera página siempre
-};
+    setSize(newSize);
+    setPage(0); // Volvemos a la primera página siempre
+  };
 
   // --- Lógica del Carrito ---
   function agregarProducto(prod) {
@@ -53,7 +53,7 @@ function Dashboard() {
   }
 
   function quitarProducto(id) {
-    setCarga((prev) => {  
+    setCarga((prev) => {
       const idx = prev.findIndex((item) => item.producto.id === id);
       if (idx === -1) return prev;
       if (prev[idx].cantidad === 1) {
@@ -84,7 +84,7 @@ function Dashboard() {
   };
 
   async function guardarVentaSinCobrar() {
-    if (carga.length === 0) return toast.warning("La carga está vacía");
+    if (carga.length === 0) return toast.warning("El carrito está vacío");
     const lineas = prepararLineas();
     try {
       const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
@@ -97,7 +97,7 @@ function Dashboard() {
   }
 
   async function finalizarYCobrar() {
-    if (carga.length === 0) return toast.warning("La carga está vacía");
+    if (carga.length === 0) return toast.warning("El carrito está vacío");
     const lineas = prepararLineas();
     try {
       const venta = await apiRequest("ventas", { lineas }, { method: "POST" });
@@ -134,17 +134,16 @@ function Dashboard() {
   const isMobile = bp === "xs";
 
   // Sumamos todas las cantidades de la carga
-const totalItems = carga.reduce((acc, item) => acc + item.cantidad, 0);
-const totalVenta = carga.reduce((acc, item) => {
-  const precio = Number(item.producto.precio);
-  const iva = Number(item.producto.iva || 0);
-  const precioConIva = precio * (1 + iva / 100);
-  return acc + (precioConIva * item.cantidad);
-}, 0);
+  const totalItems = carga.reduce((acc, item) => acc + item.cantidad, 0);
+  const totalVenta = carga.reduce((acc, item) => {
+    const precio = Number(item.producto.precio);
+    const iva = Number(item.producto.iva || 0);
+    const precioConIva = precio * (1 + iva / 100);
+    return acc + precioConIva * item.cantidad;
+  }, 0);
   // --- Renderizado ---
   return (
     <AppLayout
-
       isMobile={isMobile}
       aside={
         <Aside>
@@ -168,44 +167,43 @@ const totalVenta = carga.reduce((acc, item) => {
           size={size}
           onSizeChange={handleSizeChange}
         />
-{(bp == "xs" || bp == "sm") && (
-        <>
-    {/* 0. EL CARRITO (Base - Color Neutro) */}
-    <FAB 
-      index={0} 
-      icon={<FontAwesomeIcon icon={faShoppingCart} />} 
-      title="Ver Carrito" 
-      onClick={() => setIsDrawerOpen(true)}
-      label={totalVenta > 0 ? `${totalVenta.toFixed(2)}€` : null}
-    />
+        {/*Botones visibles en algunas pantallas pequeñas*/}
+        {(bp == "xs" || bp == "sm") && (
+          <>
+            {/* 0. EL CARRITO (Base - Color Neutro) */}
+            <FAB
+              index={0}
+              icon={<FontAwesomeIcon icon={faShoppingCart} />}
+              title="Ver Carrito"
+              onClick={() => setIsDrawerOpen(true)}
+              label={totalVenta > 0 ? `${totalVenta.toFixed(2)}€` : null}
+            />
 
-    {/* 1. GUARDAR EN ESPERA (Intermedio - Color Alerta) */}
-    <FAB 
-      index={1} 
-      variant="!bg-amber-500" 
-      icon={<FontAwesomeIcon icon={faClock} />} 
+            {/* 1. GUARDAR EN ESPERA (Intermedio - Color Alerta) */}
+            <FAB
+              index={1}
+              variant="!bg-amber-500"
+              icon={<FontAwesomeIcon icon={faClock} />}
+              title="Poner venta en espera"
+              onClick={guardarVentaSinCobrar}
+            />
 
-      title="Poner venta en espera"
-     
-    />
-
-    {/* 2. FINALIZAR Y COBRAR (Cima - Color Éxito) */}
-    <FAB 
-      index={2} 
-      variant="!bg-green-600" 
-      icon={<FontAwesomeIcon icon={faHandHoldingDollar} />} 
-      title="Finalizar y Cobrar"
-      
-    />
-  </>
-         
-)}
+            {/* 2. FINALIZAR Y COBRAR (Cima - Color Éxito) */}
+            <FAB
+              index={2}
+              variant="!bg-green-600"
+              icon={<FontAwesomeIcon icon={faHandHoldingDollar} />}
+              title="Finalizar y Cobrar"
+              onClick={finalizarYCobrar}
+            />
+          </>
+        )}
       </Main>
 
       {/* EL DRAWER PARA MÓVIL */}
       {(bp === "xs" || bp === "sm") && (
-        <DrawerCarrito 
-          isOpen={isDrawerOpen} 
+        <DrawerCarrito
+          isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}
           carga={carga}
           quitarProducto={quitarProducto}
