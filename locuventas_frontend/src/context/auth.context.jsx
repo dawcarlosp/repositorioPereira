@@ -8,16 +8,16 @@ export const AuthProvider = ({ children }) => {
   const [auth, setAuthState] = useState(() => {
     const stored = localStorage.getItem("auth");
     try {
-      return stored ? JSON.parse(stored) : { token: null, nombre: null, roles: [] };
+      return stored ? JSON.parse(stored) : { token: null, nombre: null, foto: null , roles: [] };
     } catch {
-      return { token: null, nombre: null, roles: [] };
+      return { token: null, nombre: null, foto: null,  roles: [] };
     }
   });
 
   // 2. Función Logout: Limpia estado y almacenamiento
   const logout = useCallback(() => {
     localStorage.removeItem("auth");
-    setAuthState({ token: null, nombre: null, roles: [] });
+    setAuthState({ token: null, nombre: null, foto: null, roles: [] });
   }, []);
 
   // 3. Sincronización: Cada vez que cambie 'auth', actualizamos localStorage
