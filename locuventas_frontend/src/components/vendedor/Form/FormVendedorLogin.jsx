@@ -6,7 +6,7 @@ import Enlace from "@components/common/Enlace";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AlertSimple from "@components/common/AlertSimple";
-
+import LogoNegocio from "@components/common/LogoNegocio";
 function FormVendedorLogin({ setIsOpen }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -68,19 +68,7 @@ function FormVendedorLogin({ setIsOpen }) {
           ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
           hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
       >
-        <Link
-          to="/dashboard"
-          className="
-            text-4xl font-extrabold text-white tracking-wide hover:scale-105
-            transition-transform duration-200 drop-shadow-sm
-            bg-zinc-900 px-8 py-4 rounded-2xl mb-7 flex items-center justify-center
-            border-4 border-orange-400 shadow-[0_0_16px_0_rgba(251,146,60,0.5)]
-          "
-          style={{ minWidth: "250px", minHeight: "70px" }}
-        >
-          Locu<span className="text-orange-400">Ventas</span>
-        </Link>
-
+        <LogoNegocio/>
         <InputFieldset
           label="Email"
           type="email"

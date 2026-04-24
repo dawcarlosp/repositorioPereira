@@ -1,23 +1,20 @@
 @import "tailwindcss";
 
-@keyframes rotate-border {
-
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+/* Contenedor principal */
 .animated-border-container {
+  
   position: relative;
   overflow: hidden;
-  padding: 2px;
-  /* Grosor del borde iluminado */
+  display: inline-block;
+  padding: 2px; 
+  border-radius: 12px;
+  isolation: isolate;
+  /* Transición para que el escalado sea suave */
+  transition: transform 0.3s ease;
+  cursor: pointer;
 }
 
+/* 1. El borde de color (el gradiente) */
 .animated-border-container::before {
   content: "";
   position: absolute;
@@ -25,19 +22,60 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: conic-gradient(transparent,
-      rgba(154, 52, 18, 0.1),
-      /* orange-900 con transparencia */
-      #9a3412,
-      /* orange-800 */
-      #f97316,
-      /* orange-500 */
-      #9a3412,
-      /* orange-800 */
-      transparent);
-  animation: rotate-border 4s linear infinite;
-  z-index: 0;
+  background: conic-gradient(
+    from 45deg,
+    transparent, 
+    #581c87, 
+    #a855f7, 
+    #f97316, 
+    #9a3412, 
+    transparent 60%
+  );
+  z-index: -2;
+  /* Transición para el cambio de tamaño del gradiente */
+  transition: transform 0.5s ease;
 }
+
+/* 2. El Resplandor (Glow) */
+.animated-border-container::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: #a855f7; 
+  filter: blur(15px);
+  opacity: 0.3; /* Opacidad normal */
+  z-index: -1;
+  /* Transición para el brillo */
+  transition: opacity 0.3s ease, filter 0.3s ease;
+}
+
+
+.animated-border-container:hover {
+  transform: scale(1.1);
+}
+
+/* El gradiente interno gira un poco o se expande */
+.animated-border-container:hover::before {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* El resplandor se vuelve más fuerte y nítido */
+.animated-border-container:hover::after {
+  transform: rotate(15deg) scale(2);
+  opacity: 0.7; /* Más brillo */
+  filter: blur(20px); /* Aura más grande */
+}
+
+.content {
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  display: block;
+  position: relative;
+  z-index: 1;
+  transition: background 0.3s ease;
+}
+
 
 .footer-content {
   position: relative;

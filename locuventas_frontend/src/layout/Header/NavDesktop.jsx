@@ -1,12 +1,15 @@
+// src/layout/Header/NavDesktop.jsx
 import React from "react";
 import Boton from "@components/common/Boton";
-import AvatarUsuario from "@layout/Header/components/AvatarUsuario";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import VendedoresDropdown from "@layout/Header/components/VendedoresDropdown";
+import MenuUsuario from "@components/vendedor/MenuUsuario";
 
 export default function NavDesktop({ h, esAdmin, esVendedor }) {
-  const { nombre, foto, email } = h.auth || {};
+  // Simplificamos la extracción: pasamos el objeto auth completo como "usuario"
+  const usuario = h.auth || {};
 
+  // Clase para botones con estética de sistema POS moderno
   const neonButtonClass = (active) => `
     px-4 py-2 font-bold rounded-xl transition-all duration-300 border
     ${
@@ -16,17 +19,17 @@ export default function NavDesktop({ h, esAdmin, esVendedor }) {
     }
   `;
 
-  const isGestionOpen =
-    h.activeDropdown === "gestion" || h.activeDropdown === "vendedores";
+  // Lógica para saber si el bloque de gestión está activo
+  const isGestionOpen = h.activeDropdown === "gestion" || h.activeDropdown === "vendedores";
 
   return (
     <nav className="hidden md:flex gap-6 items-center relative">
+      
+      {/* SECCIÓN GESTIÓN (ADMIN) */}
       {esAdmin && (
         <div className="relative">
           <Boton
-            onClick={() =>
-              h.setActiveDropdown(isGestionOpen ? null : "gestion")
-            }
+            onClick={() => h.setActiveDropdown(isGestionOpen ? null : "gestion")}
             className={neonButtonClass(isGestionOpen)}
           >
             Gestión
@@ -36,7 +39,7 @@ export default function NavDesktop({ h, esAdmin, esVendedor }) {
             isOpen={isGestionOpen}
             onClickVendedores={() =>
               h.setActiveDropdown(
-                h.activeDropdown === "vendedores" ? "gestion" : "vendedores",
+                h.activeDropdown === "vendedores" ? "gestion" : "vendedores"
               )
             }
           >
@@ -46,10 +49,6 @@ export default function NavDesktop({ h, esAdmin, esVendedor }) {
               onClickPendientes={() => {
                 if (typeof h.setIsPendientesOpen === "function") {
                   h.setIsPendientesOpen(!h.isPendientesOpen);
-                } else {
-                  console.error(
-                    "Error: h.setIsPendientesOpen no está definida en el hook",
-                  );
                 }
               }}
               closeAll={h.closeAll}
@@ -59,20 +58,15 @@ export default function NavDesktop({ h, esAdmin, esVendedor }) {
         </div>
       )}
 
-      <AvatarUsuario
-        foto={foto}
-        nombre={nombre}
-        email={email}
+      {/* SECCIÓN PERFIL DE USUARIO */}
+      <MenuUsuario
+        usuario={usuario} // Pasamos el objeto limpio
         isOpen={h.activeDropdown === "avatar"}
         onToggleDropdown={() =>
           h.setActiveDropdown(h.activeDropdown === "avatar" ? null : "avatar")
         }
-        onEditarPerfil={() => {
-          h.setModalEditar(true);
-          h.setActiveDropdown(null);
-        }}
-        esVendedor={esVendedor && !esAdmin}
       />
+      
     </nav>
   );
 }
