@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://github.com/dawcarlosp/repositorioPereira.git">
-    <img src="https://github.com/dawcarlosp/dawcarlosp/blob/main/assets-tfg/logoLocuventasv2.svg" width="350"/>
+    <img src="https://github.com/dawcarlosp/dawcarlosp/blob/main/assets-tfg/logoLocuventasv2.svg"/>
   </a>
 </div>
 
