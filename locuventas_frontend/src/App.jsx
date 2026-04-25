@@ -11,6 +11,7 @@ import VentasPagina from "@pages/VentasPagina";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { AuthProvider } from "@context/auth.context";
+import { HeaderProvider } from "@context/HeaderContext";
 import SobreMiPage from "@pages/SobreMiPage";
 import VentasPendientesPagina from "@pages/VentasPendientesPagina";
 import LoginPage from "@pages/LoginPage";
@@ -19,6 +20,7 @@ function App() {
 
   return (
     <AuthProvider>
+      <HeaderProvider>
       <BrowserRouter>
           <Routes>
             <Route
@@ -92,6 +94,7 @@ function App() {
             bodyClassName="text-sm font-medium"
           />
       </BrowserRouter>
+      </HeaderProvider>
     </AuthProvider>
   );
 }

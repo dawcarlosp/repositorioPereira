@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import AppLayout from "@layout/AppLayout";
 import Aside from "@layout/Aside";
 import Main from "@layout/Main";
+import { useHeader } from "@context/HeaderContext";
 import CarritoVenta from "@components/ventas/CarritoVentas";
 import CatalogoProductos from "@components/productos/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
@@ -27,6 +28,7 @@ function Dashboard() {
   const [totalPages, setTotalPages] = useState(0);
   const [size, setSize] = useState(12);
 
+  const { menuOpen } = useHeader();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const { total } = useCarrito(carga);
 
@@ -168,7 +170,7 @@ function Dashboard() {
           onSizeChange={handleSizeChange}
         />
         {/*Botones visibles en algunas pantallas pequeñas*/}
-        {(bp == "xs" || bp == "sm") && (
+        {(!menuOpen && !isDrawerOpen) && (bp == "xs" || bp == "sm") && (
           <>
             {/* 0. EL CARRITO (Base - Color Neutro) */}
             <FAB

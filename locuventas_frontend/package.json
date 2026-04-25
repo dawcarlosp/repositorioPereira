@@ -15,6 +15,7 @@
     "@fortawesome/react-fontawesome": "^3.3.1",
     "@tailwindcss/vite": "^4.1.8",
     "date-fns": "^4.1.0",
+    "html-to-image": "^1.11.13",
     "lucide-react": "^0.482.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

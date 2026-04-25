@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Boton from "@components/common/Boton";
 import BotonClaro from "@components/common/BotonClaro";
+import VentasNavMenu from "@components/ventas/VentasNavMenu";
 import { toast } from "react-toastify";
 
 export default function NavMobile({ h, esAdmin, esVendedor }) {
@@ -12,6 +13,11 @@ export default function NavMobile({ h, esAdmin, esVendedor }) {
   return (
     <div className="md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 px-6 py-6 shadow-xl border-t border-white/10 animate-in fade-in zoom-in duration-300">
       <div className="flex flex-col gap-4">
+      
+      <div className="flex flex-col gap-2">
+          <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[2px] ml-2">Navegación</p>
+          <VentasNavMenu closeMenu = {h.closeAll}/>
+        </div>
         
         {/* SECCIÓN GESTIÓN (ADMIN) */}
         {esAdmin && (

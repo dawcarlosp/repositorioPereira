@@ -28,7 +28,7 @@ export default function Header() {
         {/* MOBILE TOGGLE */}
         <button
           onClick={() => h.setMenuOpen(!h.menuOpen)}
-          className="md:hidden text-white"
+          className="md:hidden text-white transition-transform active:scale-90d"
         >
           {h.menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
