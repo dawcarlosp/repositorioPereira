@@ -1,26 +1,38 @@
+// src/components/layout/GestionDropdown.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import BotonClaro from "@components/common/BotonClaro";
+import DropdownContainer from "@components/common/DropdownContainer"; // Importamos el nuevo componente
 import { toast } from "react-toastify";
 
 export default function GestionDropdown({ isOpen, onClickVendedores, children }) {
   const navigate = useNavigate();
-  if (!isOpen) return null;
 
   return (
-    // Se alinea a la derecha del botón "Gestión" para crecer hacia la izquierda si es necesario
-    <div className="absolute top-full left-0 mt-2 z-50 w-48 bg-zinc-900 border border-zinc-800 shadow-2xl rounded-xl py-2 backdrop-blur-md">
-      {/* Flechita apuntando arriba */}
-      <div className="absolute -top-1.5 left-4 w-3 h-3 bg-zinc-900 border-t border-l border-zinc-800 rotate-45" />
-
-      <div className="px-2 space-y-1 relative z-10">
+    <DropdownContainer
+    isOpen={isOpen}
+      // La flecha sale por la parte superior
+      side="top" 
+      /* AJUSTE DE PRECISIÓN:
+         Como el dropdown está alineado a la derecha (right-1), 
+         el 100% es el borde izquierdo. 
+         Para apuntar al botón "Gestión", la flecha debe estar 
+         hacia la derecha. Prueba con un valor entre el 70% y 85%.
+      */
+      arrowOffset="82%" 
+      width="w-48"
+      className="absolute top-full mt-3 right-1"
+    >
+      <div className="space-y-1">
         <BotonClaro onClick={() => navigate("/productos/gestion")}>
           Productos
         </BotonClaro>
         
-        <BotonClaro onClick={onClickVendedores} className="flex justify-between items-center">
-          <span>Vendedores</span>
-          <span className="text-[10px] opacity-50">{"<"}</span>
+        <BotonClaro 
+          onClick={onClickVendedores} 
+          className="flex justify-between items-center"
+        >
+          Vendedores
         </BotonClaro>
 
         <BotonClaro onClick={() => toast.dark("Próximamente...")}>
@@ -29,6 +41,6 @@ export default function GestionDropdown({ isOpen, onClickVendedores, children })
       </div>
 
       {children}
-    </div>
+    </DropdownContainer>
   );
 }

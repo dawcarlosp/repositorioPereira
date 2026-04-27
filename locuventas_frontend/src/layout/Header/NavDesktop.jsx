@@ -3,7 +3,8 @@ import React from "react";
 import Boton from "@components/common/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import VendedoresDropdown from "@layout/Header/components/VendedoresDropdown";
-import MenuUsuario from "@components/vendedor/MenuUsuario";
+import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
+
 
 export default function NavDesktop({ h, esAdmin, esVendedor }) {
   // Simplificamos la extracción: pasamos el objeto auth completo como "usuario"
@@ -59,7 +60,7 @@ export default function NavDesktop({ h, esAdmin, esVendedor }) {
       )}
 
       {/* SECCIÓN PERFIL DE USUARIO */}
-      <MenuUsuario
+      <MenuUsuarioDropdown
         usuario={usuario} // Pasamos el objeto limpio
         isOpen={h.activeDropdown === "avatar"}
         onToggleDropdown={() =>

@@ -1,65 +1,68 @@
+// src/components/vendedor/VendedoresDropdown.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import BotonClaro from "@components/common/BotonClaro";
 import PendientesList from "@components/vendedor/PendientesList";
+import DropdownContainer from "@components/common/DropdownContainer";
+import BotonClaro from "@components/common/BotonClaro";
+import useBreakpoint from "@hooks/useBreakpoint";
 
 export default function VendedoresDropdown({
   isOpen,
   onClickPendientes,
   isPendientesOpen,
   onConfirmacion,
-  closeAll 
 }) {
-  const navigate = useNavigate();
-  if (!isOpen) return null;
+  const breakpoint = useBreakpoint();
+  const isSmall = ["xs", "sm", "md"].includes(breakpoint);
 
   return (
-    /* NIVEL 2: Aparece a la IZQUIERDA de Gestión */
-    <div className="absolute right-[102%] top-0 z-50">
-      <div className="w-60 bg-zinc-900 border border-zinc-800 shadow-2xl rounded-xl py-2 backdrop-blur-md">
-        <div className="px-2 space-y-1">
-          
-          {/* BOTÓN PENDIENTES -> Abre Nivel 3 a la izquierda */}
-          <div className="relative">
-            <BotonClaro 
-              onClick={(e) => {
-                e.stopPropagation();
-                onClickPendientes(); // Aquí es donde fallaba
-              }}
-              className={`flex justify-between items-center transition-colors ${
-                isPendientesOpen ? "bg-orange-500/20 text-orange-400" : ""
-              }`}
-            >
-              <span className="text-[11px] uppercase font-bold tracking-tighter">Pendientes de aprobar</span>
-              <span className="text-[10px] opacity-40">{"<"}</span>
-            </BotonClaro>
-
-            {/* NIVEL 3: Lista de personas (Más a la izquierda) */}
-            {isPendientesOpen && (
-              <div className="absolute right-[106%] top-[-8px] z-[60]">
-                <PendientesList 
-                  onClose={onClickPendientes} 
-                  onConfirmacion={onConfirmacion} 
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="h-[1px] bg-zinc-800/50 my-1 mx-2" />
-
-          {/* BOTÓN GESTIONAR -> Navega y cierra todo */}
-          <BotonClaro 
-            onClick={() => {
-              if(closeAll) closeAll();
-              navigate("/gestion/vendedores");
+    <DropdownContainer
+      isOpen={isOpen}
+      side="right"
+      arrowOffset="68px"
+      width="w-60"
+      className="absolute right-[calc(100%+12px)] top-0"
+    >
+      <div className="space-y-1">
+        {/* Contenedor relativo del Botón + Dropdown Nivel 3 */}
+        <div className="relative">
+          <BotonClaro
+            onClick={(e) => {
+              e.stopPropagation();
+              onClickPendientes();
             }}
-            className="text-[11px] uppercase font-bold tracking-tighter hover:text-orange-400"
+            className={`flex justify-between items-center transition-colors ${
+              isPendientesOpen ? "bg-orange-500/20 text-orange-400" : ""
+            }`}
           >
-            Gestionar Vendedores
+            Pendientes de aprobar
           </BotonClaro>
-          
+
+          {/* NIVEL 3: Panel de Aprobación (Drop independiente) */}
+          <DropdownContainer
+            isOpen={isPendientesOpen}
+            // LÓGICA DE POSICIÓN
+            side={isSmall ? "top" : "right"} 
+            arrowOffset={isSmall ? "20px" : "28px"}
+            width={isSmall ? "w-[350px]" : "w-[380px]"}
+            className={
+              isSmall
+                ? "absolute top-full mt-3 left-0 z-[60]" // Debajo en pantallas pequeñas
+                : "absolute right-[calc(100%+12px)] -top-4 z-[60]" // Lateral en grandes
+            }
+          >
+            <PendientesList
+              onClose={onClickPendientes}
+              onConfirmacion={onConfirmacion}
+            />
+          </DropdownContainer>
         </div>
+
+        <div className="h-[1px] bg-zinc-800/50 my-1 mx-1" />
+
+        <BotonClaro className="text-[11px] uppercase font-bold tracking-tighter hover:text-orange-400">
+          Gestionar Vendedores
+        </BotonClaro>
       </div>
-    </div>
+    </DropdownContainer>
   );
 }
