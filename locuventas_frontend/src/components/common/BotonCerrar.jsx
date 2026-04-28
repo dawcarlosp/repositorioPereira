@@ -4,7 +4,7 @@ export default function BotonCerrar({
   onClick,
   className = "",
   size = 20,
-  bg = "bg-orange-400",
+  bg = "bg-orange-500/2",
   hoverBg = "hover:bg-purple-500",
   ...props
 }) {

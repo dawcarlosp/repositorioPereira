@@ -171,6 +171,7 @@ function Dashboard() {
         />
         {/*Botones visibles en algunas pantallas pequeñas*/}
         {(!menuOpen && !isDrawerOpen) && (bp == "xs" || bp == "sm") && (
+
           <>
             {/* 0. EL CARRITO (Base - Color Neutro) */}
             <FAB
@@ -203,7 +204,7 @@ function Dashboard() {
       </Main>
 
       {/* EL DRAWER PARA MÓVIL */}
-      {(bp === "xs" || bp === "sm") && (
+      {(bp === "xs" || bp === "sm" || bp === "md") && (
         <DrawerCarrito
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}

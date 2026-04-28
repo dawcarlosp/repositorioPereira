@@ -28,6 +28,11 @@ function App() {
               element={<LoginPage setIsOpen={setIsOpen} />}
             />
 
+             <Route
+              path="/login"
+              element={<LoginPage setIsOpen={setIsOpen} />}
+            />
+
             {/* Ruta protegida con PrivateRoute */}
             <Route
               path="/dashboard"

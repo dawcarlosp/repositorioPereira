@@ -2,7 +2,7 @@
 import React from "react";
 import useVendedoresPendientes from "@hooks/useVendedoresPendientes";
 import TarjetaVendedor from "./TarjetaVendedor";
-
+import BotonCerrar from "@components/common/BotonCerrar";
 export default function PendientesList({ onClose, onConfirmacion }) {
   const { pendientes, loading, aprobar, eliminar } = useVendedoresPendientes();
 
@@ -21,7 +21,7 @@ export default function PendientesList({ onClose, onConfirmacion }) {
         <h4 className="text-white font-bold text-[10px] uppercase tracking-widest opacity-70">
           Panel de Aprobación
         </h4>
-        <button onClick={onClose} className="text-zinc-500 hover:text-white transition">✕</button>
+        <BotonCerrar onClick={onClose}/>
       </header>
 
       <div className="mt-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">

@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import BotonClaro from "@components/common/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer"; // Importamos el nuevo componente
 import { toast } from "react-toastify";
+import AdminActions from "@layout/Header/components/AdminActions";
 
 export default function GestionDropdown({ isOpen, onClickVendedores, children }) {
   const navigate = useNavigate();
@@ -24,20 +25,7 @@ export default function GestionDropdown({ isOpen, onClickVendedores, children })
       className="absolute top-full mt-3 right-1"
     >
       <div className="space-y-1">
-        <BotonClaro onClick={() => navigate("/productos/gestion")}>
-          Productos
-        </BotonClaro>
-        
-        <BotonClaro 
-          onClick={onClickVendedores} 
-          className="flex justify-between items-center"
-        >
-          Vendedores
-        </BotonClaro>
-
-        <BotonClaro onClick={() => toast.dark("Próximamente...")}>
-          Categorías
-        </BotonClaro>
+       <AdminActions onClickVendedores={onClickVendedores}/>
       </div>
 
       {children}
