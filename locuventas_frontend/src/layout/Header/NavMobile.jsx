@@ -4,7 +4,6 @@ import Boton from "@components/common/Boton";
 import BotonClaro from "@components/common/BotonClaro";
 import VentasNavMenu from "@components/ventas/VentasNavMenu";
 import { toast } from "react-toastify";
-import VentasNavMenu from "@components/ventas/VentasNavMenu";
 import AdminActions from "@layout/Header/components/AdminActions";
 export default function NavMobile({ h, esAdmin, esVendedor }) {
   if (!h.menuOpen) return null;

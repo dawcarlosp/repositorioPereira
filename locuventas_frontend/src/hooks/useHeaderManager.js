@@ -1,5 +1,5 @@
 // src/hooks/useHeaderManager.js
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@context/useAuth";
 import { useHeader } from "@context/HeaderContext"; // <--- Importamos el Context
@@ -9,16 +9,37 @@ export default function useHeaderManager() {
   const navigate = useNavigate();
   const headerRef = useRef(null);
 
-  // EXTRAEMOS LOS ESTADOS DEL CONTEXTO (Globales)
-  const { 
-    menuOpen, setMenuOpen, 
-    activeDropdown, setActiveDropdown,
-    isPendientesOpen, setIsPendientesOpen,
-    modalEditar, setModalEditar,
-    mostrarConfirmacionLogout, setMostrarConfirmacionLogout
-  } = useHeader(); 
 
-  // La lógica de cerrar al hacer click fuera se mantiene igual, 
+  // EXTRAEMOS LOS ESTADOS DEL CONTEXTO (Globales)
+  const {
+    menuOpen,
+    setMenuOpen,
+    activeDropdown,
+    setActiveDropdown,
+    isPendientesOpen,
+    setIsPendientesOpen,
+    modalEditar,
+    setModalEditar,
+    mostrarConfirmacionLogout,
+    setMostrarConfirmacionLogout,
+  } = useHeader();
+  const [breakpoint, setBreakpoint] = useState(
+    window.innerWidth < 1024 ? "sm" : "lg",
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+      if (width < 640) setBreakpoint("xs");
+      else if (width < 768) setBreakpoint("sm");
+      else if (width < 1024) setBreakpoint("md");
+      else setBreakpoint("lg");
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+  // La lógica de cerrar al hacer click fuera se mantiene igual,
   // pero ahora cerrará el estado GLOBAL.
   useEffect(() => {
     const clickOutside = (e) => {
@@ -43,11 +64,20 @@ export default function useHeaderManager() {
   };
 
   return {
-    auth, headerRef, menuOpen, setMenuOpen,
-    activeDropdown, setActiveDropdown,
-    isPendientesOpen, setIsPendientesOpen,
-    modalEditar, setModalEditar,
-    mostrarConfirmacionLogout, setMostrarConfirmacionLogout,
-    handleLogout, closeAll
+    auth,
+    headerRef,
+    menuOpen,
+    setMenuOpen,
+    activeDropdown,
+    setActiveDropdown,
+    isPendientesOpen,
+    setIsPendientesOpen,
+    modalEditar,
+    setModalEditar,
+    mostrarConfirmacionLogout,
+    setMostrarConfirmacionLogout,
+    handleLogout,
+    closeAll,
+    breakpoint
   };
 }

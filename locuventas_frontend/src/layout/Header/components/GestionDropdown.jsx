@@ -6,7 +6,7 @@ import DropdownContainer from "@components/common/DropdownContainer"; // Importa
 import { toast } from "react-toastify";
 import AdminActions from "@layout/Header/components/AdminActions";
 
-export default function GestionDropdown({ isOpen, onClickVendedores, children }) {
+export default function GestionDropdown({ isOpen, children }) {
   const navigate = useNavigate();
 
   return (
@@ -24,10 +24,7 @@ export default function GestionDropdown({ isOpen, onClickVendedores, children })
       width="w-48"
       className="absolute top-full mt-3 right-1"
     >
-      <div className="space-y-1">
-       <AdminActions onClickVendedores={onClickVendedores}/>
-      </div>
-
+      
       {children}
     </DropdownContainer>
   );

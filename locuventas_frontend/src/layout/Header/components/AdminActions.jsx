@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import BotonClaro from "@components/common/BotonClaro";
 import { toast } from "react-toastify";
 import AdminActionsPersonal from "./AdminActionsPersonal";
+import useBreakpoint from "@hooks/useBreakpoint";
 
 export default function AdminActions({ h }) {
+   const breakpoint = useBreakpoint();
   const navigate = useNavigate();
   // Detectamos si es móvil para cerrar el menú al hacer click en opciones simples
-  const isSmall = ["xs", "sm", "md"].includes(h.breakpoint);
+  const isSmall = ["xs", "sm", "md"].includes(breakpoint);
 
   return (
     <div className="flex flex-col gap-1.5">
@@ -18,6 +20,7 @@ export default function AdminActions({ h }) {
       
       {/* Opción Catálogo: Navega directo */}
       <BotonClaro onClick={() => { 
+        
         if(isSmall) h.closeAll(); 
         navigate("/productos/gestion"); 
       }}>
