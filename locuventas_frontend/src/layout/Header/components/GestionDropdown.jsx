@@ -6,12 +6,13 @@ import DropdownContainer from "@components/common/DropdownContainer"; // Importa
 import { toast } from "react-toastify";
 import AdminActions from "@layout/Header/components/AdminActions";
 
-export default function GestionDropdown({ isOpen, children }) {
+export default function GestionDropdown({ isOpen, children,triggerRef }) {
   const navigate = useNavigate();
 
   return (
     <DropdownContainer
     isOpen={isOpen}
+    triggerRef={triggerRef}
       // La flecha sale por la parte superior
       side="top" 
       /* AJUSTE DE PRECISIÓN:
@@ -20,7 +21,6 @@ export default function GestionDropdown({ isOpen, children }) {
          Para apuntar al botón "Gestión", la flecha debe estar 
          hacia la derecha. Prueba con un valor entre el 70% y 85%.
       */
-      arrowOffset="82%" 
       width="w-48"
       className="absolute top-full mt-3 right-1"
     >

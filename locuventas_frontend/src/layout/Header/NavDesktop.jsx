@@ -1,5 +1,5 @@
 // src/layout/Header/NavDesktop.jsx
-import React from "react";
+import React, { useRef } from "react";
 import Boton from "@components/common/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
@@ -7,7 +7,7 @@ import AdminActions from "@layout/Header/components/AdminActions";
 
 export default function NavDesktop({ h, esAdmin }) {
   const usuario = h.auth || {};
-
+  const btnAdminRef = useRef(null);
   const neonButtonClass = (active) => `
     px-4 py-2 font-bold rounded-xl transition-all duration-300 border
     ${active 
@@ -22,13 +22,14 @@ export default function NavDesktop({ h, esAdmin }) {
       {esAdmin && (
         <div className="relative">
           <Boton
+          ref={btnAdminRef}
             onClick={() => h.setActiveDropdown(isGestionOpen ? null : "gestion")}
             className={neonButtonClass(isGestionOpen)}
           >
             Panel de Administrador
           </Boton>
 
-          <GestionDropdown isOpen={isGestionOpen}>
+          <GestionDropdown isOpen={isGestionOpen} triggerRef={btnAdminRef}>
             <AdminActions h={h} />
           </GestionDropdown>
         </div>
