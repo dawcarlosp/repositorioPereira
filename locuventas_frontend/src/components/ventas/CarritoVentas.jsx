@@ -61,7 +61,7 @@ export default function CarritoVenta({ carga, quitarProducto, onGuardar, onCobra
                   <button 
                     onClick={() => quitarProducto(item.producto.id)}
                     className="w-7 h-7 flex items-center justify-center rounded-full bg-zinc-800 text-zinc-500 hover:bg-rose-500/20 hover:text-rose-500 transition-all border border-zinc-700"
-                    title="Quitar uno"
+                    title={`Quitar ${item.producto.nombre}`}
                   >
                     <span className="text-lg font-bold mt-[-2px]">-</span>
                   </button>

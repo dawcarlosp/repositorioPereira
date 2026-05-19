@@ -60,7 +60,6 @@ export default function CatalogoProductos({ carga, agregarProducto,
         ))}
       </div>
 
-      {totalPages > 1 && (
         <Paginacion
           page={page}
           totalPages={totalPages}
@@ -68,7 +67,6 @@ export default function CatalogoProductos({ carga, agregarProducto,
           size={size}
           onSizeChange={onSizeChange}
         />
-      )}
     </div>
   );
 }

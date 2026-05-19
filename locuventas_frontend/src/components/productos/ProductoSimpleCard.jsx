@@ -19,9 +19,11 @@ export default function ProductoSimpleCard({ producto, cantidad, onAdd }) {
         relative overflow-hidden rounded-2xl bg-zinc-900 border transition-all duration-300 group
         flex flex-col p-4 gap-3 w-full max-w-[260px] h-[280px] cursor-pointer select-none
         ${
-          hasQuantity
-            ? "border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.1)]"
-            : "border-zinc-800 hover:border-zinc-600 shadow-xl"
+          cantidad > 2
+            ? "border-purple-500 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
+            : cantidad > 0
+              ? "border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
+              : "border-zinc-800 hover:border-zinc-600 shadow-xl"
         }
         hover:-translate-y-1
       `}
@@ -29,7 +31,10 @@ export default function ProductoSimpleCard({ producto, cantidad, onAdd }) {
       {/* 1. Badge de Cantidad (Elegante) */}
       {hasQuantity && (
         <div className="absolute top-3 right-3 z-10 animate-in zoom-in duration-300">
-          <span className="flex h-6 min-w-[24px] items-center justify-center rounded-full bg-orange-500 px-1.5 text-xs font-black text-black shadow-lg">
+          <span
+            className={`flex h-6 min-w-[24px] items-center justify-center rounded-full px-1.5 text-xs font-black text-black shadow-lg 
+            ${cantidad > 1 ? "bg-purple-500" : "bg-orange-500"}`}
+          >
             {cantidad}
           </span>
         </div>

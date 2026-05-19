@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import AlertSimple from "@components/common/AlertSimple";
 import LogoNegocio from "@components/common/LogoNegocio";
+
 function FormVendedorLogin({ setIsOpen }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -61,14 +62,18 @@ function FormVendedorLogin({ setIsOpen }) {
     <>
       <form
         onSubmit={handleLogin}
-        className="flex flex-col items-center justify-center
-          p-10 rounded-xl mt-5
+        className="flex flex-col items-stretch justify-center gap-5
+          w-full max-w-[400px] mx-auto
+          p-5 sm:p-10 rounded-xl my-2
           bg-zinc-900
           transition-all duration-300
           ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
           hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
       >
-        <LogoNegocio/>
+        <div className="flex justify-center mb-1">
+          <LogoNegocio/>
+        </div>
+
         <InputFieldset
           label="Email"
           type="email"
@@ -77,6 +82,7 @@ function FormVendedorLogin({ setIsOpen }) {
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Correo electrónico"
         />
+
         <InputFieldset
           label="Contraseña"
           type="password"
@@ -85,12 +91,15 @@ function FormVendedorLogin({ setIsOpen }) {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Contraseña"
         />
-        {error && <p className="text-orange-600 mt-2">{error}</p>}
+
+        {error && <p className="text-orange-600 text-sm text-center font-medium break-words">{error}</p>}
+        
         <Boton disabled={loading}>
           {loading ? "Cargando..." : "Iniciar Sesión"}
         </Boton>
-        <div className="flex items-center justify-center mt-4">
-          <p className="me-5 text-white">¿No tienes cuenta?</p>
+
+        <div className="flex flex-col xs:flex-row items-center justify-center gap-2 mt-2 text-sm text-center">
+          <p className="text-white">¿No tienes cuenta?</p>
           <Enlace
             onClick={(e) => {
               e.preventDefault();
@@ -101,13 +110,13 @@ function FormVendedorLogin({ setIsOpen }) {
           </Enlace>
         </div>
       </form>
+
       {mostrarAlerta && (
         <AlertSimple
           mensaje={mensajeAlerta}
           onClose={() => setMostrarAlerta(false)}
         />
       )}
-
     </>
   );
 }
