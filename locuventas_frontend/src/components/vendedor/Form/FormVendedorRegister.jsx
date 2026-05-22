@@ -6,6 +6,7 @@ import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { toast } from "react-toastify";
 import BotonCerrar from "@components/common/BotonCerrar";
 import { validateUser } from "@/utils/user.validator";
+import { ToastContainer } from "react-toastify";
 
 function FormVendedorRegister({ isOpen, setIsOpen }) {
   const dialogRef = useRef(null);
@@ -26,7 +27,9 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       setPassword("");
       setErrors({});
       setTouched({});
-      toast.dark("Recuerda que en Locuventas es obligatorio proporcionar una foto al registrarse!");
+      toast.dark("Recuerda que en Locuventas es obligatorio proporcionar una foto al registrarse!", {
+  containerId: "modal-register-toast"
+});
       dialogRef.current?.showModal();
     } else {
       dialogRef.current?.close();
@@ -146,6 +149,16 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
           {loading ? "Registrando..." : "Registrarse"}
         </Boton>
       </form>
+       <ToastContainer
+        enableMultiContainer
+        containerId="modal-register-toast"
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        toastClassName="bg-white/90 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-xl border border-white/40"
+        bodyClassName="text-sm font-medium"
+        style={{ position: 'fixed', top: '16px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '360px', zIndex: 999999 }}
+      />
     </dialog>
   );
 }

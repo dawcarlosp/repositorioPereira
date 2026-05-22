@@ -2,35 +2,15 @@ import React from "react";
 import { Link} from "react-router-dom";
 import Boton from "@components/common/Boton";
 
-export default function Footer({hacia, texto}) {
-
+export default function FooterLogin() {
 
   return (
-    <footer
-      className="
-        w-full
-        bg-zinc-900 flex flex-col md:flex-row justify-center items-center
-        gap-2 md:gap-8
-        px-4 py-4
-        border-t border-zinc-800
-        shadow-xl
-        mt-auto
-        rounded-xl
-      "
-      style={{
-        position: "sticky",
-        bottom: 0,
-        left: 0,
-        zIndex: 30,
-        maxWidth: "1000px",
-        margin: "0 auto"
-      }}
-    >
-      <div className="w-full md:max-w-xs">
-        <Link to={hacia}>
-            <Boton>{texto}</Boton>
+    <div className="w-full mt-auto rounded-t-2xl shadow-2xl">
+      <footer className="flex flex-col md:flex-row justify-center items-center gap-2 md:gap-8 px-4 py-6 rounded-t-2xl">
+        <Link to="aboutme">
+            <Boton>Perfil del desarrollador</Boton>
         </Link>
-      </div>
-    </footer>
+      </footer>
+    </div>
   );
 }

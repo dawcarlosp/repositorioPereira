@@ -15,24 +15,22 @@ import { HeaderProvider } from "@context/HeaderContext";
 import SobreMiPage from "@pages/SobreMiPage";
 import VentasPendientesPagina from "@pages/VentasPendientesPagina";
 import LoginPage from "@pages/LoginPage";
+import useBreakpoint from "@/hooks/useBreakpoint";
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-
+  const breakpoint = useBreakpoint();
+  const isMobile = breakpoint === "xs" || breakpoint === "sm";
+  const toastPosition = isMobile ? "top-center" : "top-right";
   return (
     <AuthProvider>
       <HeaderProvider>
-      <BrowserRouter>
+        <BrowserRouter>
           <Routes>
+            <Route path="/" element={<LoginPage setIsOpen={setIsOpen} />} />
             <Route
-              path="/"
-              element={<LoginPage setIsOpen={setIsOpen} />}
-            />
-
-             <Route
               path="/login"
               element={<LoginPage setIsOpen={setIsOpen} />}
             />
-
             {/* Ruta protegida con PrivateRoute */}
             <Route
               path="/dashboard"
@@ -46,7 +44,7 @@ function App() {
               path="/ventas"
               element={
                 <PrivateRoute>
-                  <VentasPagina/>
+                  <VentasPagina />
                 </PrivateRoute>
               }
             />
@@ -54,12 +52,11 @@ function App() {
               path="/ventas/pendientes"
               element={
                 <PrivateRoute>
-                  <VentasPendientesPagina/>
+                  <VentasPendientesPagina />
                 </PrivateRoute>
               }
             />
             /*
-           
             <Route
               path="/vendedores/pendientes"
               element={
@@ -76,29 +73,25 @@ function App() {
                 </PrivateRoute>
               }
             />
-            <Route
-              path="/aboutme"
-              element={
-                  <SobreMiPage />
-              }
-            />
+            <Route path="/aboutme" element={<SobreMiPage />} />
           </Routes>
 
           <FormVendedorRegister isOpen={isOpen} setIsOpen={setIsOpen} />
 
           {/* Configuración de Toasts */}
           <ToastContainer
-            position="top-right"
+           position={toastPosition}
             autoClose={3000}
             hideProgressBar={false}
             newestOnTop={false}
             closeOnClick
             pauseOnHover
             draggable
+            style={{ zIndex: 99999 }} 
             toastClassName="bg-white/30 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-lg border border-white/40"
             bodyClassName="text-sm font-medium"
           />
-      </BrowserRouter>
+        </BrowserRouter>
       </HeaderProvider>
     </AuthProvider>
   );

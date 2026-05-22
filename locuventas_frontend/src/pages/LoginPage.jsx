@@ -16,7 +16,7 @@ export default function LoginPage({ setIsOpen }) {
         
         {/* El footer siempre se mantendrá abajo */}
         <div className="w-full shrink-0">
-          <FooterLogin hacia={'/aboutme'} texto={'Perfil del desarrollador'}/>
+          <FooterLogin/>
         </div>
 
       </div>

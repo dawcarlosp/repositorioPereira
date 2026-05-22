@@ -67,7 +67,7 @@ function FormVendedorLogin({ setIsOpen }) {
           p-5 sm:p-10 rounded-xl my-2
           bg-zinc-900
           transition-all duration-300
-          ring-2 ring-orange-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
+          ring-2 ring-purple-400 shadow-[0_0_12px_2px_rgba(251,146,60,0.4)]
           hover:ring-purple-500 hover:shadow-[0_0_18px_4px_rgba(168,85,247,0.6)]"
       >
         <div className="flex justify-center mb-1">

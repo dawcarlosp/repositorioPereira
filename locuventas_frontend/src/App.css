@@ -1,4 +1,24 @@
 @import "tailwindcss";
+#toast-portal .Toastify__toast-container {
+  position: fixed;
+  z-index: 99999;
+}
+/* Forzar que el contenedor inyectado ocupe la parte superior del visor del diálogo */
+#toast-portal .Toastify__toast-container {
+  position: fixed !important;
+  top: 10px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  z-index: 999999 !important;
+  width: 90% !important;
+  max-width: 400px;
+}
+
+/* Reactivar los clics exclusivamente para los Toasts individuales */
+#toast-portal .Toastify__toast {
+  pointer-events: auto !important;
+  margin-bottom: 8px;
+}
 
 /* Contenedor principal */
 .animated-border-container {
