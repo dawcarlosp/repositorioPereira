@@ -1,15 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { apiRequest } from "@services/api.config";
-import Boton from "@components/common/Boton";
+import DialogFormLayout from "@components/common/DialogFormLayout";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
-import { toast } from "react-toastify";
-import BotonCerrar from "@components/common/BotonCerrar";
 import { validateUser } from "@/utils/user.validator";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function FormVendedorRegister({ isOpen, setIsOpen }) {
-  const dialogRef = useRef(null);
   const [foto, setFoto] = useState(null);
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
@@ -17,7 +15,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [touched, setTouched] = useState({});
-  const [isClosing, setIsClosing] = useState(false);
+  const [showReminder, setShowReminder] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -27,12 +25,10 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
       setPassword("");
       setErrors({});
       setTouched({});
-      toast.dark("Recuerda que en Locuventas es obligatorio proporcionar una foto al registrarse!", {
-  containerId: "modal-register-toast"
-});
-      dialogRef.current?.showModal();
-    } else {
-      dialogRef.current?.close();
+
+      setShowReminder(true);
+      const timer = setTimeout(() => setShowReminder(false), 6000);
+      return () => clearTimeout(timer);
     }
   }, [isOpen]);
 
@@ -40,14 +36,13 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
     setErrors(validateUser({ nombre, email, password, foto }, { validarFoto: true }));
   }, [nombre, email, password, foto]);
 
-  const handleRegister = async (e) => {
-    e.preventDefault();
+  const handleRegister = async () => {
     const validationErrors = validateUser({ nombre, email, password, foto }, { validarFoto: true });
     setErrors(validationErrors);
     setTouched({ nombre: true, email: true, password: true, foto: true });
 
     if (Object.keys(validationErrors).length > 0) {
-      toast.error("Revisa los campos marcados.");
+      toast.error("Revisa los campos marcados.", { containerId: "modal-toast" });
       return;
     }
 
@@ -58,10 +53,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
     formData.append("foto", foto);
 
     try {
-      await apiRequest("auth/register", formData, {
-        isFormData: true,
-        method: "POST",
-      });
+      await apiRequest("auth/register", formData, { isFormData: true, method: "POST" });
       toast.success("¡Registro exitoso!");
       setIsOpen(false);
     } catch (err) {
@@ -72,94 +64,60 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
     }
   };
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsClosing(false);
-    }, 300);
-  };
-
   if (!isOpen) return null;
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`flex flex-col items-center rounded-xl mx-auto shadow-2xl
-        bg-white/30 backdrop-blur-lg mt-2
-        transform transition-all duration-500 ease-out
-        ${isClosing ? "opacity-0 translate-y-[-20px]" : ""}
-        ${isOpen && !isClosing ? "translate-y-0" : "translate-y-[-100vh]"}
-      `}
+    <DialogFormLayout
+      visible={isOpen}
+      onClose={() => setIsOpen(false)}
+      onSubmit={handleRegister}
+      titulo="Crear Cuenta de Vendedor"
+      botonTexto={loading ? "Registrando..." : "Registrarse"}
+      botonDisabled={loading}
     >
-      <BotonCerrar onClick={handleClose} />
-      <form
-        onSubmit={handleRegister}
-        className="flex flex-col items-center p-10 group min-w-[290px]"
-        encType="multipart/form-data"
-        autoComplete="off"
-      >
-        <UploadAvatar
-          setFile={(file) => {
-            setFoto(file);
-            setTouched((t) => ({ ...t, foto: true }));
-          }}
-          file={foto}
-        />
-        {errors.foto && (
-          <div className="bg-white text-red-700 text-sm font-medium py-1 px-3 rounded shadow mb-3 text-center">
-            {errors.foto}
-          </div>
-        )}
+      {showReminder && (
+        <div className="w-full bg-purple-600/20 border border-purple-500/30 text-purple-200 text-xs py-2 px-3 rounded-lg text-center font-medium animate-pulse mb-2">
+          👉 ¡No olvides subir una foto de perfil clara para tu usuario!
+        </div>
+      )}
 
-        <InputFieldsetValidaciones
-          type="text"
-          id="nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Dinos cómo te llamas"
-          error={errors.nombre}
-          touched={touched.nombre}
-          onBlur={() => setTouched((t) => ({ ...t, nombre: true }))}
-        />
-
-        <InputFieldsetValidaciones
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Correo electrónico"
-          error={errors.email}
-          touched={touched.email}
-          onBlur={() => setTouched((t) => ({ ...t, email: true }))}
-        />
-
-        <InputFieldsetValidaciones
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Contraseña"
-          error={errors.password}
-          touched={touched.password}
-          onBlur={() => setTouched((t) => ({ ...t, password: true }))}
-        />
-
-        <Boton type="submit" disabled={loading || Object.keys(errors).length > 0}>
-          {loading ? "Registrando..." : "Registrarse"}
-        </Boton>
-      </form>
-       <ToastContainer
-        enableMultiContainer
-        containerId="modal-register-toast"
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        toastClassName="bg-white/90 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-xl border border-white/40"
-        bodyClassName="text-sm font-medium"
-        style={{ position: 'fixed', top: '16px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '360px', zIndex: 999999 }}
+      <UploadAvatar setFile={setFoto} file={foto} />
+      
+      {/* 🛠️ SOLUCIÓN: Agregados los onChange correspondientes a cada campo */}
+      <InputFieldsetValidaciones 
+        type="text" 
+        id="nombre" 
+        value={nombre} 
+        onChange={(e) => setNombre(e.target.value)} 
+        placeholder="Dinos cómo te llamas" 
+        error={errors.nombre} 
+        touched={touched.nombre} 
       />
-    </dialog>
+      <InputFieldsetValidaciones 
+        type="email" 
+        id="email" 
+        value={email} 
+        onChange={(e) => setEmail(e.target.value)} 
+        placeholder="Correo electrónico" 
+        error={errors.email} 
+        touched={touched.email} 
+      />
+      <InputFieldsetValidaciones 
+        type="password" 
+        id="password" 
+        value={password} 
+        onChange={(e) => setPassword(e.target.value)} 
+        placeholder="Contraseña" 
+        error={errors.password} 
+        touched={touched.password} 
+      />
+      <ToastContainer 
+        containerId="modal-toast" 
+        position="top-left" 
+        autoClose={3000} 
+        style={{ zIndex: 999999 }}
+      />
+    </DialogFormLayout>
   );
 }
 

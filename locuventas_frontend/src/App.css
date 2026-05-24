@@ -150,3 +150,6 @@
 .animate-bounce-short {
   animation: bounce-short 0.5s ease-in-out 1;
 }
+.ReactToastify__toast-container {
+  z-index: 99999 !important;
+}
