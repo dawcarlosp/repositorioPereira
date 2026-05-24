@@ -1,6 +1,6 @@
 // src/components/common/BotonClaro.jsx
 import React from "react";
-const BotonClaro = React.forwardRef(({ children, disabled, onClick }, ref) => {
+function BotonClaro  ({ children, disabled, onClick }, ref) {
   return (
     <button
       ref={ref}
@@ -16,6 +16,6 @@ const BotonClaro = React.forwardRef(({ children, disabled, onClick }, ref) => {
       {children}
     </button>
   );
-});
+}
 
 export default BotonClaro;

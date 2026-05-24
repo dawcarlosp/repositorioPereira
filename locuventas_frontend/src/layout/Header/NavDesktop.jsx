@@ -4,30 +4,33 @@ import Boton from "@components/common/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
 import AdminActions from "@layout/Header/components/AdminActions";
-
+import BotonClaro from "@components/common/BotonClaro";
 export default function NavDesktop({ h, esAdmin }) {
   const usuario = h.auth || {};
   const btnAdminRef = useRef(null);
-  const neonButtonClass = (active) => `
-    px-4 py-2 font-bold rounded-xl transition-all duration-300 border
-    ${active 
-      ? "bg-orange-500 text-white border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]" 
-      : "text-orange-400 bg-zinc-900/50 border-orange-500/30 hover:text-white"}
-  `;
-
   const isGestionOpen = h.activeDropdown === "gestion";
 
   return (
     <nav className="hidden md:flex gap-6 items-center relative">
       {esAdmin && (
         <div className="relative">
-          <Boton
-          ref={btnAdminRef}
-            onClick={() => h.setActiveDropdown(isGestionOpen ? null : "gestion")}
-            className={neonButtonClass(isGestionOpen)}
-          >
-            Panel de Administrador
-          </Boton>
+          {isGestionOpen ? (
+            <Boton
+              ref={btnAdminRef}
+              disabled={true} // Se queda "marcado" y no reacciona a clicks mientras está abierto
+              className="px-4 py-2 opacity-90 ring-1 ring-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
+            >
+              Panel de Administrador
+            </Boton>
+          ) : (
+            <BotonClaro
+              ref={btnAdminRef}
+              onClick={() => h.setActiveDropdown("gestion")}
+              className="px-4 py-2 border-orange-500/30 text-orange-400"
+            >
+              Panel de Administrador
+            </BotonClaro>
+          )}
 
           <GestionDropdown isOpen={isGestionOpen} triggerRef={btnAdminRef}>
             <AdminActions h={h} />
