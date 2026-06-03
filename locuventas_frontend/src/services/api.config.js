@@ -1,6 +1,6 @@
 // src/services/api.js
 
-const apiUrl = import.meta.env.VITE_API_URL || "http://192.168.18.17:8080";
+const apiUrl = import.meta.env.VITE_API_URL || "http://192.168.101.159:8080";
 
 export const apiRequest = async (endpoint, data, options = {}) => {
   const { method = "POST", isFormData = false } = options;

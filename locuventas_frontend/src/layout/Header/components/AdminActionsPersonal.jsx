@@ -30,25 +30,27 @@ export default function AdminActionsPersonal({ h }) {
   // --- LÓGICA PARA TABLET (MD) ---
   if (isMedium) {
     return (
-      <div className="relative">
-        <BotonClaro
-          ref={btnPersonalRef}
-          onClick={(e) => {
-            e.stopPropagation();
-            setIsPersonalDropOpen(!isPersonalDropOpen);
-          }}
-          className={`flex justify-between items-center w-full ${
-            isPersonalDropOpen ? "text-orange-400 bg-zinc-800" : ""
-          }`}
-        >
-          <div className="flex flex-row items-center gap-2">
-            {isPersonalDropOpen ? (
-              <CircleArrowRight className="opacity-50" size={16} />
-            ) : (
-              <CircleArrowLeft className="text-purple-500" size={16} />
-            )}
-            Personal
-          </div>
+     <div className="relative w-full">
+  <BotonClaro
+    ref={btnPersonalRef}
+    onClick={(e) => {
+      e.stopPropagation();
+      setIsPersonalDropOpen(!isPersonalDropOpen);
+    }}
+
+    className={`!flex !justify-center !items-center !p-0 w-full ${
+      isPersonalDropOpen ? "text-orange-400 bg-zinc-800" : ""
+    }`}
+  >
+    {/* Este contenedor agrupa el icono y el texto como un pack rígido en el centro exacto */}
+    <div className="flex items-center justify-center gap-2">
+      {isPersonalDropOpen ? (
+        <CircleArrowRight className="opacity-50" size={16} />
+      ) : (
+        <CircleArrowLeft className="text-purple-500" size={16} />
+      )}
+      <span>Personal</span>
+    </div>
         </BotonClaro>
 
         {isPersonalDropOpen && (

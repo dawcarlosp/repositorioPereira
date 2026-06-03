@@ -35,7 +35,7 @@ export default function Header() {
       </div>
 
       {/* MOBILE NAV */}
-      <NavMobile h={h} esAdmin={esAdmin} esVendedor={esVendedor} />
+      <NavMobile h={h} esAdmin={esAdmin} esVendedor={esVendedor} usuario={{ nombre, email, foto }} />
 
       {/* MODALES GLOBALES */}
       {h.mostrarConfirmacionLogout && (

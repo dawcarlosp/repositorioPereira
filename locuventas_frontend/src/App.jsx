@@ -87,7 +87,7 @@ function App() {
             closeOnClick
             pauseOnHover
             draggable
-            style={{ zIndex: 99999 }} 
+            portalId="toast-portal" 
             toastClassName="bg-white/30 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-lg border border-white/40"
             bodyClassName="text-sm font-medium"
           />

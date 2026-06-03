@@ -6,8 +6,7 @@ import Avatar from "@components/common/Avatar";
 import BotonClaro from "@components/common/BotonClaro";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
-import DropdownContainer from "@components/common/DropdownContainer"; // <-- Importamos el nuevo componente
-
+import DropdownContainer from "@components/common/DropdownContainer"; 
 export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown }) {
   const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
   const [modalEditar, setModalEditar] = useState(false);

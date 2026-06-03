@@ -1,25 +1,23 @@
-import React, { useEffect, useRef, useState } from "react";
-import { X } from "lucide-react";
+import React, { useEffect, useState } from "react";
 import { apiRequest } from "@services/api.config";
-import Boton from "@components/common/Boton";
+import DialogFormLayout from "@components/common/DialogFormLayout";
+import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
+import { validateUser } from "@/utils/user.validator";
 import { toast } from "react-toastify";
 import { useAuth } from "@context/useAuth";
-import { validateUser } from "@/utils/user.validator";
-import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 
 function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
-  const dialogRef = useRef(null);
   const [foto, setFoto] = useState(null);
   const [nombre, setNombre] = useState(usuario?.nombre || "");
   const [email, setEmail] = useState(usuario?.email || "");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
-  const [isClosing, setIsClosing] = useState(false);
+  const [touched, setTouched] = useState({});
   const [loading, setLoading] = useState(false);
   const { setAuth } = useAuth();
-   const [touched, setTouched] = useState({});
 
+  // Sincronizar campos cuando se abre el modal o cambia el usuario
   useEffect(() => {
     if (isOpen) {
       setNombre(usuario?.nombre || "");
@@ -27,29 +25,27 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
       setPassword("");
       setFoto(null);
       setErrors({});
-        setTouched({});
-      dialogRef.current?.showModal();
-    } else {
-      dialogRef.current?.close();
+      setTouched({});
     }
   }, [isOpen, usuario]);
 
+  // Validación reactiva
   useEffect(() => {
     setErrors(validateUser({ nombre, email, password, foto }, { validarFoto: false }));
   }, [nombre, email, password, foto]);
 
-  const handleEditar = async (e) => {
-    e.preventDefault();
-      console.log("Archivo foto:", foto.name, foto.type, foto.size);
-    const validationErrors = validateUser({ nombre, email, password, foto }, { validarFoto: false });
-
+  const handleEditar = async () => {
+    const validationErrors = validateUser(
+      { nombre, email, password, foto },
+      { validarFoto: false }
+    );
     setErrors(validationErrors);
+    setTouched({ nombre: true, email: true, password: true });
 
     if (Object.keys(validationErrors).length > 0) {
       toast.error("Revisa los campos marcados.");
       return;
     }
-
 
     setLoading(true);
     const formData = new FormData();
@@ -80,88 +76,66 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
     }
   };
 
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsClosing(false);
-    }, 300);
-  };
-
   if (!isOpen) return null;
 
   return (
-    <dialog
-      ref={dialogRef}
-      className={`flex flex-col items-center rounded-xl mx-auto shadow-2xl
-        bg-white/30 backdrop-blur-lg mt-2
-        transform transition-all duration-500 ease-out
-        ${isClosing ? "opacity-0 translate-y-[-20px]" : ""}
-        ${isOpen && !isClosing ? "translate-y-0" : "translate-y-[-100vh]"}
-      `}
+    <DialogFormLayout
+      visible={isOpen}
+      onClose={() => setIsOpen(false)}
+      onSubmit={handleEditar}
+      titulo="Editar Perfil"
+      botonTexto={loading ? "Actualizando..." : "Actualizar"}
+      botonDisabled={loading}
     >
-      <button
-        className="border bg-orange-400 text-white hover:bg-purple-500 p-1 rounded-xl cursor-pointer hover:scale-105 self-end me-2 mt-6"
-        onClick={handleClose}
-      >
-        <X size={20} />
-      </button>
+      <UploadAvatar
+        setFile={setFoto}
+        file={foto}
+        fotoActualUrl={
+          usuario?.foto
+            ? `${import.meta.env.VITE_API_URL}/imagenes/vendedores/${usuario.foto}`
+            : null
+        }
+      />
 
-      <form onSubmit={handleEditar} className="flex flex-col items-center p-10 group min-w-[290px]">
-        <UploadAvatar
-          setFile={setFoto}
-          file={foto}
-          
-          fotoActualUrl={
-            usuario?.foto
-              ? `${import.meta.env.VITE_API_URL}/imagenes/vendedores/${usuario.foto}`
-              : null
-          }
-        />
-         {errors.foto && (
-          <div className="bg-white text-red-700 text-sm font-medium py-1 px-3 rounded shadow mb-3 text-center">
-            {errors.foto}
-          </div>
-        )}
+      {/* Error de foto separado porque UploadAvatar no usa InputFieldsetValidaciones */}
+      {errors.foto && touched.foto && (
+        <p className="text-red-400 text-xs text-center -mt-2 mb-1">{errors.foto}</p>
+      )}
 
-        <InputFieldsetValidaciones
-          type="text"
-          id="nombre"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          placeholder="Tu nombre"
-          error={errors.nombre}
-          touched={touched.nombre}
-          onBlur={() => setTouched((t) => ({...t, nombre: true}))}
-        />
+      <InputFieldsetValidaciones
+        type="text"
+        id="nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        onBlur={() => setTouched((t) => ({ ...t, nombre: true }))}
+        placeholder="Tu nombre"
+        error={errors.nombre}
+        touched={touched.nombre}
+      />
 
+      <InputFieldsetValidaciones
+        type="email"
+        id="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        onBlur={() => setTouched((t) => ({ ...t, email: true }))}
+        placeholder="Correo electrónico"
+        error={errors.email}
+        touched={touched.email}
+      />
 
-        <InputFieldsetValidaciones
-          type="email"
-          id="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="Correo electrónico"
-          error={errors.email}
-          touched={touched.email}
-          onBlur={() => setTouched((t) => ({...t, email: true}))}
-        />
-
-        <InputFieldsetValidaciones
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Nueva contraseña (opcional)"
-          autoComplete="new-password"
-          error={errors.password}
-          touched={touched.password}
-          onBlur={() => setTouched((t) => ({...t, password: true}))}
-        />
-
-        <Boton>{loading ? "Actualizando..." : "Actualizar"}</Boton>
-      </form>
-    </dialog>
+      <InputFieldsetValidaciones
+        type="password"
+        id="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        onBlur={() => setTouched((t) => ({ ...t, password: true }))}
+        placeholder="Nueva contraseña (opcional)"
+        autoComplete="new-password"
+        error={errors.password}
+        touched={touched.password}
+      />
+    </DialogFormLayout>
   );
 }
 
