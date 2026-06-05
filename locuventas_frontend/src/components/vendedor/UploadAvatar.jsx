@@ -28,9 +28,9 @@ function UploadAvatar({ setFile, file, fotoActualUrl }) {
     <div className="flex flex-col items-center mb-4">
       <div
         className={`
-          w-28 h-28 rounded-full border-4 border-orange-400 
+          w-28 h-28 rounded-full border-4 border-purple-400 
           flex items-center justify-center cursor-pointer relative overflow-hidden 
-          bg-white shadow-lg transition-transform duration-500
+          shadow-lg transition-transform duration-500
           hover:scale-105
           ${justChanged ? "ring-4 ring-purple-500 scale-125" : ""}
         `}

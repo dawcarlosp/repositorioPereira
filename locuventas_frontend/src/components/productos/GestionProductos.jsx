@@ -226,7 +226,7 @@ export default function GestionProductos() {
           <div className="mb-4 flex justify-end">
             {!isMobile && (
               <Boton
-                className="bg-orange-400 hover:bg-orange-500 text-white font-bold"
+                className=" text-white font-bold"
                 onClick={abrirNuevo}
               >
                 + Agregar producto
