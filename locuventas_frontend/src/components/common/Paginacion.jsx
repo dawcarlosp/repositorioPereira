@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 
 export default function Paginacion({ page, totalPages, onPageChange, size, onSizeChange }) {
   // Estado local para que el input sea fluido al escribir

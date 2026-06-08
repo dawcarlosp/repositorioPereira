@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import Boton from "@components/common/Boton";
-import BotonCerrar from "@components/common/BotonCerrar";
+import Boton from "@buttons/Boton";
+import BotonCerrar from "@buttons/BotonCerrar";
 
 export default function DialogFormLayout({
   visible,

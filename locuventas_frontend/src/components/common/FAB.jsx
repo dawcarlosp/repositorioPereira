@@ -1,4 +1,4 @@
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 // src/components/common/FAB.jsx
 export default function FAB({ 
   icon, 

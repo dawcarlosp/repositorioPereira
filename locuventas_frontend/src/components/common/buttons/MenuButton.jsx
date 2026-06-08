@@ -1,6 +1,6 @@
 // src/components/common/MenuButton.jsx
 import React from "react";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 import { 
   CircleArrowLeft, 
   CircleArrowRight, 

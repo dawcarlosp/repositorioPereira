@@ -1,6 +1,6 @@
 // src/components/common/AlertSimple.jsx
 import ReactDOM from "react-dom";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 
 export default function AlertSimple({ mensaje, onClose }) {
   return ReactDOM.createPortal(
