@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState } from "react";
-import Boton from "@components/common/Boton";
-import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@buttons/Boton";
+import BotonClaro from "@buttons/BotonClaro";
 import VentasNavMenu from "@components/ventas/VentasNavMenu";
 import AdminActions from "@layout/Header/components/AdminActions";
 import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
-
+//import ModalConfirmacion from "@components/common/ModalConfirmacion";
 export default function NavMobile({ h, esAdmin }) {
-  const [modalEditar, setModalEditar] = useState(false);
+
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollRef = useRef(null);
   const { nombre, email, foto } = h.auth || {};
@@ -28,14 +28,13 @@ export default function NavMobile({ h, esAdmin }) {
   return (
     <>
       <FormEditarPerfil
-        isOpen={modalEditar}
-        setIsOpen={setModalEditar}
+        isOpen={h.modalEditar}
+        setIsOpen={h.setModalEditar}
         usuario={{ nombre, email, foto }}
       />
 
       {h.menuOpen && (
         <div className="md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 shadow-xl border-t border-white/10 animate-in fade-in zoom-in duration-300 flex flex-col overflow-hidden max-h-[75dvh]">
-          
           {/* Zona scrollable con custom scrollbar */}
           <div
             ref={scrollRef}
@@ -72,7 +71,7 @@ export default function NavMobile({ h, esAdmin }) {
 
               <BotonClaro
                 onClick={() => {
-                  setModalEditar(true);
+                  h.setModalEditar(true);
                   h.closeAll();
                 }}
               >
@@ -83,7 +82,7 @@ export default function NavMobile({ h, esAdmin }) {
                 className="w-full bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500 hover:text-white"
                 onClick={() => {
                   h.setMostrarConfirmacionLogout(true);
-                  h.setMenuOpen(false);
+                  h.closeAll();
                 }}
               >
                 Cerrar Sesión

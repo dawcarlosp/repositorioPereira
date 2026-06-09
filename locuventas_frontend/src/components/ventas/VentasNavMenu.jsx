@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
-import Boton from "@components/common/Boton";
-import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@buttons/Boton";
+import BotonClaro from "@buttons/BotonClaro";
 function VentasNavMenu({ closeMenu }) {
   const navigate = useNavigate();
   const location = useLocation();

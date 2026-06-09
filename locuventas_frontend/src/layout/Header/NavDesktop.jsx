@@ -1,10 +1,10 @@
 // src/layout/Header/NavDesktop.jsx
 import React, { useRef } from "react";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
 import AdminActions from "@layout/Header/components/AdminActions";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 export default function NavDesktop({ h, esAdmin }) {
   const usuario = h.auth || {};
   const btnAdminRef = useRef(null);
@@ -39,9 +39,20 @@ export default function NavDesktop({ h, esAdmin }) {
       )}
 
       <MenuUsuarioDropdown
+      h={h}
         usuario={usuario}
         isOpen={h.activeDropdown === "avatar"}
-        onToggleDropdown={() => h.setActiveDropdown(h.activeDropdown === "avatar" ? null : "avatar")}
+        onToggleDropdown={() =>
+          h.setActiveDropdown(h.activeDropdown === "avatar" ? null : "avatar")
+        }
+        onOpenLogoutModal={() => {
+          // 1. Despertamos el modal global primero
+          h.setMostrarConfirmacionLogout(true);
+          // 2. Limpiamos los menús un instante después para no romper la burbuja del evento
+          setTimeout(() => {
+            h.closeAll();
+          }, 0);
+        }}
       />
     </nav>
   );

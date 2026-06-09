@@ -1,7 +1,7 @@
 // src/components/layout/GestionDropdown.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer"; // Importamos el nuevo componente
 import { toast } from "react-toastify";
 import AdminActions from "@layout/Header/components/AdminActions";

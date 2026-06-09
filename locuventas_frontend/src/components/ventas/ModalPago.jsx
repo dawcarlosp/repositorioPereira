@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
-import Boton from "@components/common/Boton";
-import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@buttons/Boton";
+import BotonClaro from "@buttons/BotonClaro";
 
 export default function ModalPago({
   totalPendiente,

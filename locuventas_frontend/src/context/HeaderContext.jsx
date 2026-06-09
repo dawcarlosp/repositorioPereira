@@ -6,19 +6,30 @@ const HeaderContext = createContext();
 export function HeaderProvider({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
-  // Centralizamos los estados que antes daban error
   const [isPendientesOpen, setIsPendientesOpen] = useState(false);
+   const [modalEditar, setModalEditar] = useState(false);
+  
+  // 🔓 AGREGAMOS LOS ESTADOS PARA EL LOGOUT QUE FALTABAN
+  const [mostrarConfirmacionLogout, setMostrarConfirmacionLogout] = useState(false);
 
   const closeAll = () => {
     setMenuOpen(false);
     setActiveDropdown(null);
-    setIsPendientesOpen(false); // Ahora esto no fallará
+    setIsPendientesOpen(false);
   };
 
+  // 📦 INCLUIMOS LOS NUEVOS ESTADOS EN EL VALUE PARA EXPORTARLOS
   const value = {
-    menuOpen, setMenuOpen,
-    activeDropdown, setActiveDropdown,
-    isPendientesOpen, setIsPendientesOpen,
+    menuOpen,
+    setMenuOpen,
+    activeDropdown,
+    setActiveDropdown,
+    isPendientesOpen,
+    setIsPendientesOpen,
+    mostrarConfirmacionLogout,       
+    setMostrarConfirmacionLogout,
+    modalEditar,
+    setModalEditar,   
     closeAll
   };
 

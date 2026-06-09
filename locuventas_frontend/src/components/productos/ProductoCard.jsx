@@ -1,5 +1,5 @@
-import Boton from "@components/common/Boton";
-import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@buttons/Boton";
+import BotonClaro from "@buttons/BotonClaro";
 const API_URL = import.meta.env.VITE_API_URL;
 function resolverRutaFoto(foto) {
   if (!foto) return null;

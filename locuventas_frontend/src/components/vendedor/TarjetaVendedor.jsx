@@ -1,7 +1,7 @@
 import React from "react";
 import defaultAvatar from "@/assets/default-avatar.png";
-import BotonClaro from "@components/common/BotonClaro";
-import Boton from "@components/common/Boton";
+import BotonClaro from "@buttons/BotonClaro";
+import Boton from "@buttons/Boton";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 

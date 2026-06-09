@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer";
 import PendientesList from "@components/vendedor/PendientesList";
 import useBreakpoint from "@hooks/useBreakpoint";
@@ -102,7 +102,7 @@ export default function AdminActionsPersonal({ h }) {
             isAccordionOpen ? "text-orange-400 bg-orange-500/10" : ""
           }`}
         >
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center justify-center gap-2">
             {isAccordionOpen ? <CircleArrowUp size={16} /> : <CircleArrowDown size={16} />}
             Personal
           </div>
@@ -147,7 +147,7 @@ export default function AdminActionsPersonal({ h }) {
           isPersonalDropOpen ? "text-orange-400 bg-zinc-800" : ""
         }`}
       >
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center justify-center gap-2">
           {isPersonalDropOpen ? (
             <CircleArrowRight className="opacity-50" size={16} />
           ) : (
@@ -193,7 +193,7 @@ export default function AdminActionsPersonal({ h }) {
                   triggerRef={btnSolicitudesRef}
                   side="right"
                   width="w-[380px]"
-                  className="absolute right-[calc(100%+25px)] -top-10 z-[70]"
+                  className="absolute right-[calc(100%+25px)] -top-3 z-[70]"
                 >
                   <PendientesList
                     onClose={() => h.setIsPendientesOpen(false)}

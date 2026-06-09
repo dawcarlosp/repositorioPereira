@@ -2,7 +2,7 @@
 import React from "react";
 import useVendedoresPendientes from "@hooks/useVendedoresPendientes";
 import TarjetaVendedor from "./TarjetaVendedor";
-import BotonCerrar from "@components/common/BotonCerrar";
+import BotonCerrar from "@buttons/BotonCerrar";
 export default function PendientesList({ onClose, onConfirmacion }) {
   const { pendientes, loading, aprobar, eliminar } = useVendedoresPendientes();
 

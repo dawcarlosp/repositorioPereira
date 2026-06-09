@@ -1,22 +1,19 @@
 // src/components/vendedor/MenuUsuario.jsx
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@context/useAuth";
+import { Link } from "react-router-dom";
 import Avatar from "@components/common/Avatar";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
-import DropdownContainer from "@components/common/DropdownContainer"; 
-export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown }) {
-  const [mostrarConfirmacion, setMostrarConfirmacion] = useState(false);
-  const [modalEditar, setModalEditar] = useState(false);
-  const { setAuth } = useAuth();
-  const navigate = useNavigate();
+import DropdownContainer from "@components/common/DropdownContainer";
 
-  const handleLogout = () => {
-    setAuth({ token: null, nombre: null, foto: null, email: null, roles: [] });
-    navigate("/");
-  };
+export default function MenuUsuarioDropdown({
+  h,
+  usuario,
+  isOpen,
+  onToggleDropdown,
+  onOpenLogoutModal,
+}) {
+  const [modalEditar, setModalEditar] = useState(false);
 
   const fotoUrl = usuario.foto
     ? `${import.meta.env.VITE_API_URL}/imagenes/vendedores/${usuario.foto}`
@@ -39,16 +36,16 @@ export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown 
 
       {/* Menú Desplegable Reutilizable */}
       <DropdownContainer
-        isOpen={isOpen} 
-  side="top"
-  /* Anclaje milimétrico:
+        isOpen={isOpen}
+        side="top"
+        /* Anclaje milimétrico:
      Como el dropdown mide 256px (w-64) y está pegado a la derecha,
      necesitamos que la flecha esté casi al final.
      'calc(100% - 24px)' suele ser el centro exacto para un Avatar estándar.
   */
-  arrowOffset="calc(100% - 24px)" 
-  className="absolute top-full mt-3 right-0" 
-  width="w-64"
+        arrowOffset="calc(100% - 24px)"
+        className="absolute top-full mt-3 right-0"
+        width="w-64"
       >
         <div className="mb-4 pb-3 border-b border-zinc-800">
           <p className="text-[10px] uppercase tracking-widest text-zinc-500 font-black">
@@ -65,6 +62,10 @@ export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown 
               onToggleDropdown();
             }}
             className="!justify-start !text-[11px] uppercase tracking-wider font-bold h-9"
+             onClick={() => {
+                  h.setModalEditar(true);
+                  h.closeAll();
+                }}
           >
             Editar Perfil
           </BotonClaro>
@@ -76,9 +77,9 @@ export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown 
           </Link>
 
           <BotonClaro
-            onClick={() => {
-              setMostrarConfirmacion(true);
-              onToggleDropdown();
+            onClick={(e) => {
+              e.stopPropagation(); // 👈 EVITA QUE EL CLICKOUTSIDE DETECTE ESTE CLIC
+              onOpenLogoutModal();
             }}
             className="!justify-start !text-[11px] uppercase tracking-wider font-bold h-9 hover:!text-rose-500"
           >
@@ -86,21 +87,6 @@ export default function MenuUsuarioDropdown({ usuario, isOpen, onToggleDropdown 
           </BotonClaro>
         </div>
       </DropdownContainer>
-
-      {/* Modales fuera del flujo */}
-      <FormEditarPerfil
-        isOpen={modalEditar}
-        setIsOpen={setModalEditar}
-        usuario={usuario}
-      />
-
-      {mostrarConfirmacion && (
-        <ModalConfirmacion
-          mensaje="¿Deseas finalizar tu sesión de trabajo?"
-          onConfirmar={handleLogout}
-          onCancelar={() => setMostrarConfirmacion(false)}
-        />
-      )}
     </div>
   );
 }

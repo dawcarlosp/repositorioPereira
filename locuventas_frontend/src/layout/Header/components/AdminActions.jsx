@@ -1,7 +1,7 @@
 // src/layout/Header/components/AdminActions.jsx
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import BotonClaro from "@components/common/BotonClaro";
+import BotonClaro from "@buttons/BotonClaro";
 import { toast } from "react-toastify";
 import AdminActionsPersonal from "./AdminActionsPersonal";
 import useBreakpoint from "@hooks/useBreakpoint";

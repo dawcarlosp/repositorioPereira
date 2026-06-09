@@ -1,6 +1,6 @@
 import { apiRequest } from "@services/api.config";
 import { useAuth } from "@context/useAuth";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 import InputFieldset from "@components/common/InputFieldset";
 import Enlace from "@components/common/Enlace";
 import { Link, useNavigate } from "react-router-dom";

@@ -2,7 +2,6 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import useHeaderManager from "@hooks/useHeaderManager";
-
 // Sub-componentes que extraeremos
 import NavDesktop from "@layout/Header/NavDesktop";
 import NavMobile from "@layout/Header/NavMobile";
@@ -27,17 +26,20 @@ export default function Header() {
 
         {/* MOBILE TOGGLE */}
         <button
-          onClick={() => h.setMenuOpen(!h.menuOpen)}
-          className="md:hidden text-white transition-transform active:scale-90d"
+          onClick={() => { 
+            h.setMenuOpen(!h.menuOpen); 
+            }}
+          className="md:hidden text-white transition-transform active:scale-90"
         >
           {h.menuOpen ? <X size={28} /> : <Menu size={28} />}
         </button>
       </div>
 
       {/* MOBILE NAV */}
-      <NavMobile h={h} esAdmin={esAdmin} esVendedor={esVendedor} usuario={{ nombre, email, foto }} />
+      <NavMobile h={h} esAdmin={esAdmin} esVendedor={esVendedor} usuario={{ nombre, email, foto } } />
 
       {/* MODALES GLOBALES */}
+    
       {h.mostrarConfirmacionLogout && (
         <ModalConfirmacion
           mensaje="¿Estás seguro de cerrar sesión?"
@@ -46,11 +48,12 @@ export default function Header() {
         />
       )}
 
+      {h.modalEditar && (
       <FormEditarPerfil
         isOpen={h.modalEditar}
         setIsOpen={h.setModalEditar}
         usuario={{ nombre, email, foto }}
-      />
+      /> )}
     </header>
   );
 }

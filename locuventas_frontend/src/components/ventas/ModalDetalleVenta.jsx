@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import BotonClaro from "@components/common/BotonClaro";
-import Boton from "@components/common/Boton";
+import BotonClaro from "@buttons/BotonClaro";
+import Boton from "@buttons/Boton";
 import { VentaService } from "@services/venta.service";
 
 export default function ModalDetalleVenta({ venta, onClose }) {

@@ -13,7 +13,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@components': path.resolve(__dirname, 'src/components'),
-      '@buttons': path.resolve(__dirname, 'src/components/buttons'),
+      '@buttons': path.resolve(__dirname, 'src/components/common/buttons'),
       '@layout': path.resolve(__dirname, 'src/layout'),
       '@context': path.resolve(__dirname, 'src/context'),
       '@utils': path.resolve(__dirname, 'src/utils'),

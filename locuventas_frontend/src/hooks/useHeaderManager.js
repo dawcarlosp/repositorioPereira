@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@context/useAuth";
-import { useHeader } from "@context/HeaderContext"; // <--- Importamos el Context
+import { useHeader } from "@context/HeaderContext";
 
 export default function useHeaderManager() {
   const { auth, setAuth } = useAuth();
@@ -39,20 +39,24 @@ export default function useHeaderManager() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-  // La lógica de cerrar al hacer click fuera se mantiene igual,
-  // pero ahora cerrará el estado GLOBAL.
+
+ // Lógica de cerrar al hacer click fuera corregida
   useEffect(() => {
     const clickOutside = (e) => {
+      // Si un modal está abierto, congelamos la lógica de click fuera del header
+      if (mostrarConfirmacionLogout || modalEditar) return;
+
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         closeAll();
       }
     };
     document.addEventListener("mousedown", clickOutside);
     return () => document.removeEventListener("mousedown", clickOutside);
-  }, []);
+  }, [mostrarConfirmacionLogout, modalEditar]); // Dependencias agregadas
 
   const handleLogout = () => {
     setAuth({ token: null, nombre: null, foto: null, email: null, roles: [] });
+    setMostrarConfirmacionLogout(false);
     closeAll(); // Limpiamos menús al salir
     navigate("/");
   };

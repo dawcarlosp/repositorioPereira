@@ -1,6 +1,6 @@
 import React from "react";
 import { Link} from "react-router-dom";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 
 export default function FooterLogin() {
 

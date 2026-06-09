@@ -2,8 +2,8 @@
 import React from "react";
 import { useAuth } from "@context/useAuth";
 import { useCarrito } from "@hooks/useCarrito";
-import Boton from "@components/common/Boton";
-import BotonClaro from "@components/common/BotonClaro";
+import Boton from "@buttons/Boton";
+import BotonClaro from "@buttons/BotonClaro";
 
 export default function CarritoVenta({ carga, quitarProducto, onGuardar, onCobrar }) {
   const { auth } = useAuth();

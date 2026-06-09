@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@/services/api.config";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 import ProductoCard from "@components/productos/ProductoCard";
 import TablaProductos from "@components/productos/TablaProductos";
 import ModalProductoForm from "@components/productos/ModalProductoForm";
@@ -185,7 +185,8 @@ export default function GestionProductos() {
     };
 
     const formData = new FormData();
-    formData.append("producto", JSON.stringify(productoDTO));
+    formData.append("producto", 
+  new Blob([JSON.stringify(productoDTO)], { type: "application/json" }));
     if (foto) formData.append("foto", foto);
 
     if (editando) {
@@ -206,7 +207,7 @@ export default function GestionProductos() {
       return;
     }
 
-    await guardarProducto(formData, null, "POST");
+    await guardarProducto(formData, id, "POST");
   }
 
   const botonFlotanteMobile = isMobile ? (

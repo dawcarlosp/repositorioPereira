@@ -1,5 +1,5 @@
 import TablaLayout from "@components/common/TablaLayout";
-import Boton from "@components/common/Boton";
+import Boton from "@buttons/Boton";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const resolverRutaFoto = (foto) => (!foto ? null : foto.includes("/") ? foto : `productos/${foto}`);
@@ -37,7 +37,7 @@ export default function TablaProductos({ productos, onEditar, onEliminar, pagina
             <td className="px-4 py-4 font-bold text-orange-400">{p.precio}€</td>
             <td className="px-4 py-4">{p.paisNombre || "-"}</td>
             <td className="px-4 py-4">
-                {/* Tus etiquetas de categorías aquí */}
+               {(p.categorias || []).join(", ")}
             </td>
             <td className="px-4 py-4">
                <div className="flex justify-end gap-2">

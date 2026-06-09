@@ -3,7 +3,7 @@ import React from "react";
 import DropdownContainer from "@components/common/DropdownContainer";
 import useBreakpoint from "@hooks/useBreakpoint";
 import useHeaderManager from "@hooks/useHeaderManager";
-import AdminActionsPersonal from "./AdminActionsPersonal";
+import AdminActionsPersonal from "@layout/Header/components/AdminActionsPersonal";
 
 export default function VendedoresDropdown({
   isOpen,
