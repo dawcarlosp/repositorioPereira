@@ -5,10 +5,10 @@ import BotonClaro from "@buttons/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer"; // Importamos el nuevo componente
 import { toast } from "react-toastify";
 import AdminActions from "@layout/Header/components/AdminActions";
-
+import useResponsiveLayout from "@hooks/useResponsiveLayout";
 export default function GestionDropdown({ isOpen, children,triggerRef }) {
   const navigate = useNavigate();
-
+  const { isSmall, isMedium } = useResponsiveLayout();
   return (
     <DropdownContainer
     isOpen={isOpen}

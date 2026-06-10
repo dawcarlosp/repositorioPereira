@@ -9,7 +9,7 @@ export function HeaderProvider({ children }) {
   const [isPendientesOpen, setIsPendientesOpen] = useState(false);
    const [modalEditar, setModalEditar] = useState(false);
   
-  // 🔓 AGREGAMOS LOS ESTADOS PARA EL LOGOUT QUE FALTABAN
+
   const [mostrarConfirmacionLogout, setMostrarConfirmacionLogout] = useState(false);
 
   const closeAll = () => {
@@ -18,7 +18,7 @@ export function HeaderProvider({ children }) {
     setIsPendientesOpen(false);
   };
 
-  // 📦 INCLUIMOS LOS NUEVOS ESTADOS EN EL VALUE PARA EXPORTARLOS
+
   const value = {
     menuOpen,
     setMenuOpen,

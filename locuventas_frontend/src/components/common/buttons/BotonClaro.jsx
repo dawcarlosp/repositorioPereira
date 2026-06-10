@@ -1,6 +1,10 @@
 // src/components/common/BotonClaro.jsx
 import React from "react";
-function BotonClaro  ({ children, disabled, onClick }, ref) {
+
+const BotonClaro = React.forwardRef(function BotonClaro(
+  { children, disabled, onClick, className = "", ...props },
+  ref
+) {
   return (
     <button
       ref={ref}
@@ -11,11 +15,13 @@ function BotonClaro  ({ children, disabled, onClick }, ref) {
         ${disabled
           ? "bg-zinc-700 text-gray-300 cursor-not-allowed opacity-60"
           : "bg-zinc-800 text-white hover:bg-zinc-700 hover:scale-105 cursor-pointer"}
+        ${className}
       `}
+      {...props}
     >
       {children}
     </button>
   );
-}
+});
 
 export default BotonClaro;
