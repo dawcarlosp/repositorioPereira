@@ -3,8 +3,8 @@ import React, { useRef } from "react";
 import Boton from "@buttons/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
-import AdminActions from "@layout/Header/components/AdminActions";
 import BotonClaro from "@buttons/BotonClaro";
+
 export default function NavDesktop({ h, esAdmin }) {
   const usuario = h.auth || {};
   const btnAdminRef = useRef(null);
@@ -17,7 +17,7 @@ export default function NavDesktop({ h, esAdmin }) {
           {isGestionOpen ? (
             <Boton
               ref={btnAdminRef}
-              disabled={true} // Se queda "marcado" y no reacciona a clicks mientras está abierto
+              disabled={true}
               className="px-4 py-2 opacity-90 ring-1 ring-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
             >
               Panel de Administrador
@@ -32,26 +32,20 @@ export default function NavDesktop({ h, esAdmin }) {
             </BotonClaro>
           )}
 
-          <GestionDropdown isOpen={isGestionOpen} triggerRef={btnAdminRef}>
-            <AdminActions h={h} />
-          </GestionDropdown>
+          <GestionDropdown isOpen={isGestionOpen} triggerRef={btnAdminRef} h={h} />
         </div>
       )}
 
       <MenuUsuarioDropdown
-      h={h}
+        h={h}
         usuario={usuario}
         isOpen={h.activeDropdown === "avatar"}
         onToggleDropdown={() =>
           h.setActiveDropdown(h.activeDropdown === "avatar" ? null : "avatar")
         }
         onOpenLogoutModal={() => {
-          // 1. Despertamos el modal global primero
           h.setMostrarConfirmacionLogout(true);
-          // 2. Limpiamos los menús un instante después para no romper la burbuja del evento
-          setTimeout(() => {
-            h.closeAll();
-          }, 0);
+          setTimeout(() => { h.closeAll(); }, 0);
         }}
       />
     </nav>

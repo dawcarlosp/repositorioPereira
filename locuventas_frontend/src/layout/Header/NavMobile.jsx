@@ -1,17 +1,16 @@
+// src/layout/Header/NavMobile.jsx
 import React, { useRef, useEffect, useState } from "react";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
 import VentasNavMenu from "@components/ventas/VentasNavMenu";
-import AdminActions from "@layout/Header/components/AdminActions";
-import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
-//import ModalConfirmacion from "@components/common/ModalConfirmacion";
-export default function NavMobile({ h, esAdmin }) {
+import AdminMenu from "@layout/Header/components/AdminMenu";  // ← cambiado
 
+
+export default function NavMobile({ h, esAdmin }) {
   const [isScrolling, setIsScrolling] = useState(false);
   const scrollRef = useRef(null);
   const { nombre, email, foto } = h.auth || {};
 
-  // Custom scrollbar: muestra la barra solo mientras hay scroll activo
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
@@ -27,15 +26,10 @@ export default function NavMobile({ h, esAdmin }) {
 
   return (
     <>
-      <FormEditarPerfil
-        isOpen={h.modalEditar}
-        setIsOpen={h.setModalEditar}
-        usuario={{ nombre, email, foto }}
-      />
+
 
       {h.menuOpen && (
         <div className="md:hidden mx-4 mt-[2px] rounded-b-2xl bg-zinc-900/95 shadow-xl border-t border-white/10 animate-in fade-in zoom-in duration-300 flex flex-col overflow-hidden max-h-[75dvh]">
-          {/* Zona scrollable con custom scrollbar */}
           <div
             ref={scrollRef}
             className={`
@@ -44,7 +38,6 @@ export default function NavMobile({ h, esAdmin }) {
               px-6 py-6 flex flex-col gap-4
             `}
           >
-            {/* NAVEGACIÓN */}
             <div className="flex flex-col gap-2">
               <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[2px] ml-2">
                 Navegación
@@ -52,14 +45,12 @@ export default function NavMobile({ h, esAdmin }) {
               <VentasNavMenu closeMenu={h.closeAll} />
             </div>
 
-            {/* GESTIÓN ADMIN */}
             {esAdmin && (
               <div className="px-2 py-4 border-t border-zinc-800/50">
-                <AdminActions h={h} />
+                <AdminMenu h={h} showTitle />  {/* ← cambiado */}
               </div>
             )}
 
-            {/* CUENTA */}
             <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
               <p className="text-xs font-bold text-zinc-500 uppercase tracking-widest text-left ml-2">
                 Mi Cuenta

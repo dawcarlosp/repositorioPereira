@@ -1,31 +1,18 @@
 // src/components/layout/GestionDropdown.jsx
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import BotonClaro from "@buttons/BotonClaro";
-import DropdownContainer from "@components/common/DropdownContainer"; // Importamos el nuevo componente
-import { toast } from "react-toastify";
-import AdminActions from "@layout/Header/components/AdminActions";
-import useResponsiveLayout from "@hooks/useResponsiveLayout";
-export default function GestionDropdown({ isOpen, children,triggerRef }) {
-  const navigate = useNavigate();
-  const { isSmall, isMedium } = useResponsiveLayout();
+import DropdownContainer from "@components/common/DropdownContainer";
+import AdminMenu from "@layout/Header/components/AdminMenu";
+
+export default function GestionDropdown({ isOpen, triggerRef, h }) {
   return (
     <DropdownContainer
-    isOpen={isOpen}
-    triggerRef={triggerRef}
-      // La flecha sale por la parte superior
-      side="top" 
-      /* AJUSTE DE PRECISIÓN:
-         Como el dropdown está alineado a la derecha (right-1), 
-         el 100% es el borde izquierdo. 
-         Para apuntar al botón "Gestión", la flecha debe estar 
-         hacia la derecha. Prueba con un valor entre el 70% y 85%.
-      */
+      isOpen={isOpen}
+      triggerRef={triggerRef}
+      side="top"
       width="w-48"
-      className="absolute top-full mt-3 right-1"
+      className="top-full mt-3 right-1 z-50"
     >
-      
-      {children}
+      <AdminMenu h={h} showTitle />
     </DropdownContainer>
   );
 }
