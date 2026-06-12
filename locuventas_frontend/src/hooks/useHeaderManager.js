@@ -9,20 +9,23 @@ export default function useHeaderManager() {
   const navigate = useNavigate();
   const headerRef = useRef(null);
 
-
-  // EXTRAEMOS LOS ESTADOS DEL CONTEXTO (Globales)
   const {
-    menuOpen,
-    setMenuOpen,
-    activeDropdown,
-    setActiveDropdown,
-    isPendientesOpen,
-    setIsPendientesOpen,
-    modalEditar,
-    setModalEditar,
-    mostrarConfirmacionLogout,
-    setMostrarConfirmacionLogout,
+    menuOpen, setMenuOpen,
+    activeDropdown, setActiveDropdown,
+    isPendientesOpen, setIsPendientesOpen,
+    modalEditar, setModalEditar,
+    mostrarConfirmacionLogout, setMostrarConfirmacionLogout,
   } = useHeader();
+
+  // Estado para el modal de confirmación genérico (aprobar/eliminar vendedores, etc.)
+  const [confirmacionGlobal, setConfirmacionGlobal] = useState(null);
+
+  const abrirConfirmacionGlobal = ({ mensaje, confirmText, onConfirmar }) => {
+    setConfirmacionGlobal({ mensaje, confirmText, onConfirmar });
+  };
+
+  const cerrarConfirmacionGlobal = () => setConfirmacionGlobal(null);
+
   const [breakpoint, setBreakpoint] = useState(
     window.innerWidth < 1024 ? "sm" : "lg",
   );
@@ -35,29 +38,25 @@ export default function useHeaderManager() {
       else if (width < 1024) setBreakpoint("md");
       else setBreakpoint("lg");
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
- // Lógica de cerrar al hacer click fuera corregida
   useEffect(() => {
     const clickOutside = (e) => {
-      // Si un modal está abierto, congelamos la lógica de click fuera del header
-      if (mostrarConfirmacionLogout || modalEditar) return;
-
+      if (mostrarConfirmacionLogout || modalEditar || confirmacionGlobal) return;
       if (headerRef.current && !headerRef.current.contains(e.target)) {
         closeAll();
       }
     };
     document.addEventListener("mousedown", clickOutside);
     return () => document.removeEventListener("mousedown", clickOutside);
-  }, [mostrarConfirmacionLogout, modalEditar]); // Dependencias agregadas
+  }, [mostrarConfirmacionLogout, modalEditar, confirmacionGlobal]);
 
   const handleLogout = () => {
     setAuth({ token: null, nombre: null, foto: null, email: null, roles: [] });
     setMostrarConfirmacionLogout(false);
-    closeAll(); // Limpiamos menús al salir
+    closeAll();
     navigate("/");
   };
 
@@ -70,18 +69,17 @@ export default function useHeaderManager() {
   return {
     auth,
     headerRef,
-    menuOpen,
-    setMenuOpen,
-    activeDropdown,
-    setActiveDropdown,
-    isPendientesOpen,
-    setIsPendientesOpen,
-    modalEditar,
-    setModalEditar,
-    mostrarConfirmacionLogout,
-    setMostrarConfirmacionLogout,
+    menuOpen, setMenuOpen,
+    activeDropdown, setActiveDropdown,
+    isPendientesOpen, setIsPendientesOpen,
+    modalEditar, setModalEditar,
+    mostrarConfirmacionLogout, setMostrarConfirmacionLogout,
     handleLogout,
     closeAll,
-    breakpoint
+    breakpoint,
+    // Modal de confirmación genérico
+    confirmacionGlobal,
+    abrirConfirmacionGlobal,
+    cerrarConfirmacionGlobal,
   };
 }

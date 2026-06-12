@@ -1,23 +1,23 @@
 // src/layout/Header/config/userMenuConfig.js
-import { toast } from "react-toastify";
-
 export const userMenuConfig = (h) => [
   {
     label: "Editar Perfil",
     action: () => {
       h.setModalEditar(true);
+      h.closeAll();
     },
   },
   {
     label: "Developer Info",
-    action: () => {
-      toast.info("Desarrollado con ❤️ en React & Tailwind.");
-    },
+    route: "/aboutme",
   },
   {
     label: "Cerrar Sesión",
-    action: () => {
+    action: (e) => {
+      e?.stopPropagation();
       h.setMostrarConfirmacionLogout(true);
+      h.closeAll();
     },
+    danger: true, 
   },
 ];

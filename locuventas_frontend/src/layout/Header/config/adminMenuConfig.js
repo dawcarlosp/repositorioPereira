@@ -11,12 +11,16 @@ export const adminMenuConfig = (navigate, h) => [
     children: [
       {
         label: "Solicitudes nuevas",
+        action: () => navigate("/vendedores/pendientes"),
         panel: "PendientesList",
-        panelWidth: "w-[380px]"
+        panelWidth: "w-[380px]",
+        panelProps: {
+          onConfirmacion: h.abrirConfirmacionGlobal,
+        },
       },
       {
         label: "Lista de personal",
-        action: () => navigate("/vendedores/pendientes"),
+        action: () => navigate("/vendedores/lista"),
       },
     ],
   },

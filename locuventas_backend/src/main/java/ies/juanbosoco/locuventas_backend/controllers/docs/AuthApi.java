@@ -2,7 +2,9 @@
 
     import ies.juanbosoco.locuventas_backend.DTO.auth.*;
     import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
+    import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
     import io.swagger.v3.oas.annotations.Operation;
+    import io.swagger.v3.oas.annotations.Parameter;
     import io.swagger.v3.oas.annotations.media.Content;
     import io.swagger.v3.oas.annotations.media.Encoding;
     import io.swagger.v3.oas.annotations.media.Schema;
@@ -118,7 +120,13 @@
                 }
         )
         @GetMapping("/usuarios/sin-rol")
-        ResponseEntity<ApiResponseDTO<List<UserResponseDTO>>> getBasicUsers();
+        ResponseEntity<ApiResponseDTO<PageDTO<UserResponseDTO>>> getBasicUsers(
+                @Parameter(description = "Número de página (empieza en 0)", example = "0")
+                @RequestParam(defaultValue = "0") int page,
+
+                @Parameter(description = "Cantidad de elementos por página", example = "12")
+                @RequestParam(defaultValue = "12") int size
+        );
 
         @Operation(
                 summary = "Editar perfil de usuario",

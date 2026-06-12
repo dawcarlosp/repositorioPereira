@@ -19,26 +19,27 @@ export default function RecursiveMenu({
   h,
 }) {
   const [openIndex, setOpenIndex] = useState(null);
-  const triggerRefs = useRef({});  // refs estables por índice
+  const triggerRefs = useRef({});
 
   const toggle = (i) => setOpenIndex(openIndex === i ? null : i);
 
-  // Acordeón en móvil y tablet — evita que el submenú se salga de pantalla
   const useAccordion = isSmall || isMedium;
 
   return (
     <div className="relative flex flex-col gap-1 p-1">
       {items.map((item, i) => {
-        const hasChildren = item.children?.length > 0;
-        const hasPanel    = !!item.panel;
-        const isOpen      = openIndex === i;
+        const hasChildren  = item.children?.length > 0;
+        const hasPanel     = !!item.panel;
+        const hasAction    = !!item.action;
+        const isOpen       = openIndex === i;
 
-        // Inicializar ref estable para este índice la primera vez
         if (!triggerRefs.current[i]) {
           triggerRefs.current[i] = { current: null };
         }
 
-        // ── Hoja simple ──────────────────────────────────────────────
+        // ── Hoja simple O item con panel pero en móvil (usa action) ──
+        // En acordeón, si el item tiene action lo usamos directamente
+        // aunque también tenga panel (panel es solo para desktop)
         if (!hasChildren && !hasPanel) {
           return (
             <BotonClaro
@@ -53,6 +54,20 @@ export default function RecursiveMenu({
 
         // ── Acordeón (móvil + tablet) ────────────────────────────────
         if (useAccordion) {
+          // Item con panel + action en móvil → comportarse como hoja, navega directo
+          if (hasPanel && hasAction) {
+            return (
+              <BotonClaro
+                key={item.label}
+                className="!h-9 !text-[10px] !justify-start whitespace-nowrap"
+                onClick={() => { onClose(); item.action(); }}
+              >
+                {item.label}
+              </BotonClaro>
+            );
+          }
+
+          // Item con hijos → acordeón expandible
           return (
             <div key={item.label} className="flex flex-col gap-1">
               <BotonClaro
@@ -111,7 +126,7 @@ export default function RecursiveMenu({
               className="right-[calc(100%+20px)] top-0 z-[60]"
             >
               {PanelComponent
-                ? <PanelComponent {...(item.panelProps?.(h) ?? {})} />
+   ? <PanelComponent {...(item.panelProps ?? {})} />
                 : (
                   <RecursiveMenu
                     items={item.children ?? []}

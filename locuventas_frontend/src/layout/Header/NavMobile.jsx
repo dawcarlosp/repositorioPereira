@@ -69,15 +69,15 @@ export default function NavMobile({ h, esAdmin }) {
                 Editar Perfil
               </BotonClaro>
 
-              <Boton
-                className="w-full bg-rose-500/10 text-rose-500 border-rose-500/20 hover:bg-rose-500 hover:text-white"
+              <BotonClaro
+                className="w-full bg-rose-500/10 text-rose-500 border-rose-500/20 hover:text-rose-500"
                 onClick={() => {
                   h.setMostrarConfirmacionLogout(true);
                   h.closeAll();
                 }}
               >
                 Cerrar Sesión
-              </Boton>
+              </BotonClaro>
             </div>
           </div>
         </div>

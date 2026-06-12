@@ -1,6 +1,8 @@
 package ies.juanbosoco.locuventas_backend.controllers.auth;
 import ies.juanbosoco.locuventas_backend.DTO.auth.*;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
 import ies.juanbosoco.locuventas_backend.DTO.common.ApiResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.controllers.docs.AuthApi;
 import ies.juanbosoco.locuventas_backend.services.auth.AuthService;
 import jakarta.validation.Valid;
@@ -65,13 +67,34 @@ public class AuthController implements AuthApi {
      */
     @GetMapping("/usuarios/sin-rol")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ApiResponseDTO<List<UserResponseDTO>>> getBasicUsers() {
+    public ResponseEntity<ApiResponseDTO<PageDTO<UserResponseDTO>>> getBasicUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        PageDTO<UserResponseDTO> vendedores = authService.getBasicUsers(page, size);
         return ApiResponseDTO.success(
                 "Usuarios pendientes de habilitar recuperados",
-                authService.getBasicUsers(),
+                vendedores,
                 HttpStatus.OK
         );
     }
+
+
+    @GetMapping("/usuarios/sin-rol")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponseDTO<PageDTO<UserResponseDTO>>> getBasicUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search
+    ) {
+        PageDTO<UserResponseDTO> vendedores = authService.getBasicUsers(page, size, search);
+        return ApiResponseDTO.success(
+                "Usuarios pendientes recuperados",
+                vendedores,
+                HttpStatus.OK
+        );
+    }
+
 
     @PutMapping(value = "/usuarios/editar-perfil", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")

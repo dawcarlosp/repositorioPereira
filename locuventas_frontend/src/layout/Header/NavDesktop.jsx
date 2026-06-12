@@ -2,7 +2,7 @@
 import React, { useRef } from "react";
 import Boton from "@buttons/Boton";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
-import MenuUsuarioDropdown from "@components/vendedor/MenuUsuarioDropdown";
+import MenuUsuarioDropdown from "@layout/Header/components/MenuUsuarioDropdown";
 import BotonClaro from "@buttons/BotonClaro";
 
 export default function NavDesktop({ h, esAdmin }) {

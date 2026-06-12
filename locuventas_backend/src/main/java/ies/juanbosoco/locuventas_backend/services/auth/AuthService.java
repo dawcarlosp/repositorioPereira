@@ -1,9 +1,12 @@
 package ies.juanbosoco.locuventas_backend.services.auth;
 
 import ies.juanbosoco.locuventas_backend.DTO.auth.*;
+import ies.juanbosoco.locuventas_backend.DTO.catalogo.ProductoResponseDTO;
+import ies.juanbosoco.locuventas_backend.DTO.common.PageDTO;
 import ies.juanbosoco.locuventas_backend.config.JwtTokenProvider;
 import ies.juanbosoco.locuventas_backend.constants.Roles;
 import ies.juanbosoco.locuventas_backend.entities.auth.Vendedor;
+import ies.juanbosoco.locuventas_backend.entities.catalogo.Producto;
 import ies.juanbosoco.locuventas_backend.errors.BusinessException;
 import ies.juanbosoco.locuventas_backend.errors.exceptions.InsufficientPermissionsException;
 import ies.juanbosoco.locuventas_backend.errors.exceptions.UserAlreadyExistsException;
@@ -14,6 +17,10 @@ import ies.juanbosoco.locuventas_backend.services.media.FotoService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -129,13 +136,43 @@ public class AuthService {
         usuario.getAuthoritiesRaw().add(Roles.VENDEDOR);
         userRepository.save(usuario);
     }
-    public List<UserResponseDTO> getBasicUsers() {
-        return userRepository.findByAuthoritiesNotContaining(Roles.ADMIN, Roles.VENDEDOR)
-                .stream()
+    public PageDTO<UserResponseDTO> getBasicUsers(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nombre").ascending());
+
+        // Le pasamos los roles que queremos excluir a la consulta paginada
+        Page<Vendedor> vendedoresPage = userRepository.findAllWithoutRol(Roles.ADMIN, Roles.VENDEDOR, pageable);
+
+        List<UserResponseDTO> content = vendedoresPage.getContent().stream()
                 .map(vendedorMapper::mapToResponseDTO)
                 .toList();
+
+        return new PageDTO<>(
+                content,
+                vendedoresPage.getNumber(),
+                vendedoresPage.getTotalPages(),
+                vendedoresPage.getTotalElements()
+        );
     }
 
+    // AuthService.java — sobrecargar getBasicUsers con search
+    public PageDTO<UserResponseDTO> getBasicUsers(int page, int size, String search) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nombre").ascending());
+
+        Page<Vendedor> vendedoresPage = search == null || search.isBlank()
+                ? userRepository.findAllWithoutRol(Roles.ADMIN, Roles.VENDEDOR, pageable)
+                : userRepository.findAllWithoutRolAndSearch(Roles.ADMIN, Roles.VENDEDOR, search.trim(), pageable);
+
+        List<UserResponseDTO> content = vendedoresPage.getContent().stream()
+                .map(vendedorMapper::mapToResponseDTO)
+                .toList();
+
+        return new PageDTO<>(
+                content,
+                vendedoresPage.getNumber(),
+                vendedoresPage.getTotalPages(),
+                vendedoresPage.getTotalElements()
+        );
+    }
     @Transactional
     public UserResponseDTO editarPerfil(String emailActual, UserEditDTO dto, MultipartFile foto) {
         // 1. Recuperar usuario

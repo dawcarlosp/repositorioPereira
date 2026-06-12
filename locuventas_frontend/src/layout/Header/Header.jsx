@@ -39,7 +39,17 @@ export default function Header() {
       <NavMobile h={h} esAdmin={esAdmin} esVendedor={esVendedor} usuario={{ nombre, email, foto } } />
 
       {/* MODALES GLOBALES */}
-    
+      {h.confirmacionGlobal && (
+  <ModalConfirmacion
+    mensaje={h.confirmacionGlobal.mensaje}
+    confirmText={h.confirmacionGlobal.confirmText}
+    onConfirmar={() => {
+      h.confirmacionGlobal.onConfirmar();
+      h.cerrarConfirmacionGlobal();
+    }}
+    onCancelar={h.cerrarConfirmacionGlobal}
+  />
+)}
       {h.mostrarConfirmacionLogout && (
         <ModalConfirmacion
           mensaje="¿Estás seguro de cerrar sesión?"
