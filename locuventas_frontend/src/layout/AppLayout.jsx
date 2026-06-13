@@ -25,7 +25,7 @@ export default function AppLayout({ children, aside }) {
       </div>
 
       {/* Footer: Visible a partir de 1024px */}
-      {bp != "xs" && bp != "sm" && bp != "md" && <Footer />}
+      {bp != "xs" && bp != "sm" && <Footer />}
     </div>
   );
 }

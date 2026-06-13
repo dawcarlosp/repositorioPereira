@@ -13,9 +13,9 @@ function SelectFieldset({
   searchPlaceholder = "Buscar...",
 }) {
   const [open, setOpen] = useState(false);
-  const [query, setQuery] = useState("");
+  const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
   const ref = useRef(null);
-  const searchRef = useRef(null);
+
 
   const selectedOption = !multiple
     ? options.find((opt) => String(opt.value) === String(value))
@@ -134,14 +134,14 @@ function SelectFieldset({
               ref={searchRef}
               type="text"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => handleChange(e.target.value)} 
               placeholder={searchPlaceholder}
               className="flex-1 text-sm text-gray-700 bg-transparent focus:outline-none placeholder-gray-400 min-w-0"
             />
             {query && (
               <button
                 type="button"
-                onClick={() => setQuery("")}
+                onClick={handleClear}
                 className="text-gray-400 hover:text-gray-600 flex-shrink-0"
               >
                 <X className="w-3.5 h-3.5" />

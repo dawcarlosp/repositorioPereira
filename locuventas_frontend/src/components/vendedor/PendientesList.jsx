@@ -4,6 +4,10 @@ import useVendedoresPendientes from "@hooks/useVendedoresPendientes";
 import TarjetaVendedor from "@components/vendedor/TarjetaVendedor";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
+import SkeletonTarjetaVendedor from "@components/common/SkeletonTarjetaVendedor";
+
+// Cuántos skeletons mostrar mientras carga
+const SKELETON_COUNT = 3;
 
 export default function PendientesList({
   onConfirmacion,
@@ -13,7 +17,7 @@ export default function PendientesList({
   onSizeChange,
 }) {
   const [internalPage, setInternalPage] = useState(0);
-  const [internalSize, setInternalSize] = useState(5);
+  const [internalSize, setInternalSize] = useState(3);
   const [search, setSearch]             = useState("");
 
   const page = externalPage ?? internalPage;
@@ -25,7 +29,6 @@ export default function PendientesList({
   const handlePageChange = onPageChange ?? setInternalPage;
   const handleSizeChange = onSizeChange ?? ((s) => { setInternalSize(s); setInternalPage(0); });
 
-  // Al buscar, volver a página 0
   const handleSearch = (v) => {
     setSearch(v);
     handlePageChange(0);
@@ -54,12 +57,16 @@ export default function PendientesList({
         />
       </header>
 
-      <div className="mt-3 max-h-[400px] overflow-y-auto custom-scrollbar pr-1">
+      <div className="mt-3 max-h-[350px] overflow-y-auto custom-scrollbar pr-1">
         {loading ? (
-          <p className="text-orange-500 text-center py-10 animate-pulse text-xs">Cargando...</p>
+          <ul className="space-y-3">
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <SkeletonTarjetaVendedor key={i} />
+            ))}
+          </ul>
         ) : pendientes.length === 0 ? (
           <p className="text-zinc-500 text-center py-10 italic text-xs">
-            {search ? "Sin resultados" : "Sin registros"}
+            {search ? `Sin resultados para "${search}"` : "Sin registros"}
           </p>
         ) : (
           <ul className="space-y-3">
