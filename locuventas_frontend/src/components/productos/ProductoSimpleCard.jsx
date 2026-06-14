@@ -46,9 +46,14 @@ export default function ProductoSimpleCard({ producto, cantidad, onAdd }) {
           #{producto.id}
         </span>
         <h3
-          title={producto.nombre}
-          className="font-bold text-zinc-100 text-base leading-tight line-clamp-2 group-hover:text-orange-400 transition-colors"
-        >
+  title={producto.nombre}
+  className={`font-bold text-base leading-tight line-clamp-2 transition-colors
+    ${cantidad > 3
+      ? "text-purple-400 group-hover:text-purple-300"
+      : "text-zinc-100 group-hover:text-orange-400"
+    }
+  `}
+>
           {producto.nombre}
         </h3>
       </div>

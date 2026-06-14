@@ -1,16 +1,14 @@
-// src/components/common/SelectFieldset.jsx
+// src/components/common/SelectFiltro.jsx
 import React, { useEffect, useRef, useState } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
 import useBuscador from "@hooks/useBuscador";
 
-function SelectFieldset({
+export default function SelectFiltro({
   id,
   value,
   onChange,
-  placeholder,
-  required = false,
+  placeholder = "Filtrar...",
   options = [],
-  multiple = false,
   disabled = false,
   searchPlaceholder = "Buscar...",
 }) {
@@ -18,9 +16,7 @@ function SelectFieldset({
   const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
   const ref = useRef(null);
 
-  const selectedOption = !multiple
-    ? options.find((opt) => String(opt.value) === String(value))
-    : null;
+  const selectedOption = options.find((opt) => String(opt.value) === String(value));
 
   const filtered = query.trim()
     ? options.filter((opt) =>
@@ -28,6 +24,7 @@ function SelectFieldset({
       )
     : options;
 
+  // Cierra al hacer click fuera
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -39,6 +36,7 @@ function SelectFieldset({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
+  // Focus automático al abrir, limpiar al cerrar
   useEffect(() => {
     if (open) {
       setTimeout(() => searchRef.current?.focus(), 50);
@@ -56,108 +54,102 @@ function SelectFieldset({
     if (!disabled) setOpen((o) => !o);
   };
 
-  if (multiple) {
-    return (
-      <select
-        id={id}
-        value={value}
-        onChange={onChange}
-        required={required}
-        multiple
-        disabled={disabled}
-        className={`
-          w-full py-3 px-4 text-gray-700 text-sm bg-white rounded-xl
-          border border-gray-300 shadow-md
-          focus:border-purple-500 focus:ring-2 focus:ring-purple-500
-          transition-all flex-shrink-0
-          ${disabled ? "opacity-50 cursor-not-allowed" : ""}
-        `}
-        style={{ minHeight: 110 }}
-      >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    );
-  }
-
   return (
     <div ref={ref} className="relative w-full flex-shrink-0">
-      {placeholder && (
-        <label htmlFor={id} className="block text-purple-500 font-medium text-xs mb-1">
-          {placeholder}
-          {required && <span className="text-orange-500"> *</span>}
-        </label>
-      )}
-
+      {/* Trigger */}
       <button
         id={id}
         type="button"
         disabled={disabled}
         onClick={handleToggle}
         className={`
-          w-full h-[52px] flex items-center gap-2.5 px-4
-          bg-white rounded-xl border shadow-md transition-all text-left
-          focus:outline-none
-          ${open ? "border-purple-500 ring-2 ring-purple-500" : "border-gray-300"}
-          ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-purple-400"}
+          w-full h-9 flex items-center gap-2 px-3
+          bg-zinc-800 rounded-xl border transition-all text-left
+          focus:outline-none text-[11px]
+          ${open
+            ? "border-purple-500 ring-1 ring-purple-500"
+            : "border-zinc-700 hover:border-zinc-500"
+          }
+          ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         `}
       >
+        {/* Imagen del item seleccionado (ej: bandera de país) */}
         {selectedOption?.image && (
           <img
             src={selectedOption.image}
             alt={selectedOption.label}
-            className="w-6 h-4 rounded-sm object-cover flex-shrink-0 shadow-sm"
+            className="w-5 h-3.5 rounded-sm object-cover flex-shrink-0"
           />
         )}
-        <span className={`flex-1 text-base truncate ${selectedOption ? "text-gray-700" : "text-gray-400"}`}>
-          {selectedOption ? selectedOption.label : "Selecciona..."}
+
+        <span className={`flex-1 truncate ${selectedOption ? "text-white" : "text-zinc-500"}`}>
+          {selectedOption ? selectedOption.label : placeholder}
         </span>
-        <ChevronDown
-          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
+
+        {/* X para limpiar si hay selección, chevron si no */}
+        {selectedOption ? (
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSelect("");
+            }}
+            className="text-zinc-500 hover:text-white transition-colors flex-shrink-0"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        ) : (
+          <ChevronDown
+            className={`w-3.5 h-3.5 text-zinc-500 flex-shrink-0 transition-transform duration-200 ${
+              open ? "rotate-180" : ""
+            }`}
+          />
+        )}
       </button>
 
+      {/* Dropdown */}
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100">
-            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
+        <div className="absolute z-50 mt-1 w-full min-w-[160px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
+
+          {/* Buscador interno */}
+          <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
+            <Search className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
             <input
               ref={searchRef}
               type="text"
               value={query}
               onChange={(e) => handleChange(e.target.value)}
               placeholder={searchPlaceholder}
-              className="flex-1 text-sm text-gray-700 bg-transparent focus:outline-none placeholder-gray-400 min-w-0"
+              className="flex-1 text-[11px] text-white bg-transparent focus:outline-none placeholder-zinc-600 min-w-0"
             />
             {query && (
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-gray-400 hover:text-gray-600 flex-shrink-0"
+                className="text-zinc-500 hover:text-white flex-shrink-0"
               >
-                <X className="w-3.5 h-3.5" />
+                <X className="w-3 h-3" />
               </button>
             )}
           </div>
 
+          {/* Lista */}
           <ul className="max-h-48 overflow-y-auto custom-scrollbar py-1">
+            {/* Opción vacía para limpiar — solo si no hay búsqueda activa */}
             {!query && (
               <li>
                 <button
                   type="button"
                   onClick={() => handleSelect("")}
-                  className="w-full px-4 py-2.5 text-left text-sm text-gray-400 hover:bg-purple-50 transition-colors"
+                  className="w-full px-3 py-2 text-left text-[11px] text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors"
                 >
-                  Selecciona...
+                  {placeholder}
                 </button>
               </li>
             )}
 
             {filtered.length === 0 ? (
-              <li className="px-4 py-3 text-sm text-gray-400 text-center">
+              <li className="px-3 py-3 text-[11px] text-zinc-600 text-center italic">
                 Sin resultados para "{query}"
               </li>
             ) : (
@@ -167,18 +159,19 @@ function SelectFieldset({
                     type="button"
                     onClick={() => handleSelect(opt.value)}
                     className={`
-                      w-full px-4 py-2.5 text-left text-sm flex items-center gap-2.5
-                      hover:bg-purple-50 transition-colors
+                      w-full px-3 py-2 text-left text-[11px] flex items-center gap-2
+                      transition-colors
                       ${String(opt.value) === String(value)
-                        ? "bg-purple-50 text-purple-700 font-medium"
-                        : "text-gray-700"}
+                        ? "bg-purple-500/10 text-purple-400"
+                        : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
+                      }
                     `}
                   >
                     {opt.image && (
                       <img
                         src={opt.image}
                         alt={opt.label}
-                        className="w-6 h-4 rounded-sm object-cover flex-shrink-0 shadow-sm"
+                        className="w-5 h-3.5 rounded-sm object-cover flex-shrink-0"
                       />
                     )}
                     <span className="truncate">{opt.label}</span>
@@ -192,5 +185,3 @@ function SelectFieldset({
     </div>
   );
 }
-
-export default SelectFieldset;
