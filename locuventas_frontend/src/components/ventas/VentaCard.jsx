@@ -1,85 +1,93 @@
-import Boton from "@buttons/Boton";
+// src/components/ventas/VentaCard.jsx
+import React from "react";
 import BotonClaro from "@buttons/BotonClaro";
 
-export default function VentaCard({
-  venta,
-  onDetalle,
-  onCancelar,
-  onCobrarResto 
-}) {
+const ESTADO_STYLES = {
+  PAGADO:  "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  PARCIAL: "bg-amber-500/10  text-amber-400  border-amber-500/20",
+  PENDIENTE: "bg-rose-500/10 text-rose-400   border-rose-500/20",
+};
+
+export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto }) {
+  const fecha = venta.fecha
+    ? new Date(venta.fecha).toLocaleString("es-ES", {
+        day: "2-digit", month: "2-digit", year: "numeric",
+        hour: "2-digit", minute: "2-digit",
+      })
+    : "-";
+
   return (
-    <div
-      className="rounded-xl bg-white/95 shadow-lg border-2 border-orange-400 flex flex-col px-4 py-3 gap-2
-        w-full min-h-[220px] max-w-[350px] transition-all duration-200 box-border"
-      style={{ boxSizing: "border-box" }}
-    >
-      {/* Top: ID y acciones */}
-      <div className="flex justify-between items-center mb-1">
-        <span className="font-bold text-purple-600 text-lg">Venta #{venta.id}</span>
-        <div className="flex gap-2">
-          <BotonClaro
-            className="bg-purple-500 hover:bg-purple-600 text-white font-bold px-3 py-1"
-            onClick={() => onDetalle(venta)}
-          >
-            Detalle
-          </BotonClaro>
-          {!venta.cancelada && (
-            <Boton
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold px-3 py-1"
-              onClick={() => onCancelar(venta)}
-            >
-              Cancelar
-            </Boton>
-          )}
-        </div>
+    <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 w-full transition-all duration-200 hover:border-zinc-600">
+
+      {/* Cabecera */}
+      <div className="flex justify-between items-center">
+        <span className="font-black text-white text-base">#{venta.id}</span>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide border ${
+          ESTADO_STYLES[venta.estadoPago] ?? ESTADO_STYLES.PENDIENTE
+        }`}>
+          {venta.estadoPago}
+        </span>
       </div>
-      {/* Info de la venta */}
-      <div className="flex flex-col gap-1 text-sm">
-        <div>
-          <span className="font-bold text-gray-800">Fecha: </span>
-          <span className="text-gray-700">{venta.fecha ? new Date(venta.fecha).toLocaleString() : "-"}</span>
+
+      {/* Info */}
+      <div className="flex flex-col gap-1.5 text-xs text-zinc-400">
+        <div className="flex justify-between">
+          <span>Fecha</span>
+          <span className="text-zinc-200">{fecha}</span>
         </div>
-        <div>
-          <span className="font-bold text-gray-800">Vendedor: </span>
-          <span className="text-gray-700">{venta.vendedor}</span>
+        <div className="flex justify-between">
+          <span>Vendedor</span>
+          <span className="text-zinc-200">{venta.vendedor ?? "N/A"}</span>
         </div>
-        <div>
-          <span className="font-bold text-gray-800">Total: </span>
-          <span className="text-gray-700">{venta.total}€</span>
-        </div>
-        <div>
-          <span className="font-bold text-gray-800">Pagado: </span>
-          <span className="text-gray-700">{venta.montoPagado}€</span>
-        </div>
-        <div>
-          <span className="font-bold text-gray-800">Estado: </span>
-          <span className={`
-            font-bold px-2 py-1 rounded
-            ${venta.estadoPago === "PAGADO" ? "bg-green-200 text-green-800" :
-              venta.estadoPago === "PARCIAL" ? "bg-yellow-200 text-yellow-800" :
-              "bg-red-100 text-red-700"}
-          `}>
-            {venta.estadoPago}
+        <div className="flex justify-between">
+          <span>Total</span>
+          <span className="text-white font-black text-sm">
+            {venta.total?.toLocaleString("es-ES", { minimumFractionDigits: 2 })} €
           </span>
         </div>
-        <div>
-          <span className="font-bold text-gray-800">Cancelada: </span>
-          <span className={venta.cancelada ? "text-red-600 font-bold" : "text-green-700 font-semibold"}>
-            {venta.cancelada ? "Sí" : "No"}
-          </span>
-        </div>
-        {/* Aquí va el botón Cobrar resto SOLO si corresponde */}
-        {venta.saldo > 0 && !venta.cancelada && (
-          <div className="mt-2">
-            <BotonClaro
-              className="bg-green-500 hover:bg-green-600 text-white font-bold w-full"
-              onClick={() => onCobrarResto(venta)}
-            >
-              Cobrar resto
-            </BotonClaro>
+        {venta.saldo > 0 && (
+          <div className="flex justify-between">
+            <span>Saldo pendiente</span>
+            <span className="text-amber-400 font-bold">
+              {venta.saldo?.toLocaleString("es-ES", { minimumFractionDigits: 2 })} €
+            </span>
           </div>
+        )}
+        {venta.cancelada && (
+          <div className="flex justify-between">
+            <span>Estado</span>
+            <span className="text-rose-400 font-bold">Anulada</span>
+          </div>
+        )}
+      </div>
+
+      {/* Acciones */}
+      <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
+        <BotonClaro
+          className="!h-8 !text-[11px] !justify-center"
+          onClick={() => onDetalle(venta)}
+        >
+          Ver detalle
+        </BotonClaro>
+
+        {!venta.cancelada && venta.saldo > 0 && (
+          <BotonClaro
+            className="!h-8 !text-[11px] !justify-center !text-emerald-400 hover:!text-emerald-300"
+            onClick={() => onCobrarResto(venta)}
+          >
+            Cobrar resto
+          </BotonClaro>
+        )}
+
+        {!venta.cancelada && (
+          <BotonClaro
+            className="!h-8 !text-[11px] !justify-center !text-rose-400 hover:!text-rose-300"
+            onClick={() => onCancelar(venta)}
+          >
+            Cancelar venta
+          </BotonClaro>
         )}
       </div>
     </div>
   );
-};
+}
