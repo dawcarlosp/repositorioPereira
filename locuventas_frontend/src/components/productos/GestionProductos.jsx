@@ -1,327 +1,197 @@
-import { useEffect, useState, useRef } from "react";
-import { toast } from "react-toastify";
-import { apiRequest } from "@/services/api.config";
-import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import Boton from "@buttons/Boton";
-import ProductoCard from "@components/productos/ProductoCard";
+// src/components/productos/GestionProductos.jsx
+import React, { useState } from "react";
+import useProductos from "@hooks/useProductos";
+import useFiltrosProducto from "@hooks/useFiltrosProducto";
+import useGestionProductos from "@hooks/useGestionProductos";
+import useBreakpoint from "@hooks/useBreakpoint";
 import TablaProductos from "@components/productos/TablaProductos";
+import ProductoCard from "@components/productos/ProductoCard";
 import ModalProductoForm from "@components/productos/ModalProductoForm";
-import FAB from "@components/common/FAB";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import Paginacion from "@components/common/Paginacion";
+import BuscadorInput from "@components/common/BuscadorInput";
+import SelectFiltro from "@components/common/SelectFiltro";
+import FAB from "@components/common/FAB";
+import Boton from "@buttons/Boton";
 
-const API_URL = import.meta.env.VITE_API_URL;
+const SkeletonProductoCard = () => (
+  <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 animate-pulse">
+    <div className="flex justify-between items-center">
+      <div className="h-3 w-8 bg-zinc-700 rounded" />
+      <div className="flex gap-2">
+        <div className="h-8 w-14 bg-zinc-700 rounded-xl" />
+        <div className="h-8 w-16 bg-zinc-700 rounded-xl" />
+      </div>
+    </div>
+    <div className="h-28 bg-zinc-800 rounded-xl border border-zinc-700/30" />
+    <div className="flex flex-col gap-2">
+      {Array.from({ length: 4 }).map((_, i) => (
+        <div key={i} className="flex justify-between">
+          <div className="h-3 w-16 bg-zinc-700/50 rounded" />
+          <div className="h-3 w-24 bg-zinc-700/50 rounded" />
+        </div>
+      ))}
+    </div>
+  </div>
+);
 
 export default function GestionProductos() {
-  const [productos, setProductos] = useState([]);
-  const [paises, setPaises] = useState([]);
-  const [categorias, setCategorias] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(0);
-  const [size] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
+  const bp       = useBreakpoint();
+  const isMobile = bp === "xs" || bp === "sm";
 
-  const [showForm, setShowForm] = useState(false);
-  const [editando, setEditando] = useState(null);
-  const [nombre, setNombre] = useState("");
-  const [precio, setPrecio] = useState("");
-  const [iva, setIva] = useState("");
-  const [paisId, setPaisId] = useState("");
-  const [categoriaIds, setCategoriaIds] = useState([]);
-  const [foto, setFoto] = useState(null);
-  const [fotoUrlEdicion, setFotoUrlEdicion] = useState(null);
-  const fileInputRef = useRef();
+  const [page, setPage]               = useState(0);
+  const [size, setSize]               = useState(10);
+  const [search, setSearch]           = useState("");
+  const [paisId, setPaisId]           = useState("");
+  const [categoriaId, setCategoriaId] = useState("");
 
-  const [modal, setModal] = useState({
-    visible: false,
-    mensaje: "",
-    confirmText: "",
-    onConfirmar: null,
-    onCancelarCustom: null,
+  const { paises, categorias } = useFiltrosProducto();
+
+  const { productos, loading, totalPages } = useProductos({
+    page, size, search,
+    paisId:      paisId      ? Number(paisId)      : null,
+    categoriaId: categoriaId ? Number(categoriaId) : null,
   });
 
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" && window.innerWidth < 640
+  const {
+    form, setField,
+    editando, showForm,
+    modal, setModal,
+    abrirNuevo, abrirEditar, cerrarForm,
+    handleSubmit, pedirConfirmacionEliminar,
+  } = useGestionProductos({
+    onSuccess: () => setPage(0),
+  });
+
+  const handleSearch    = (v)   => { setSearch(v);            setPage(0); };
+  const handlePais      = (e)   => { setPaisId(e.target.value);      setPage(0); };
+  const handleCategoria = (e)   => { setCategoriaId(e.target.value); setPage(0); };
+  const hayFiltros      = search || paisId || categoriaId;
+
+  const paginacion = !loading && totalPages > 1 && (
+    <Paginacion
+      page={page}
+      totalPages={totalPages}
+      onPageChange={setPage}
+      size={size}
+      onSizeChange={(s) => { setSize(s); setPage(0); }}
+    />
   );
-
-  useEffect(() => {
-    function handleResize() {
-      setIsMobile(window.innerWidth < 640);
-    }
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  useEffect(() => {
-    fetchData();
-    // eslint-disable-next-line
-  }, [page, size]);
-
-  async function fetchData() {
-    setLoading(true);
-    try {
-      const [prodPage, pais, cat] = await Promise.all([
-        apiRequest(`productos?page=${page}&size=${size}`, null, {
-          method: "GET",
-        }),
-        apiRequest("paises", null, { method: "GET" }),
-        apiRequest("categorias", null, { method: "GET" }),
-      ]);
-      setProductos(prodPage.data.content || []);
-      setTotalPages(prodPage.totalPages || 0);
-      setPage(prodPage.pageNumber || 0);
-      setPaises(pais.data);
-      setCategorias(cat.data);
-    } catch {
-      toast.error("Error cargando datos.");
-    }
-    setLoading(false);
-  }
-
-  function abrirNuevo() {
-    setEditando(null);
-    setNombre("");
-    setPrecio("");
-    setIva("");
-    setPaisId(paises[0]?.id || "");
-    setCategoriaIds([]);
-    setFoto(null);
-    setFotoUrlEdicion(null);
-    setShowForm(true);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }
-
-  function abrirEditar(prod) {
-    setEditando(prod);
-    setNombre(prod.nombre);
-    setPrecio(prod.precio);
-    setIva(prod.iva);
-    setPaisId(
-      prod.paisId || paises.find((p) => p.nombre === prod.paisNombre)?.id || ""
-    );
-    const selectedIds = categorias
-      .filter((c) => (prod.categorias || []).includes(c.nombre))
-      .map((c) => c.id);
-    setCategoriaIds(selectedIds);
-    setFoto(null);
-    const rutaFoto = prod.foto?.includes("/")
-      ? prod.foto
-      : `productos/${prod.foto}`;
-    setFotoUrlEdicion(prod.foto ? `${API_URL}/imagenes/${rutaFoto}` : null);
-
-    setShowForm(true);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }
-
-  function cerrarForm() {
-    setShowForm(false);
-    setFoto(null);
-    setEditando(null);
-    setFotoUrlEdicion(null);
-    if (fileInputRef.current) fileInputRef.current.value = "";
-  }
-  const onEliminar = (id) => {
-    setModal({
-      visible: true,
-      mensaje: "¿Seguro que quieres eliminar este producto?",
-      confirmText: "Eliminar",
-      onConfirmar: async () => {
-        setModal((m) => ({ ...m, visible: false }));
-        try {
-          await apiRequest(`productos/${id}`, null, { method: "DELETE" });
-          toast.success("Producto eliminado correctamente.");
-          fetchData();
-        } catch (error) {
-          if (error.razon === "EN_VENTA") {
-            toast.warn(
-              "No puedes eliminar este producto porque ya ha sido vendido. Consulta las ventas asociadas o marca el producto como inactivo."
-            );
-          } else if (error.error) {
-            toast.error(error.error);
-          } else {
-            toast.error("No se pudo eliminar el producto.");
-          }
-        }
-      },
-      onCancelarCustom: () => setModal((m) => ({ ...m, visible: false })),
-    });
-  };
-
-  async function guardarProducto(formData, id, method) {
-    let endpoint = "productos";
-    if (id) endpoint += `/${id}`;
-    try {
-      await apiRequest(endpoint, formData, { method, isFormData: true });
-      toast.success(id ? "Producto editado" : "Producto creado");
-      cerrarForm();
-      fetchData();
-    } catch (err) {
-      if (err.foto) {
-        toast.error(err.foto);
-      } else if (err.error) {
-        toast.error(err.error);
-      } else {
-        toast.error("Error guardando producto");
-      }
-    }
-  }
-
-  async function handleSubmit(e) {
-    e.preventDefault();
-    if (!nombre || !precio || !paisId || categoriaIds.length === 0) {
-      toast.error("Completa todos los campos obligatorios");
-      return;
-    }
-    if (!editando && !foto) {
-      toast.error("La foto es obligatoria");
-      return;
-    }
-
-    const productoDTO = {
-      nombre,
-      precio: parseFloat(precio),
-      iva: parseFloat(iva),
-      paisId: Number(paisId),
-      categoriaIds: categoriaIds.map(Number),
-    };
-
-    const formData = new FormData();
-    formData.append("producto", 
-  new Blob([JSON.stringify(productoDTO)], { type: "application/json" }));
-    if (foto) formData.append("foto", foto);
-
-    if (editando) {
-      setShowForm(false);
-      setModal({
-        visible: true,
-        mensaje: "¿Guardar cambios de este producto?",
-        confirmText: "Guardar cambios",
-        onConfirmar: async () => {
-          setModal((m) => ({ ...m, visible: false }));
-          await guardarProducto(formData, editando.id, "PUT");
-        },
-        onCancelarCustom: () => {
-          setModal((m) => ({ ...m, visible: false }));
-          setShowForm(true);
-        },
-      });
-      return;
-    }
-
-    await guardarProducto(formData, id, "POST");
-  }
-
-  const botonFlotanteMobile = isMobile ? (
-    <FAB onClick={abrirNuevo} title="Nuevo Producto"
-  icon={"+"} />
-  ) : null;
 
   return (
     <>
-      {botonFlotanteMobile}
-      <div className="min-h-screen bg-zinc-900 p-2 sm:p-4">
-        <div className="max-w-7xl mx-auto rounded-2xl mt-4 sm:mt-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center text-white drop-shadow">
-            Gestión de Productos
-          </h1>
+      {isMobile && (
+        <FAB onClick={() => abrirNuevo(paises)} title="Nuevo Producto" icon="+" />
+      )}
 
-          <div className="mb-4 flex justify-end">
-            {!isMobile && (
-              <Boton
-                className=" text-white font-bold"
-                onClick={abrirNuevo}
-              >
-                + Agregar producto
-              </Boton>
-            )}
-          </div>
-
-          <ModalProductoForm
-            visible={showForm}
-            onClose={cerrarForm}
-            onSubmit={handleSubmit}
-            editando={editando}
-            nombre={nombre}
-            setNombre={setNombre}
-            precio={precio}
-            setPrecio={setPrecio}
-            iva={iva}
-            setIva={setIva}
-            paisId={paisId}
-            setPaisId={setPaisId}
-            categoriaIds={categoriaIds}
-            setCategoriaIds={setCategoriaIds}
-            foto={foto}
-            setFoto={setFoto}
-            fotoUrlEdicion={fotoUrlEdicion}
-            paises={paises}
-            categorias={categorias}
-            fileInputRef={fileInputRef}
+      {/* Barra de filtros */}
+      <div className="flex flex-wrap items-end gap-3 mb-6">
+        <div className="flex-1 min-w-[200px]">
+          <BuscadorInput
+            value={search}
+            onChange={handleSearch}
+            placeholder="Buscar producto..."
           />
-
-          {modal.visible && (
-            <ModalConfirmacion
-              mensaje={modal.mensaje}
-              confirmText={modal.confirmText}
-              onConfirmar={modal.onConfirmar}
-              onCancelar={
-                modal.onCancelarCustom
-                  ? modal.onCancelarCustom
-                  : () => setModal((m) => ({ ...m, visible: false }))
-              }
-            />
-          )}
-
-          {!isMobile && (
-            <>
-              <TablaProductos
-                productos={productos}
-                onEditar={abrirEditar}
-                onEliminar={onEliminar}
-              />
-              {totalPages > 1 && (
-                <Paginacion
-                  page={page}
-                  totalPages={totalPages}
-                  onPageChange={setPage}
-                />
-              )}
-            </>
-          )}
-
-          {isMobile && (
-            <div className="flex flex-col gap-4 pb-12">
-              {productos.length === 0 && (
-                <div className="py-8 text-center text-gray-400 bg-white rounded-xl shadow-lg">
-                  No hay productos
-                </div>
-              )}
-              {productos.map((p) => (
-                <ProductoCard
-                  key={p.id}
-                  producto={p}
-                  onEditar={abrirEditar}
-                  onEliminar={onEliminar}
-                />
-              ))}
-               {totalPages > 1 && (
-      <div className="mt-4">
-        <Paginacion
-          page={page}
-          totalPages={totalPages}
-          onPageChange={setPage}
-        />
-      </div>
-    )}
-            </div>
-          )}
-
-          {loading && (
-            <div className="text-center py-6 text-gray-500">
-              Cargando productos...
-            </div>
-          )}
         </div>
+        <div className="w-44">
+          <SelectFiltro
+            id="filtro-pais"
+            value={paisId}
+            onChange={handlePais}
+            placeholder="País"
+            options={paises}
+            searchPlaceholder="Buscar país..."
+          />
+        </div>
+        <div className="w-44">
+          <SelectFiltro
+            id="filtro-categoria"
+            value={categoriaId}
+            onChange={handleCategoria}
+            placeholder="Categoría"
+            options={categorias}
+            searchPlaceholder="Buscar categoría..."
+          />
+        </div>
+        {hayFiltros && (
+          <button
+            onClick={() => { setSearch(""); setPaisId(""); setCategoriaId(""); setPage(0); }}
+            className="text-[11px] text-zinc-500 hover:text-white transition-colors whitespace-nowrap pb-1"
+          >
+            Limpiar filtros
+          </button>
+        )}
+        {!isMobile && (
+          <Boton onClick={() => abrirNuevo(paises)} className="ml-auto">
+            + Agregar producto
+          </Boton>
+        )}
       </div>
+
+      {/* Vista desktop */}
+      {!isMobile && (
+        <div className="flex flex-col gap-4">
+          <TablaProductos
+            productos={productos}
+            loading={loading}
+            size={size}
+            onEditar={(p) => abrirEditar(p, paises, categorias)}
+            onEliminar={(id) => pedirConfirmacionEliminar(id, () => setPage(0))}
+          />
+          {paginacion}
+        </div>
+      )}
+
+      {/* Vista móvil */}
+      {isMobile && (
+        <div className="flex flex-col gap-4 pb-16">
+          {loading
+            ? Array.from({ length: size }).map((_, i) => (
+                <SkeletonProductoCard key={i} />
+              ))
+            : productos.length === 0
+              ? (
+                <div className="py-12 text-center text-zinc-400 bg-zinc-800/50 rounded-2xl border border-zinc-700">
+                  {hayFiltros ? "Sin resultados para los filtros aplicados." : "No hay productos registrados."}
+                </div>
+              )
+              : productos.map((p) => (
+                  <ProductoCard
+                    key={p.id}
+                    producto={p}
+                    onEditar={() => abrirEditar(p, paises, categorias)}
+                    onEliminar={() => pedirConfirmacionEliminar(p.id, () => setPage(0))}
+                  />
+                ))
+          }
+          {paginacion}
+        </div>
+      )}
+
+      <ModalProductoForm
+        visible={showForm}
+        onClose={cerrarForm}
+        onSubmit={handleSubmit}
+        editando={editando}
+        nombre={form.nombre}             setNombre={setField("nombre")}
+        precio={form.precio}             setPrecio={setField("precio")}
+        iva={form.iva}                   setIva={setField("iva")}
+        paisId={form.paisId}             setPaisId={setField("paisId")}
+        categoriaIds={form.categoriaIds} setCategoriaIds={setField("categoriaIds")}
+        foto={form.foto}                 setFoto={setField("foto")}
+        fotoUrlEdicion={form.fotoUrlEdicion}
+        paises={paises}
+        categorias={categorias}
+      />
+
+      {modal.visible && (
+        <ModalConfirmacion
+          mensaje={modal.mensaje}
+          confirmText={modal.confirmText}
+          onConfirmar={modal.onConfirmar}
+          onCancelar={modal.onCancelar ?? (() => setModal({ visible: false }))}
+        />
+      )}
     </>
   );
 }
