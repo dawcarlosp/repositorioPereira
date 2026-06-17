@@ -43,22 +43,30 @@ public class ProductoService {
     @Autowired
     private ProductoMapper productoMapper;
 
-        public PageDTO<ProductoResponseDTO> getAllProductos(int page, int size) {
-            Pageable pageable = PageRequest.of(page, size, Sort.by("nombre").ascending());
-            Page<Producto> productosPage = productoRepository.findAllWithCategories(pageable);
 
-            List<ProductoResponseDTO> content = productosPage.getContent().stream()
-                    .map(productoMapper::mapToResponseDTO)
-                    .toList();
+    public PageDTO<ProductoResponseDTO> getAllProductos(
+            int page, int size, String search, Long paisId, Long categoriaId
+    ) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("nombre").ascending());
 
-            return new PageDTO<>(
-                    content,
-                    productosPage.getNumber(),
-                    productosPage.getTotalPages(),
-                    productosPage.getTotalElements()
-            );
-        }
+        Page<Producto> productosPage = productoRepository.findAllWithFilters(
+                paisId,
+                categoriaId,
+                search == null ? "" : search.trim(),
+                pageable
+        );
 
+        List<ProductoResponseDTO> content = productosPage.getContent().stream()
+                .map(productoMapper::mapToResponseDTO)
+                .toList();
+
+        return new PageDTO<>(
+                content,
+                productosPage.getNumber(),
+                productosPage.getTotalPages(),
+                productosPage.getTotalElements()
+        );
+    }
 
     @Transactional
     public ProductoResponseDTO crearProducto(ProductoCreateDTO dto, MultipartFile foto) {

@@ -27,12 +27,13 @@ public class ProductoController implements ProductoApi {
     @PreAuthorize("hasAnyRole('ADMIN','VENDEDOR')")
     public ResponseEntity<ApiResponseDTO<PageDTO<ProductoResponseDTO>>> getAllProductos(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        // 1. Obtenemos los datos paginados del service
-        PageDTO<ProductoResponseDTO> productos = productoService.getAllProductos(page, size);
-
-        // 2. Usamos tu método estático 'success' en lugar del builder manual
-        // Esto rellena automáticamente el status (int) y el timestamp
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "") String search,
+            @RequestParam(required = false) Long paisId,
+            @RequestParam(required = false) Long categoriaId
+    ) {
+        PageDTO<ProductoResponseDTO> productos =
+                productoService.getAllProductos(page, size, search, paisId, categoriaId);
         return ApiResponseDTO.success(
                 "Productos recuperados correctamente",
                 productos,

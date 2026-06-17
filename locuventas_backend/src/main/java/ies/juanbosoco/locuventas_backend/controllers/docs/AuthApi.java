@@ -125,7 +125,9 @@
                 @RequestParam(defaultValue = "0") int page,
 
                 @Parameter(description = "Cantidad de elementos por página", example = "12")
-                @RequestParam(defaultValue = "12") int size
+                @RequestParam(defaultValue = "12") int size,
+                @Parameter(description = "Palabra a buscar", example = "celular")
+                @RequestParam(defaultValue = "") String search
         );
 
         @Operation(

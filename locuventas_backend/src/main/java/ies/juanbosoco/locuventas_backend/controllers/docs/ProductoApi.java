@@ -33,11 +33,20 @@ public interface ProductoApi {
     )
     @GetMapping
     ResponseEntity<ApiResponseDTO<PageDTO<ProductoResponseDTO>>> getAllProductos(
-            @Parameter(description = "Número de página (empieza en 0)", example = "0")
+            @Parameter(description = "Número de página", example = "0")
             @RequestParam(defaultValue = "0") int page,
 
-            @Parameter(description = "Cantidad de elementos por página", example = "12")
-            @RequestParam(defaultValue = "12") int size
+            @Parameter(description = "Elementos por página", example = "12")
+            @RequestParam(defaultValue = "12") int size,
+
+            @Parameter(description = "Búsqueda por nombre", example = "arroz")
+            @RequestParam(defaultValue = "") String search,
+
+            @Parameter(description = "Filtrar por país", example = "3")
+            @RequestParam(required = false) Long paisId,
+
+            @Parameter(description = "Filtrar por categoría", example = "7")
+            @RequestParam(required = false) Long categoriaId
     );
     @Operation(
             summary = "Crear un nuevo producto (Solo ADMIN)",

@@ -65,6 +65,7 @@ public class AuthController implements AuthApi {
      * Es decir, aquellos cuya única autoridad es ROLE_USER.
      * Solo puede accederlo ADMIN.
      */
+    /*
     @GetMapping("/usuarios/sin-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponseDTO<PageDTO<UserResponseDTO>>> getBasicUsers(
@@ -79,7 +80,7 @@ public class AuthController implements AuthApi {
         );
     }
 
-
+*/
     @GetMapping("/usuarios/sin-rol")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponseDTO<PageDTO<UserResponseDTO>>> getBasicUsers(
