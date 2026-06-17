@@ -1,12 +1,7 @@
 // src/components/ventas/VentaCard.jsx
 import React from "react";
 import BotonClaro from "@buttons/BotonClaro";
-
-const ESTADO_STYLES = {
-  PAGADO:  "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
-  PARCIAL: "bg-amber-500/10  text-amber-400  border-amber-500/20",
-  PENDIENTE: "bg-rose-500/10 text-rose-400   border-rose-500/20",
-};
+import { PAYMENT_STATE_STYLES, getPaymentStateStyle } from "@constants/states";
 
 export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto }) {
   const fecha = venta.fecha
@@ -23,7 +18,7 @@ export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto 
       <div className="flex justify-between items-center">
         <span className="font-black text-white text-base">#{venta.id}</span>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide border ${
-          ESTADO_STYLES[venta.estadoPago] ?? ESTADO_STYLES.PENDIENTE
+          getPaymentStateStyle(venta.estadoPago)
         }`}>
           {venta.estadoPago}
         </span>

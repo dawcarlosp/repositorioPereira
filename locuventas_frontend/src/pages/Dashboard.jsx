@@ -11,6 +11,7 @@ import { apiRequest } from "@services/api.config";
 import { useCarrito } from "@hooks/useCarrito";
 import DrawerCarrito from "@components/ventas/DrawerCarrito";
 import useBreakpoint from "@hooks/useBreakpoint";
+import { isBreakpoint, BREAKPOINTS } from "@constants/breakpoints";
 import { toast } from "react-toastify";
 import FAB from "@components/common/FAB";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -133,7 +134,13 @@ function Dashboard() {
 
   //Responsive
   const bp = useBreakpoint();
-  const isMobile = bp === "xs";
+  const isMobile = bp === BREAKPOINTS.XS;
+
+  // Mostrar FABs en pantallas pequeñas
+  const showSmallScreenFABs = !menuOpen && !isDrawerOpen && isBreakpoint(bp, "MOBILE");
+
+  // Mostrar Drawer en pantallas pequeñas y medianas
+  const showDrawer = isBreakpoint(bp, "SMALL_SCREENS");
 
   // Sumamos todas las cantidades de la carga
   const totalItems = carga.reduce((acc, item) => acc + item.cantidad, 0);
@@ -169,8 +176,8 @@ function Dashboard() {
           size={size}
           onSizeChange={handleSizeChange}
         />
-        {/*Botones visibles en algunas pantallas pequeñas*/}
-        {(!menuOpen && !isDrawerOpen) && (bp == "xs" || bp == "sm") && (
+        {/*Botones visibles en pantallas pequeñas*/}
+        {showSmallScreenFABs && (
 
           <>
             {/* 0. EL CARRITO (Base - Color Neutro) */}
@@ -204,7 +211,7 @@ function Dashboard() {
       </Main>
 
       {/* EL DRAWER PARA MÓVIL */}
-      {(bp === "xs" || bp === "sm" || bp === "md") && (
+      {showDrawer && (
         <DrawerCarrito
           isOpen={isDrawerOpen}
           onClose={() => setIsDrawerOpen(false)}

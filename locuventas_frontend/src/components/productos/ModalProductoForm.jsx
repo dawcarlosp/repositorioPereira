@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import DialogFormLayout from "@components/common/DialogFormLayout";
+import FormDialog from "@components/common/FormDialog";
 import InputFieldset from "@components/common/InputFieldset";
 import SelectFieldset from "@components/common/SelectFieldset";
 import UploadComponent from "@components/common/UploadComponent";
+import useBreakpoint from "@hooks/useBreakpoint";
+import { isMobile as checkIsMobile } from "@constants/breakpoints";
 
 export default function ModalProductoForm({
   visible, onClose, onSubmit, editando,
@@ -16,20 +18,12 @@ export default function ModalProductoForm({
   paises,
   categorias,
 }) {
-  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 640);
-
-  useEffect(() => {
-    const handler = () => setIsMobile(window.innerWidth < 640);
-    window.addEventListener("resize", handler);
-    return () => window.removeEventListener("resize", handler);
-  }, []);
-
+  const bp = useBreakpoint();
+  const isMobile = checkIsMobile(bp);
   const sinPaises = paises.length === 0;
 
- 
-
   return (
-    <DialogFormLayout
+    <FormDialog
       visible={visible}
       onClose={onClose}
       onSubmit={onSubmit}
@@ -131,6 +125,8 @@ export default function ModalProductoForm({
           </div>
         )}
       </div>
-    </DialogFormLayout>
+    </FormDialog>
   );
 }
+
+

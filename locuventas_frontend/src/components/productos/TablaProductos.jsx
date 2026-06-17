@@ -1,10 +1,7 @@
 // src/components/productos/TablaProductos.jsx
-import TablaLayout from "@components/common/TablaLayout";
+import DataTable from "@components/common/DataTable";
 import Boton from "@buttons/Boton";
-
-const API_URL = import.meta.env.VITE_API_URL;
-const resolverRutaFoto = (foto) =>
-  !foto ? null : foto.includes("/") ? foto : `productos/${foto}`;
+import { resolveProductImage } from "@utils/imageUtils";
 
 const columnas = [
   { label: "ID" },
@@ -24,7 +21,7 @@ export default function TablaProductos({
   onEliminar,
 }) {
   return (
-    <TablaLayout columnas={columnas} loading={loading} size={size}>
+    <DataTable columnas={columnas} loading={loading} size={size}>
       {productos.length === 0 ? (
         <tr>
           <td colSpan={7} className="py-20 text-center text-zinc-500 italic">
@@ -42,7 +39,7 @@ export default function TablaProductos({
             <td className="px-4 py-4">
               {p.foto ? (
                 <img
-                  src={`${API_URL}/imagenes/${resolverRutaFoto(p.foto)}`}
+                  src={resolveProductImage(p.foto)}
                   alt={p.nombre}
                   className="w-12 h-10 object-cover rounded-lg border border-zinc-700"
                 />
@@ -104,6 +101,8 @@ export default function TablaProductos({
           </tr>
         ))
       )}
-    </TablaLayout>
+    </DataTable>
   );
 }
+
+

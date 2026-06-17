@@ -1,5 +1,6 @@
 import React from "react";
-import TablaLayout from "@components/common/TablaLayout";
+import DataTable from "@components/common/DataTable";
+import { getPaymentStateStyle } from "@constants/states";
 
 export default function TablaVentas({
   ventas,
@@ -25,7 +26,7 @@ export default function TablaVentas({
   ];
 
   return (
-    <TablaLayout
+    <DataTable
       columnas={columnas}
       loading={loading}
       paginaActual={paginaActual}
@@ -75,10 +76,8 @@ export default function TablaVentas({
             {/* Estado */}
             <td className="px-4 py-4 text-center">
               <span className={`
-                inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide
-                ${venta.estadoPago === "PAGADO" ? "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20" :
-                  venta.estadoPago === "PARCIAL" ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
-                    "bg-rose-500/10 text-rose-500 border border-rose-500/20"}
+                inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide border
+                ${getPaymentStateStyle(venta.estadoPago)}
               `}>
                 {venta.estadoPago}
               </span>
@@ -136,6 +135,8 @@ export default function TablaVentas({
           </tr>
         ))
       )}
-    </TablaLayout>
+    </DataTable>
   );
 }
+
+

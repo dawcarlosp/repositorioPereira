@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiRequest } from "@services/api.config";
-import DialogFormLayout from "@components/common/DialogFormLayout";
+import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { validateUser } from "@/utils/user.validator";
@@ -67,7 +67,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
   if (!isOpen) return null;
 
   return (
-    <DialogFormLayout
+    <FormDialog
       visible={isOpen}
       onClose={() => setIsOpen(false)}
       onSubmit={handleRegister}
@@ -117,7 +117,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         autoClose={3000} 
         style={{ zIndex: 999999 }}
       />
-    </DialogFormLayout>
+    </FormDialog>
   );
 }
 

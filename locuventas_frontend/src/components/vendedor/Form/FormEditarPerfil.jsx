@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { apiRequest } from "@services/api.config";
-import DialogFormLayout from "@components/common/DialogFormLayout";
+import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { validateUser } from "@/utils/user.validator";
@@ -79,7 +79,7 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
   if (!isOpen) return null;
 
   return (
-    <DialogFormLayout
+    <FormDialog
       visible={isOpen}
       onClose={() => setIsOpen(false)}
       onSubmit={handleEditar}
@@ -135,7 +135,7 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
         error={errors.password}
         touched={touched.password}
       />
-    </DialogFormLayout>
+    </FormDialog>
   );
 }
 

@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Boton from "@buttons/Boton";
 import BotonCerrar from "@buttons/BotonCerrar";
 
-export default function DialogFormLayout({
+export default function FormDialog({
   visible,
   onClose,
   onSubmit,

@@ -1,89 +1,131 @@
-// src/components/productos/ProductoCard.jsx
-import BotonClaro from "@buttons/BotonClaro";
+import React from "react";
+import { getProductImage } from "@utils/imageUtils";
 
-const API_URL = import.meta.env.VITE_API_URL;
+export default function ProductoCard({ producto, cantidad, onAdd }) {
+  const hasQuantity = cantidad > 0;
 
-const resolverRutaFoto = (foto) =>
-  !foto ? null : foto.includes("/") ? foto : `productos/${foto}`;
-
-export default function ProductoCard({ producto, onEditar, onEliminar }) {
   return (
-    <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 transition-all duration-200 hover:border-zinc-600">
-
-      {/* Cabecera */}
-      <div className="flex justify-between items-center">
-        <span className="font-black text-zinc-500 text-sm">#{producto.id}</span>
-        <div className="flex gap-2">
-          <BotonClaro
-            className="!h-8 !text-[11px] !px-3"
-            onClick={() => onEditar(producto)}
+    <div
+      onClick={() => onAdd && onAdd(producto)}
+      className={`
+        relative overflow-hidden rounded-2xl bg-zinc-900 border transition-all duration-300 group
+        flex flex-col p-4 gap-3 w-full max-w-[260px] h-[280px] cursor-pointer select-none
+        ${
+          cantidad > 2
+            ? "border-purple-500 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
+            : cantidad > 0
+              ? "border-orange-500 shadow-[0_0_15px_rgba(249,115,22,0.1)]" 
+              : "border-zinc-800 hover:border-zinc-600 shadow-xl"
+        }
+        hover:-translate-y-1
+      `}
+    >
+      {/* 1. Badge de Cantidad (Elegante) */}
+      {hasQuantity && (
+        <div className="absolute top-3 right-3 z-10 animate-in zoom-in duration-300">
+          <span
+            className={`flex h-6 min-w-[24px] items-center justify-center rounded-full px-1.5 text-xs font-black text-black shadow-lg 
+            ${cantidad > 1 ? "bg-purple-500" : "bg-orange-500"}`}
           >
-            Editar
-          </BotonClaro>
-          <BotonClaro
-            className="!h-8 !text-[11px] !px-3 !text-rose-400 hover:!text-rose-300"
-            onClick={() => onEliminar(producto.id)}
-          >
-            Eliminar
-          </BotonClaro>
+            {cantidad}
+          </span>
         </div>
+      )}
+
+      {/* 2. Cabecera: Nombre e ID */}
+      <div className="flex flex-col min-h-[44px]">
+        <span className="font-bold text-zinc-500 uppercase tracking-widest">
+          #{producto.id}
+        </span>
+        <h3
+  title={producto.nombre}
+  className={`font-bold text-base leading-tight line-clamp-2 transition-colors
+    ${cantidad > 3
+      ? "text-purple-400 group-hover:text-purple-300"
+      : "text-zinc-100 group-hover:text-orange-400"
+    }
+  `}
+>
+          {producto.nombre}
+        </h3>
       </div>
 
-      {/* Imagen */}
-      <div className="flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
+      {/* 3. Imagen del Producto */}
+      <div className="relative flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
         {producto.foto ? (
           <img
-            src={`${API_URL}/imagenes/${resolverRutaFoto(producto.foto)}`}
+            src={getProductImage(producto.foto)}
             alt={producto.nombre}
-            className="h-24 w-auto object-contain"
+            className="h-24 w-24 object-contain transition-transform duration-500 group-hover:scale-110"
+            loading="lazy"
           />
         ) : (
-          <span className="text-zinc-600 text-xs italic">Sin imagen</span>
-        )}
-      </div>
-
-      {/* Info */}
-      <div className="flex flex-col gap-1.5 text-xs text-zinc-400">
-        <div className="flex justify-between items-start gap-2">
-          <span>Nombre</span>
-          <span className="text-white font-semibold text-right break-words max-w-[60%]">
-            {producto.nombre}
-          </span>
-        </div>
-
-        <div className="flex justify-between">
-          <span>Precio</span>
-          <span className="text-orange-400 font-black text-sm">
-            {producto.precio?.toLocaleString("es-ES", { minimumFractionDigits: 2 })} €
-          </span>
-        </div>
-
-        <div className="flex justify-between items-center">
-          <span>País</span>
-          <div className="flex items-center gap-1.5">
-            {producto.paisFoto && (
-              <img
-                src={producto.paisFoto}
-                alt={producto.paisNombre}
-                className="w-6 h-4 rounded-sm object-cover"
+          <div className="flex flex-col items-center text-zinc-600 italic">
+            <svg
+              className="w-8 h-8 opacity-20"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="1"
+                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
               />
-            )}
-            <span className="text-zinc-200">{producto.paisNombre ?? "-"}</span>
+            </svg>
+            <span className="text-[10px] mt-1">Sin imagen</span>
           </div>
-        </div>
+        )}
 
-        <div className="flex justify-between items-start gap-2">
-          <span className="flex-shrink-0">Categorías</span>
-          <div className="flex flex-wrap justify-end gap-1">
-            {(producto.categorias ?? []).map((cat) => (
-              <span
-                key={cat}
-                className="text-[10px] px-2 py-0.5 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/20"
-              >
-                {cat}
-              </span>
-            ))}
+        {/* Overlay de hover sutil */}
+        <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/5 transition-colors" />
+      </div>
+      {/* 4. Info Inferior */}
+      <div className="flex flex-col mt-auto pt-2 border-t border-zinc-800/50">
+        {/* Fila 1: Categorías (Ocupa todo el ancho arriba del precio) */}
+        {producto.categorias?.length > 0 && (
+          <div className="mb-1">
+            <span
+              className="text-[10px] text-zinc-500 block truncate"
+              title={producto.categorias.join(", ")}
+            >
+              {producto.categorias[0]}{" "}
+              {producto.categorias.length > 1 &&
+                `+${producto.categorias.length - 1}`}
+            </span>
           </div>
+        )}
+
+        {/* Fila 2: Precio y País (Distribución extremos) */}
+        <div className="flex justify-between items-end gap-2">
+          <div className="flex flex-col">
+            <span className="text-base font-black text-white whitespace-nowrap">
+              {producto.precio.toLocaleString("es-ES", {
+                minimumFractionDigits: 2,
+              })}
+              <span className="text-sm text-orange-500 ml-0.5">€</span>
+            </span>
+          </div>
+
+          {/* País (Tamaño fijo para que no baile) */}
+          {producto.paisNombre && (
+            <div className="flex items-center gap-1.5 bg-zinc-800/80 px-2 py-1 rounded-md border border-zinc-700 shrink-0">
+              {producto.paisFoto && (
+                <img
+                  src={producto.paisFoto}
+                  alt={producto.paisNombre}
+                  className="w-4 h-2.5 object-cover rounded-sm"
+                />
+              )}
+              <span
+                className="text-zinc-400 text-[9px] font-bold uppercase"
+                title={producto.paisNombre}
+              >
+                {producto.paisNombre.substring(0, 3)}
+              </span>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -44,7 +44,6 @@ function FormVendedorLogin({ setIsOpen }) {
         setError("No se recibió un token");
       }
     } catch (err) {
-      console.log("Login error:", err);
       if (err.message && err.path && err.timestamp) {
         setMensajeAlerta(err.message);
         setMostrarAlerta(true);

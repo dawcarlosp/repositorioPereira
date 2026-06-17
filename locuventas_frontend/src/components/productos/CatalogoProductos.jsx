@@ -1,6 +1,6 @@
 // src/components/productos/CatalogoProductos.jsx
 import React, { useState, useEffect } from "react";
-import ProductoSimpleCard from "./ProductoSimpleCard";
+import ProductoCard from "./ProductoCard";
 import SkeletonProductoCard from "@components/common/SkeletonProductoCard";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
@@ -111,7 +111,7 @@ export default function CatalogoProductos({
               </div>
             )
             : productos.map((prod) => (
-              <ProductoSimpleCard
+              <ProductoCard
                 key={prod.id}
                 producto={prod}
                 cantidad={getCantidad(prod.id)}

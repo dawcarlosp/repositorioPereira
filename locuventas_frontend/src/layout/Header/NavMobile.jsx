@@ -2,7 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
-import VentasNavMenu from "@components/ventas/VentasNavMenu";
+import MenuVentas from "@components/ventas/MenuVentas";
 import AdminMenu from "@layout/Header/components/AdminMenu";  // ← cambiado
 
 
@@ -42,7 +42,7 @@ export default function NavMobile({ h, esAdmin }) {
               <p className="text-[10px] font-black text-zinc-500 uppercase tracking-[2px] ml-2">
                 Navegación
               </p>
-              <VentasNavMenu closeMenu={h.closeAll} />
+              <MenuVentas closeMenu={h.closeAll} />
             </div>
 
             {esAdmin && (

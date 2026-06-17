@@ -4,6 +4,7 @@ import TablaVentas from "@components/ventas/TablaVentas";
 import VentaCard from "@components/ventas/VentaCard";
 import Paginacion from "@components/common/Paginacion";
 import useBreakpoint from "@hooks/useBreakpoint";
+import { isBreakpoint } from "@constants/breakpoints";
 
 const SkeletonVentaCard = () => (
   <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 w-full animate-pulse">
@@ -38,7 +39,7 @@ export default function ContenedorVentas({
   onSizeChange,
 }) {
   const bp = useBreakpoint();
-  const isMobile = bp === "xs" || bp === "sm";
+  const isMobile = isBreakpoint(bp, "MOBILE");
 
   // Paginación compartida entre móvil y desktop
   const paginacion = !loading && totalPages > 1 && (

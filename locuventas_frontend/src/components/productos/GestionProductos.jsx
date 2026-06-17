@@ -4,8 +4,9 @@ import useProductos from "@hooks/useProductos";
 import useFiltrosProducto from "@hooks/useFiltrosProducto";
 import useGestionProductos from "@hooks/useGestionProductos";
 import useBreakpoint from "@hooks/useBreakpoint";
+import { isBreakpoint } from "@constants/breakpoints";
 import TablaProductos from "@components/productos/TablaProductos";
-import ProductoCard from "@components/productos/ProductoCard";
+import ProductoGestionCard from "@components/productos/ProductoGestionCard";
 import ModalProductoForm from "@components/productos/ModalProductoForm";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import Paginacion from "@components/common/Paginacion";
@@ -36,10 +37,10 @@ const SkeletonProductoCard = () => (
 );
 
 export default function GestionProductos() {
-  const bp       = useBreakpoint();
-  const isMobile = bp === "xs" || bp === "sm";
+  const bp = useBreakpoint();
+  const isMobile = isBreakpoint(bp, "MOBILE");
 
-  const [page, setPage]               = useState(0);
+  const [page, setPage] = useState(0);
   const [size, setSize]               = useState(10);
   const [search, setSearch]           = useState("");
   const [paisId, setPaisId]           = useState("");
@@ -156,7 +157,7 @@ export default function GestionProductos() {
                 </div>
               )
               : productos.map((p) => (
-                  <ProductoCard
+                  <ProductoGestionCard
                     key={p.id}
                     producto={p}
                     onEditar={() => abrirEditar(p, paises, categorias)}

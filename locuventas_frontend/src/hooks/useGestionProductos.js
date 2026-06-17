@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@services/api.config";
+import { resolveProductImage } from "@utils/imageUtils";
 
 const FORM_INITIAL = {
   nombre: "",
@@ -19,8 +20,6 @@ export default function useGestionProductos({ onSuccess }) {
   const [showForm, setShowForm] = useState(false);
   const [modal, setModal]     = useState({ visible: false });
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
   const setField = (field) => (value) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
@@ -32,9 +31,6 @@ export default function useGestionProductos({ onSuccess }) {
 
   const abrirEditar = (prod, paises, categorias) => {
     setEditando(prod);
-    const rutaFoto = prod.foto?.includes("/")
-      ? prod.foto
-      : `productos/${prod.foto}`;
     setForm({
       nombre:       prod.nombre,
       precio:       prod.precio,
@@ -42,7 +38,7 @@ export default function useGestionProductos({ onSuccess }) {
       paisId:       prod.paisId ?? paises.find((p) => p.nombre === prod.paisNombre)?.id ?? "",
       categoriaIds: categorias.filter((c) => (prod.categorias ?? []).includes(c.nombre)).map((c) => c.id),
       foto:         null,
-      fotoUrlEdicion: prod.foto ? `${API_URL}/imagenes/${rutaFoto}` : null,
+      fotoUrlEdicion: prod.foto ? resolveProductImage(prod.foto) : null,
     });
     setShowForm(true);
   };
