@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 
 export default function useVentasManager(tipo = "todas", pageInitial = 0) {

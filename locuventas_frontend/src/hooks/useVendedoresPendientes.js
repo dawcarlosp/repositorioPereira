@@ -1,6 +1,6 @@
 // src/hooks/useVendedoresPendientes.js
 import { useState, useEffect } from "react";
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 
 export default function useVendedoresPendientes({ page = 0, size = 10, search = "" } = {}) {

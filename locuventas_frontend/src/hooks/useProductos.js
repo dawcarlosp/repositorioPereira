@@ -1,6 +1,6 @@
 // src/hooks/useProductos.js
 import { useState, useEffect } from "react";
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 
 export default function useProductos({

@@ -1,5 +1,5 @@
 // src/services/venta.service.js
-import { apiRequest } from "./api.config";
+import { apiRequest } from "./api";
 
 /**
  * Servicio para la gestión de ventas.

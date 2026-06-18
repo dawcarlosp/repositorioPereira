@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";

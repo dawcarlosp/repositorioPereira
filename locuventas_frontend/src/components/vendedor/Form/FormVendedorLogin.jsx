@@ -1,4 +1,4 @@
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import { useAuth } from "@context/useAuth";
 import Boton from "@buttons/Boton";
 import InputFieldset from "@components/common/InputFieldset";

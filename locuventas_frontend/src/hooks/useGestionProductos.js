@@ -1,7 +1,7 @@
 // src/hooks/useGestionProductos.js
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { apiRequest } from "@services/api.config";
+import { apiRequest } from "@services/api";
 import { resolveProductImage } from "@utils/imageUtils";
 
 const FORM_INITIAL = {
