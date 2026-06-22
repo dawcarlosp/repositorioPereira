@@ -7,7 +7,7 @@
  * @param {RegExp|string} [delimitador=',|;'] - Delimitador para strings (por defecto: coma o punto y coma)
  * @returns {string[]}
  */
-export function normalizaMultiValor(valor, delimitador = /,|;/) {
+export function normalizaMultiValor (valor, delimitador = /,|;/) {
   if (Array.isArray(valor)) {
     return valor
       .map(x => typeof x === "string" ? x.trim() : String(x).trim())

@@ -14,6 +14,8 @@ import BuscadorInput from "@components/common/BuscadorInput";
 import SelectFiltro from "@components/common/SelectFiltro";
 import FAB from "@components/common/FAB";
 import Boton from "@buttons/Boton";
+import { Donut } from "lucide-react";
+import { toast } from "react-toastify";
 
 const SkeletonProductoCard = () => (
   <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 animate-pulse">
@@ -47,7 +49,7 @@ export default function GestionProductos() {
   const [categoriaId, setCategoriaId] = useState("");
 
   const { paises, categorias } = useFiltrosProducto();
-
+  
   const { productos, loading, totalPages } = useProductos({
     page, size, search,
     paisId:      paisId      ? Number(paisId)      : null,

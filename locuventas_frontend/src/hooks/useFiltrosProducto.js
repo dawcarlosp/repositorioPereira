@@ -15,7 +15,8 @@ export default function useFiltrosProducto() {
           apiRequest("paises", null, { method: "GET" }),
           apiRequest("categorias", null, { method: "GET" }),
         ]);
-
+console.log("Respuesta de la API Paises:", resPaises);
+console.log("Respuesta de la API Categorias:", resCategorias);
         // Pais devuelve la entidad directa: { id, nombre, codigo, enlaceFoto }
         setPaises(
           (resPaises.data ?? []).map((p) => ({
@@ -41,6 +42,6 @@ export default function useFiltrosProducto() {
 
     cargar();
   }, []); // solo una vez — son catálogos maestros
-
+console.log(paises);
   return { paises, categorias, loading };
 }

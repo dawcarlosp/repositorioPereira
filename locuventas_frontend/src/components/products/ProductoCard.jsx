@@ -1,5 +1,5 @@
 import React from "react";
-import { getProductImage } from "@utils/imageUtils";
+import { resolveProductImage } from "@utils/imageUtils";
 
 export default function ProductoCard({ producto, cantidad, onAdd }) {
   const hasQuantity = cantidad > 0;
@@ -54,7 +54,7 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
       <div className="relative flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
         {producto.foto ? (
           <img
-            src={getProductImage(producto.foto)}
+            src={resolveProductImage(producto.foto)}
             alt={producto.nombre}
             className="h-24 w-24 object-contain transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

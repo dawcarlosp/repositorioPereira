@@ -1,45 +1,31 @@
-/**
- * Utilidades para manejo de imágenes de productos y países
- * Centraliza lógica de resolución de rutas de imagen
- */
+// src/utils/imageUtils.ts
 
-const API_URL = import.meta.env.VITE_API_URL;
+const API_URL = import.meta.env.VITE_API_URL as string;
 
 /**
- * Resuelve la ruta completa de una imagen de producto
- * @param {string|null} foto - Nombre o ruta de foto
- * @returns {string|null} URL completa de imagen o null
+ * Resuelve la URL completa de la imagen de un producto.
+ * Si `foto` ya contiene "/", se usa tal cual como ruta relativa.
  */
-export const resolveProductImage = (foto : string | null): string | null =>  {
+export const resolveProductImage = (foto: string | null | undefined): string | null => {
   if (!foto) return null;
   const path = foto.includes("/") ? foto : `productos/${foto}`;
   return `${API_URL}/imagenes/${path}`;
 };
 
 /**
- * Alias por compatibilidad (usada en ProductoCard)
+ * Resuelve la URL de la bandera de un país.
+ * Si ya es una URL absoluta, se devuelve sin modificar.
  */
-export const getProductImage = resolveProductImage;
-
-/**
- * Resuelve la ruta de una bandera de país
- * @param {string|null} enlaceFoto - URL o ruta de bandera
- * @returns {string|null} URL completa o null
- */
-export const resolveCountryImage = (enlaceFoto : string | null): string | null => {
+export const resolveCountryImage = (enlaceFoto: string | null | undefined): string | null => {
   if (!enlaceFoto) return null;
-  // Si ya es una URL completa, devolverla tal cual
   if (enlaceFoto.startsWith("http")) return enlaceFoto;
-  // Si no, construir URL del API
   return `${API_URL}/imagenes/paises/${enlaceFoto}`;
 };
 
 /**
- * Obtiene URL de imagen con fallback
- * @param {string|null} imagePath - Ruta de imagen
- * @param {string} fallbackSrc - Imagen por defecto si no existe
- * @returns {string} URL de imagen o fallback
+ * Devuelve la URL de imagen del producto o un fallback si no existe.
  */
-export const getImageWithFallback = (imagePath: string | null, fallbackSrc = ""): string | null => {
-  return imagePath ? resolveProductImage(imagePath) : fallbackSrc;
-};
+export const resolveProductImageWithFallback = (
+  foto: string | null | undefined,
+  fallback: string
+): string => resolveProductImage(foto) ?? fallback;
