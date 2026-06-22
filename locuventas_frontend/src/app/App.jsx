@@ -6,7 +6,7 @@ import useBreakpoint from "@/hooks/useBreakpoint";
 import FormVendedorRegister from "@components/vendedor/Form/FormVendedorRegister";
 import { AppProviders } from "./providers";
 import { AppRoutes } from "./routes";
-import "../App.css";
+import "@/app/App.css";
 
 export default function App() {
   const [isOpen, setIsOpen] = useState(false);

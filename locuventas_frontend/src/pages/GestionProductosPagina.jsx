@@ -2,7 +2,7 @@
 import React, { useState } from "react";
 import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
-import GestionProductos from "@components/productos/GestionProductos";
+import GestionProductos from "@components/products/GestionProductos";
 
 export default function GestionProductosPagina() {
   return (

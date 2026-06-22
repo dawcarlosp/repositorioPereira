@@ -10,7 +10,7 @@ const API_URL = import.meta.env.VITE_API_URL;
  * @param {string|null} foto - Nombre o ruta de foto
  * @returns {string|null} URL completa de imagen o null
  */
-export const resolveProductImage = (foto) => {
+export const resolveProductImage = (foto : string | null): string | null =>  {
   if (!foto) return null;
   const path = foto.includes("/") ? foto : `productos/${foto}`;
   return `${API_URL}/imagenes/${path}`;
@@ -26,7 +26,7 @@ export const getProductImage = resolveProductImage;
  * @param {string|null} enlaceFoto - URL o ruta de bandera
  * @returns {string|null} URL completa o null
  */
-export const resolveCountryImage = (enlaceFoto) => {
+export const resolveCountryImage = (enlaceFoto : string | null): string | null => {
   if (!enlaceFoto) return null;
   // Si ya es una URL completa, devolverla tal cual
   if (enlaceFoto.startsWith("http")) return enlaceFoto;
@@ -40,6 +40,6 @@ export const resolveCountryImage = (enlaceFoto) => {
  * @param {string} fallbackSrc - Imagen por defecto si no existe
  * @returns {string} URL de imagen o fallback
  */
-export const getImageWithFallback = (imagePath, fallbackSrc = "") => {
+export const getImageWithFallback = (imagePath: string | null, fallbackSrc = ""): string | null => {
   return imagePath ? resolveProductImage(imagePath) : fallbackSrc;
 };

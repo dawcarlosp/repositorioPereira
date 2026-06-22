@@ -1,3 +1,4 @@
+//src/components/dev/SobreMi.jsx
 import React from "react";
 
 const SobreMi = () => (
