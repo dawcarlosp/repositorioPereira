@@ -8,7 +8,7 @@ function InputFieldset({
   onChange,
   placeholder,
   required = false,
-  onBlur,
+  onBlur  ,
   customClasses = "bg-white border-gray-300 focus-within:border-purple-500 focus-within:ring-2 focus-within:ring-purple-500",
 }) {
   const [showPassword, setShowPassword] = useState(false);
