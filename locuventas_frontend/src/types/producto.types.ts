@@ -18,3 +18,15 @@ export interface ProductoDTO {
   paisId:      number;
   categoriaIds: number[];
 }
+
+export interface SelectOption {
+  value: number;
+  label: string;
+  image?: string | null;
+}
+
+export interface FiltrosProducto {
+  paises:     SelectOption[];
+  categorias: SelectOption[];
+  loading:    boolean;
+}
