@@ -1,10 +1,33 @@
-import { useEffect, useState } from "react";
+// src/components/products/ModalProductoForm.tsx
 import FormDialog from "@components/common/FormDialog";
 import InputFieldset from "@components/common/InputFieldset";
 import SelectFieldset from "@components/common/SelectFieldset";
 import UploadComponent from "@components/common/UploadComponent";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { isMobile as checkIsMobile } from "@constants/breakpoints";
+import type { SelectOption } from "@domain/ui.types";
+
+interface Props {
+  visible:         boolean;
+  onClose:         () => void;
+  onSubmit:        (e: React.FormEvent) => void;
+  editando:        unknown;
+  nombre:          string;
+  setNombre:       (v: string) => void;
+  precio:          string;
+  setPrecio:       (v: string) => void;
+  iva:             string;
+  setIva:          (v: string) => void;
+  paisId:          number | "";
+  setPaisId:       (v: number | "") => void;
+  categoriaIds:    number[];
+  setCategoriaIds: (v: number[]) => void;
+  foto:            File | null;
+  setFoto:         (v: File | null) => void;
+  fotoUrlEdicion:  string | null;
+  paises:          SelectOption[];
+  categorias:      SelectOption[];
+}
 
 export default function ModalProductoForm({
   visible, onClose, onSubmit, editando,
@@ -17,10 +40,17 @@ export default function ModalProductoForm({
   fotoUrlEdicion,
   paises,
   categorias,
-}) {
-  const bp = useBreakpoint();
+}: Props) {
+  const bp       = useBreakpoint();
   const isMobile = checkIsMobile(bp);
   const sinPaises = paises.length === 0;
+
+  const toggleCategoria = (id: number, checked: boolean) =>
+    setCategoriaIds(
+      checked
+        ? [...categoriaIds, id]
+        : categoriaIds.filter((c) => c !== id)
+    );
 
   return (
     <FormDialog
@@ -33,7 +63,7 @@ export default function ModalProductoForm({
     >
       <UploadComponent
         setFile={setFoto}
-        file={foto instanceof File ? foto : null}
+        file={foto}
         fotoActualUrl={fotoUrlEdicion}
         disabled={sinPaises}
         className="flex-shrink-0"
@@ -69,7 +99,6 @@ export default function ModalProductoForm({
         required
       />
 
-      {/* País — image pasa la bandera directamente al SelectFieldset */}
       <div className="w-full max-w-xs flex-shrink-0">
         <p className="text-white font-semibold text-xs mb-1">Selecciona un país *</p>
         <SelectFieldset
@@ -78,48 +107,41 @@ export default function ModalProductoForm({
           onChange={(e) => setPaisId(Number(e.target.value))}
           required
           disabled={sinPaises}
-          options={paises.map((p) => ({
-            value: p.id,
-            label: p.nombre,
-            image: p.enlaceFoto ?? null,   // 👈 bandera integrada en el select
-          }))}
+          options={paises}
         />
       </div>
 
-      {/* Categorías */}
       <div className="w-full max-w-xs flex-shrink-0">
         <p className="text-white font-semibold text-xs mb-1">Selecciona categorías *</p>
         {!isMobile ? (
           <SelectFieldset
             id="categorias"
-            value={categoriaIds.map(String)}
-            onChange={(e) =>
-              setCategoriaIds(Array.from(e.target.selectedOptions, (opt) => opt.value))
-            }
+            value={categoriaIds}
+            onChange={(e) => {
+              const select = e.target as unknown as HTMLSelectElement;
+              setCategoriaIds(
+                Array.from(select.selectedOptions, (opt) => Number(opt.value))
+              );
+            }}
             required
             multiple
             disabled={sinPaises}
-            options={categorias.map((c) => ({ value: c.id, label: c.nombre }))}
+            options={categorias}
           />
         ) : (
           <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 bg-black/10 rounded-lg custom-scrollbar">
             {categorias.map((cat) => (
               <label
-                key={cat.id}
+                key={cat.value}
                 className="flex items-center gap-1.5 text-gray-100 text-xs bg-black/20 rounded-lg px-2 py-1.5 cursor-pointer select-none active:bg-black/30"
               >
                 <input
                   type="checkbox"
-                  value={cat.id}
-                  checked={categoriaIds.includes(String(cat.id)) || categoriaIds.includes(cat.id)}
-                  onChange={(e) =>
-                    e.target.checked
-                      ? setCategoriaIds([...categoriaIds, String(cat.id)])
-                      : setCategoriaIds(categoriaIds.filter((id) => id !== String(cat.id) && id !== cat.id))
-                  }
+                  value={cat.value}
+                  onChange={(e) => toggleCategoria(Number(cat.value), e.target.checked)}
                   className="accent-orange-400"
                 />
-                {cat.nombre}
+                {cat.label}
               </label>
             ))}
           </div>
@@ -128,5 +150,3 @@ export default function ModalProductoForm({
     </FormDialog>
   );
 }
-
-

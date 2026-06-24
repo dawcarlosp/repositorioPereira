@@ -1,9 +1,22 @@
-// src/components/common/SelectFieldset.jsx
-import React, { useEffect, useRef, useState } from "react";
+// src/components/common/SelectFieldset.tsx
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
-import useBuscador from "@hooks/useBuscador";
+import useBuscador from "@/hooks/useBuscador";
+import type { SelectOption } from "@domain/ui.types";
 
-function SelectFieldset({
+interface SelectFieldsetProps {
+  id:                string;
+  value:             string | number | (string | number)[];
+  onChange:          (e: React.ChangeEvent<HTMLSelectElement> | { target: { value: string | number } }) => void;
+  placeholder?:      string;
+  required?:         boolean;
+  options?:          SelectOption[];
+  multiple?:         boolean;
+  disabled?:         boolean;
+  searchPlaceholder?: string;
+}
+
+export default function SelectFieldset({
   id,
   value,
   onChange,
@@ -13,31 +26,29 @@ function SelectFieldset({
   multiple = false,
   disabled = false,
   searchPlaceholder = "Buscar...",
-}) {
+}: SelectFieldsetProps) {
   const [open, setOpen] = useState(false);
   const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const selectedOption = !multiple
     ? options.find((opt) => String(opt.value) === String(value))
     : null;
 
   const filtered = query.trim()
-    ? options.filter((opt) =>
-        opt.label.toLowerCase().includes(query.toLowerCase())
-      )
+    ? options.filter((opt) => opt.label.toLowerCase().includes(query.toLowerCase()))
     : options;
 
   useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
         setQuery("");
       }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
-  }, []);
+  }, [setQuery]);
 
   useEffect(() => {
     if (open) {
@@ -45,23 +56,19 @@ function SelectFieldset({
     } else {
       setQuery("");
     }
-  }, [open]);
+  }, [open, setQuery, searchRef]);
 
-  const handleSelect = (optValue) => {
+  const handleSelect = (optValue: string | number) => {
     onChange({ target: { value: optValue } });
     setOpen(false);
-  };
-
-  const handleToggle = () => {
-    if (!disabled) setOpen((o) => !o);
   };
 
   if (multiple) {
     return (
       <select
         id={id}
-        value={value}
-        onChange={onChange}
+         value={(Array.isArray(value) ? value : [value]).map(String)}
+        onChange={onChange as React.ChangeEventHandler<HTMLSelectElement>}
         required={required}
         multiple
         disabled={disabled}
@@ -96,12 +103,11 @@ function SelectFieldset({
         id={id}
         type="button"
         disabled={disabled}
-        onClick={handleToggle}
+        onClick={() => !disabled && setOpen((o) => !o)}
         className={`
           w-full h-[52px] flex items-center gap-2.5 px-4
-          bg-white rounded-xl border shadow-md transition-all text-left
-          focus:outline-none
-          ${open ? "border-purple-500 ring-2 ring-purple-500" : "border-gray-300"}
+          bg-white rounded-xl border shadow-md transition-all text-left focus:outline-none
+          ${open     ? "border-purple-500 ring-2 ring-purple-500" : "border-gray-300"}
           ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-purple-400"}
         `}
       >
@@ -115,9 +121,7 @@ function SelectFieldset({
         <span className={`flex-1 text-base truncate ${selectedOption ? "text-gray-700" : "text-gray-400"}`}>
           {selectedOption ? selectedOption.label : "Selecciona..."}
         </span>
-        <ChevronDown
-          className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
+        <ChevronDown className={`w-4 h-4 text-gray-400 flex-shrink-0 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
@@ -133,11 +137,7 @@ function SelectFieldset({
               className="flex-1 text-sm text-gray-700 bg-transparent focus:outline-none placeholder-gray-400 min-w-0"
             />
             {query && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="text-gray-400 hover:text-gray-600 flex-shrink-0"
-              >
+              <button type="button" onClick={handleClear} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
@@ -155,7 +155,6 @@ function SelectFieldset({
                 </button>
               </li>
             )}
-
             {filtered.length === 0 ? (
               <li className="px-4 py-3 text-sm text-gray-400 text-center">
                 Sin resultados para "{query}"
@@ -169,17 +168,11 @@ function SelectFieldset({
                     className={`
                       w-full px-4 py-2.5 text-left text-sm flex items-center gap-2.5
                       hover:bg-purple-50 transition-colors
-                      ${String(opt.value) === String(value)
-                        ? "bg-purple-50 text-purple-700 font-medium"
-                        : "text-gray-700"}
+                      ${String(opt.value) === String(value) ? "bg-purple-50 text-purple-700 font-medium" : "text-gray-700"}
                     `}
                   >
                     {opt.image && (
-                      <img
-                        src={opt.image}
-                        alt={opt.label}
-                        className="w-6 h-4 rounded-sm object-cover flex-shrink-0 shadow-sm"
-                      />
+                      <img src={opt.image} alt={opt.label} className="w-6 h-4 rounded-sm object-cover flex-shrink-0 shadow-sm" />
                     )}
                     <span className="truncate">{opt.label}</span>
                   </button>
@@ -192,5 +185,3 @@ function SelectFieldset({
     </div>
   );
 }
-
-export default SelectFieldset;
