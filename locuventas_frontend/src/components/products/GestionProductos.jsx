@@ -49,7 +49,7 @@ export default function GestionProductos() {
   const [categoriaId, setCategoriaId] = useState("");
 
   const { paises, categorias } = useFiltrosProducto();
-  
+
   const { productos, loading, totalPages } = useProductos({
     page, size, search,
     paisId:      paisId      ? Number(paisId)      : null,

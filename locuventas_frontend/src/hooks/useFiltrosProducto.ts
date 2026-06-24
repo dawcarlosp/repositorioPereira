@@ -24,11 +24,13 @@ interface FiltrosProductoReturn {
 }
 
 export default function useFiltrosProducto(): FiltrosProductoReturn {
+
   const [paises,     setPaises]     = useState<SelectOption[]>([]);
   const [categorias, setCategorias] = useState<SelectOption[]>([]);
   const [loading,    setLoading]    = useState(true);
 
   useEffect(() => {
+
     const cargar = async (): Promise<void> => {
       try {
         const [resPaises, resCategorias] = await Promise.all([
@@ -40,6 +42,7 @@ export default function useFiltrosProducto(): FiltrosProductoReturn {
           (resPaises.data ?? []).map((p) => ({
             value: p.id,
             label: p.nombre,
+
             image: p.enlaceFoto ?? null,
           }))
         );

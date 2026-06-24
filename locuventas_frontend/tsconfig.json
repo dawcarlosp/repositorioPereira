@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
-    // ── Entorno Vite + React ──────────────────────────────────────
+    // ── Entorno ───────────────────────────────────────────────────
     "target": "ES2022",
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "moduleDetection": "force",
+    "types": ["node"],
 
     // ── JSX ──────────────────────────────────────────────────────
     "jsx": "react-jsx",
@@ -15,12 +16,13 @@
     "checkJs": false,
 
     // ── Imports ──────────────────────────────────────────────────
-    "verbatimModuleSyntax": true,
+    "verbatimModuleSyntax": false,
     "resolveJsonModule": true,
     "allowImportingTsExtensions": true,
 
-    // ── Output — Vite compila, TS solo verifica ───────────────────
+    // ── Output ───────────────────────────────────────────────────
     "noEmit": true,
+    "sourceMap": true,
 
     // ── Strictness ───────────────────────────────────────────────
     "strict": true,
@@ -29,7 +31,7 @@
     "noImplicitOverride": true,
     "noFallthroughCasesInSwitch": true,
 
-    // ── Paths — deben coincidir exactamente con vite.config.js ───
+    // ── Paths — sin baseUrl, usando rootDir ──────────────────────
     "rootDir": ".",
     "paths": {
       "@/*":           ["./src/*"],
@@ -42,7 +44,7 @@
       "@buttons/*":    ["./src/components/common/buttons/*"],
       "@constants/*":  ["./src/constants/*"],
       "@utils/*":      ["./src/utils/*"],
-      "@assets/*":     ["./src/assets/*"],
+      "@types/*":      ["./src/types/*"],
       "@domain/*":     ["./src/domain/*"]
     },
 
@@ -50,6 +52,6 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src", "vite.config.js"],
+  "include": ["src", "vite.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

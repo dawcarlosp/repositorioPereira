@@ -46,11 +46,13 @@ export default function ModalProductoForm({
   const sinPaises = paises.length === 0;
 
   const toggleCategoria = (id: number, checked: boolean) =>
+
     setCategoriaIds(
       checked
         ? [...categoriaIds, id]
         : categoriaIds.filter((c) => c !== id)
     );
+
 
   return (
     <FormDialog
@@ -113,16 +115,19 @@ export default function ModalProductoForm({
 
       <div className="w-full max-w-xs flex-shrink-0">
         <p className="text-white font-semibold text-xs mb-1">Selecciona categorías *</p>
+
         {!isMobile ? (
           <SelectFieldset
             id="categorias"
             value={categoriaIds}
+
             onChange={(e) => {
               const select = e.target as unknown as HTMLSelectElement;
               setCategoriaIds(
                 Array.from(select.selectedOptions, (opt) => Number(opt.value))
               );
             }}
+
             required
             multiple
             disabled={sinPaises}
@@ -138,7 +143,9 @@ export default function ModalProductoForm({
                 <input
                   type="checkbox"
                   value={cat.value}
+
                   onChange={(e) => toggleCategoria(Number(cat.value), e.target.checked)}
+
                   className="accent-orange-400"
                 />
                 {cat.label}
