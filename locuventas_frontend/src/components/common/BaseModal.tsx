@@ -1,5 +1,15 @@
-import React from "react";
+import { type ReactNode } from "react";
 import ReactDOM from "react-dom";
+
+interface BaseModalProps {
+  title?:                string;
+  children?:             ReactNode;
+  footer?:               ReactNode;
+  onClose?:              () => void;
+  className?:            string;
+  contentClassName?:     string;
+  closeOnOverlayClick?:  boolean;
+}
 
 export default function BaseModal({
   title,
@@ -9,8 +19,8 @@ export default function BaseModal({
   className = "",
   contentClassName = "flex-1 overflow-y-auto",
   closeOnOverlayClick = true,
-}) {
-  const handleBackdropClick = (event) => {
+}: BaseModalProps) {
+  const handleBackdropClick = (event: React.MouseEvent) => {
     if (!closeOnOverlayClick) return;
     if (event.target === event.currentTarget) {
       onClose?.();
@@ -39,6 +49,6 @@ export default function BaseModal({
         )}
       </div>
     </div>,
-    document.getElementById("portal-root"),
+    document.getElementById("portal-root")!,
   );
 }

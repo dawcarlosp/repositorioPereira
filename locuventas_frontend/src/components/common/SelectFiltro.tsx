@@ -1,7 +1,17 @@
-// src/components/common/SelectFiltro.jsx
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Search, X } from "lucide-react";
 import useBuscador from "@hooks/useBuscador";
+import type { SelectOption } from "@domain/ui.types";
+
+interface SelectFiltroProps {
+  id?:               string;
+  value?:            string | number;
+  onChange?:         (e: { target: { value: string } }) => void;
+  placeholder?:      string;
+  options?:          SelectOption[];
+  disabled?:         boolean;
+  searchPlaceholder?: string;
+}
 
 export default function SelectFiltro({
   id,
@@ -11,10 +21,10 @@ export default function SelectFiltro({
   options = [],
   disabled = false,
   searchPlaceholder = "Buscar...",
-}) {
+}: SelectFiltroProps) {
   const [open, setOpen] = useState(false);
   const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find((opt) => String(opt.value) === String(value));
 
@@ -24,10 +34,9 @@ export default function SelectFiltro({
       )
     : options;
 
-  // Cierra al hacer click fuera
   useEffect(() => {
-    const handler = (e) => {
-      if (ref.current && !ref.current.contains(e.target)) {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
         setOpen(false);
         setQuery("");
       }
@@ -36,7 +45,6 @@ export default function SelectFiltro({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Focus automático al abrir, limpiar al cerrar
   useEffect(() => {
     if (open) {
       setTimeout(() => searchRef.current?.focus(), 50);
@@ -45,8 +53,8 @@ export default function SelectFiltro({
     }
   }, [open]);
 
-  const handleSelect = (optValue) => {
-    onChange({ target: { value: optValue } });
+  const handleSelect = (optValue: string) => {
+    onChange?.({ target: { value: optValue } });
     setOpen(false);
   };
 
@@ -56,7 +64,6 @@ export default function SelectFiltro({
 
   return (
     <div ref={ref} className="relative w-full flex-shrink-0">
-      {/* Trigger */}
       <button
         id={id}
         type="button"
@@ -73,7 +80,6 @@ export default function SelectFiltro({
           ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
         `}
       >
-        {/* Imagen del item seleccionado (ej: bandera de país) */}
         {selectedOption?.image && (
           <img
             src={selectedOption.image}
@@ -86,7 +92,6 @@ export default function SelectFiltro({
           {selectedOption ? selectedOption.label : placeholder}
         </span>
 
-        {/* X para limpiar si hay selección, chevron si no */}
         {selectedOption ? (
           <button
             type="button"
@@ -107,11 +112,8 @@ export default function SelectFiltro({
         )}
       </button>
 
-      {/* Dropdown */}
       {open && (
         <div className="absolute z-50 mt-1 w-full min-w-[160px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
-
-          {/* Buscador interno */}
           <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
             <Search className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
             <input
@@ -133,9 +135,7 @@ export default function SelectFiltro({
             )}
           </div>
 
-          {/* Lista */}
           <ul className="max-h-48 overflow-y-auto custom-scrollbar py-1">
-            {/* Opción vacía para limpiar — solo si no hay búsqueda activa */}
             {!query && (
               <li>
                 <button
@@ -157,7 +157,7 @@ export default function SelectFiltro({
                 <li key={opt.value}>
                   <button
                     type="button"
-                    onClick={() => handleSelect(opt.value)}
+                    onClick={() => handleSelect(String(opt.value))}
                     className={`
                       w-full px-3 py-2 text-left text-[11px] flex items-center gap-2
                       transition-colors

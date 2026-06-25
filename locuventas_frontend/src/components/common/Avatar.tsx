@@ -1,7 +1,13 @@
-// src/components/common/Avatar.jsx
 import defaultAvatar from "@/assets/default-avatar.png";
 
-export default function Avatar({ src, alt, size = "w-15 h-15", className = "" }) {
+interface AvatarProps {
+  src?:       string | null;
+  alt?:       string;
+  size?:      string;
+  className?: string;
+}
+
+export default function Avatar({ src, alt, size = "w-15 h-15", className = "" }: AvatarProps) {
   const displayUrl = src || defaultAvatar;
 
   return (

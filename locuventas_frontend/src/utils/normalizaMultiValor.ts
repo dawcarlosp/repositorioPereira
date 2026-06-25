@@ -1,13 +1,13 @@
-// src/services/normalizaMultiValor.js
+// src/utils/normalizaMultiValor.ts
 
 /**
  * Convierte un valor multivalor (array, string delimitado, null, undefined, etc)
  * en un array de strings limpios, únicos y no vacíos.
- * @param {any} valor
+ * @param {unknown} valor
  * @param {RegExp|string} [delimitador=',|;'] - Delimitador para strings (por defecto: coma o punto y coma)
  * @returns {string[]}
  */
-export function normalizaMultiValor (valor, delimitador = /,|;/) {
+export function normalizaMultiValor (valor: unknown, delimitador: RegExp | string = /,|;/): string[] {
   if (Array.isArray(valor)) {
     return valor
       .map(x => typeof x === "string" ? x.trim() : String(x).trim())

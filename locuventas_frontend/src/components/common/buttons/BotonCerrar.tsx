@@ -1,4 +1,11 @@
 import { X } from "lucide-react";
+import type { ButtonHTMLAttributes } from "react";
+
+interface BotonCerrarProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  size?:    number;
+  bg?:      string;
+  hoverBg?: string;
+}
 
 export default function BotonCerrar({
   onClick,
@@ -7,7 +14,7 @@ export default function BotonCerrar({
   bg = "bg-orange-500/2",
   hoverBg = "hover:bg-purple-500",
   ...props
-}) {
+}: BotonCerrarProps) {
   return (
     <button
       type="button"

@@ -1,6 +1,17 @@
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode, FormEvent } from "react";
 import Boton from "@buttons/Boton";
 import BotonCerrar from "@buttons/BotonCerrar";
+
+interface FormDialogProps {
+  visible:       boolean;
+  onClose:       () => void;
+  onSubmit:      (e: FormEvent) => void;
+  titulo:        string;
+  botonTexto:    string;
+  botonDisabled?: boolean;
+  children:      ReactNode;
+}
 
 export default function FormDialog({
   visible,
@@ -10,12 +21,12 @@ export default function FormDialog({
   botonTexto,
   botonDisabled = false,
   children,
-}) {
-  const dialogRef = useRef(null);
-  const scrollContainerRef = useRef(null);
+}: FormDialogProps) {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [isScrolling, setIsScrolling] = useState(false);
   const [render, setRender] = useState(visible);
-  const [animState, setAnimState] = useState("closed");
+  const [animState, setAnimState] = useState<"closed" | "open" | "closing">("closed");
 
   useEffect(() => {
     if (visible) {
@@ -40,7 +51,7 @@ export default function FormDialog({
     setTimeout(() => onClose(), 280);
   };
 
-  const handleCancel = (e) => {
+  const handleCancel = (e: Event) => {
     e.preventDefault();
     handleClose();
   };
@@ -48,7 +59,7 @@ export default function FormDialog({
   useEffect(() => {
     const el = scrollContainerRef.current;
     if (!el) return;
-    let timeout;
+    let timeout: ReturnType<typeof setTimeout>;
     const handleScroll = () => {
       setIsScrolling(true);
       clearTimeout(timeout);
@@ -73,7 +84,6 @@ export default function FormDialog({
         border: "0",
         padding: "0",
         background: "transparent",
-        // El backdrop lo maneja Tailwind backdrop:
       }}
       className={`
         fixed inset-0 m-auto
@@ -87,7 +97,6 @@ export default function FormDialog({
         ${animationClass}
       `}
     >
-      {/* Cabecera fija: nunca se comprime ni desaparece */}
       <div className="flex-shrink-0 flex items-center justify-between px-5 pt-5 pb-3 sm:px-7 sm:pt-6">
         <h2 className="text-lg sm:text-xl font-bold text-white drop-shadow-md leading-tight">
           {titulo}
@@ -100,12 +109,6 @@ export default function FormDialog({
         autoComplete="off"
         className="flex flex-col min-h-0 flex-1 overflow-hidden px-5 pb-5 sm:px-7 sm:pb-6"
       >
-        {/*
-          ZONA DE SCROLL:
-          - overflow-y-auto: scroll solo cuando el contenido supera el espacio disponible
-          - flex-1 min-h-0: ocupa el espacio sobrante entre cabecera y botón, sin comprimir nada
-          - Los hijos NO son flex — son block, así cada uno toma su altura natural
-        */}
         <div
           ref={scrollContainerRef}
           className={`
@@ -121,7 +124,6 @@ export default function FormDialog({
           {children}
         </div>
 
-        {/* Botón siempre visible en la parte inferior */}
         <div className="flex-shrink-0 w-full max-w-xs mx-auto mt-4">
           <Boton
             type="submit"

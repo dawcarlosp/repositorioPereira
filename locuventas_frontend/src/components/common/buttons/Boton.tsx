@@ -1,7 +1,10 @@
-// src/components/common/Boton.jsx
-import React from "react";
+import type { ReactNode, ButtonHTMLAttributes } from "react";
 
-function Boton({ children, disabled, onClick, className = "", ref }) {
+interface BotonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+export default function Boton({ children, disabled, onClick, className = "", ref, ...props }: BotonProps) {
   const baseStyle = `
     px-4 py-2 font-semibold rounded-xl transition-all duration-300 
     text-white bg-zinc-900 tracking-wide cursor-pointer
@@ -19,15 +22,14 @@ function Boton({ children, disabled, onClick, className = "", ref }) {
   `;
 
   return (
-    <button 
+    <button
       ref={ref}
       onClick={onClick}
       disabled={disabled}
       className={`${baseStyle} ${disabled ? disabledStyle : enabledStyle} ${className}`}
+      {...props}
     >
       {children}
     </button>
   );
 }
-
-export default Boton;

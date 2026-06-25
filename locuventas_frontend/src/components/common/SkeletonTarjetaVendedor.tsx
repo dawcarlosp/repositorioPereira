@@ -1,4 +1,3 @@
-// src/components/common/SkeletonTarjetaVendedor.jsx
 export default function SkeletonTarjetaVendedor() {
   return (
     <li className="flex items-center gap-3 p-3 rounded-xl bg-zinc-800/50 animate-pulse">

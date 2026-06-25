@@ -1,7 +1,18 @@
-// src/components/common/DataTable.jsx
-import React from "react";
+import type { ReactNode } from "react";
 
-const FilaSkeleton = ({ cols }) => (
+interface Columna {
+  label:     string;
+  className?: string;
+}
+
+interface DataTableProps {
+  children?:  ReactNode;
+  columnas?:  Columna[];
+  loading?:   boolean;
+  size?:      number;
+}
+
+const FilaSkeleton = ({ cols }: { cols: number }) => (
   <tr className="animate-pulse border-b border-zinc-800/50">
     {Array.from({ length: cols }).map((_, i) => (
       <td key={i} className="px-4 py-5">
@@ -18,7 +29,7 @@ export default function DataTable({
   columnas = [],
   loading = false,
   size,
-}) {
+}: DataTableProps) {
   return (
     <div className="flex flex-col bg-zinc-800/50 border border-zinc-700/50 rounded-2xl shadow-2xl overflow-hidden">
       <div className="w-full overflow-x-auto custom-scrollbar">

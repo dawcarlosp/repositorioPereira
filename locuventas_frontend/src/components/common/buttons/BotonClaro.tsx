@@ -1,7 +1,11 @@
-// src/components/common/BotonClaro.jsx
-import React from "react";
+import { forwardRef } from "react";
+import type { ReactNode, ButtonHTMLAttributes } from "react";
 
-const BotonClaro = React.forwardRef(function BotonClaro(
+interface BotonClaroProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+const BotonClaro = forwardRef<HTMLButtonElement, BotonClaroProps>(function BotonClaro(
   { children, disabled, onClick, className = "", ...props },
   ref
 ) {

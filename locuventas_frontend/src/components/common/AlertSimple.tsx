@@ -1,8 +1,12 @@
-// src/components/common/AlertSimple.jsx
 import BaseModal from "@components/common/BaseModal";
 import Boton from "@buttons/Boton";
 
-export default function AlertSimple({ mensaje, onClose }) {
+interface AlertSimpleProps {
+  mensaje: string;
+  onClose: () => void;
+}
+
+export default function AlertSimple({ mensaje, onClose }: AlertSimpleProps) {
   return (
     <BaseModal
       title={mensaje}
