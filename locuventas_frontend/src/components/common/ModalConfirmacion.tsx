@@ -5,7 +5,7 @@ import BotonClaro from "@buttons/BotonClaro";
 interface ModalConfirmacionProps {
   mensaje:      string;
   confirmText?: string;
-  onConfirmar?: () => void;
+  onConfirmar?: () => void | Promise<void>;
   onCancelar?:  () => void;
 }
 
