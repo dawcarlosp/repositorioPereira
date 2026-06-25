@@ -1,5 +1,4 @@
 import { useState, useRef, Fragment } from "react";
-import type { ReactNode } from "react";
 import BotonClaro from "@buttons/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer";
 import {
@@ -8,15 +7,7 @@ import {
 } from "lucide-react";
 import PendientesList from "@components/vendedor/PendientesList";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
-
-interface MenuItem {
-  label:       string;
-  action?:     () => void;
-  children?:   MenuItem[];
-  panel?:      string;
-  panelWidth?: string;
-  panelProps?: Record<string, unknown>;
-}
+import type { MenuItem } from "@domain/ui.types";
 
 interface RecursiveMenuProps {
   items:     MenuItem[];

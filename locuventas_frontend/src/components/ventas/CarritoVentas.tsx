@@ -25,7 +25,7 @@ export default function CarritoVenta({ carga, quitarProducto, onGuardar, onCobra
         <div className="flex justify-between items-center mb-1">
           <h2 className="text-white font-bold text-lg tracking-tight">Carrito de Venta</h2>
           <span className="text-[10px] bg-zinc-800 text-zinc-400 px-2 py-0.5 rounded-md border border-zinc-700">
-            ID: {auth?.id || '001'}
+            ID: {auth?.email?.split('@')[0] || '001'}
           </span>
         </div>
         <p className="text-zinc-500 text-xs flex items-center gap-1">
