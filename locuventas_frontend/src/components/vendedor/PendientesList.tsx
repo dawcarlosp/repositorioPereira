@@ -1,13 +1,21 @@
-// src/components/vendedor/PendientesList.jsx
-import React, { useState } from "react";
+import { useState } from "react";
+import type { ConfirmacionGlobal } from "@domain/auth.types";
+import type { UsuarioPendiente } from "@domain/auth.types";
 import useVendedoresPendientes from "@hooks/useVendedoresPendientes";
 import TarjetaVendedor from "@components/vendedor/TarjetaVendedor";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
 import SkeletonTarjetaVendedor from "@components/common/SkeletonTarjetaVendedor";
 
-// Cuántos skeletons mostrar mientras carga
 const SKELETON_COUNT = 3;
+
+interface Props {
+  onConfirmacion: (c: ConfirmacionGlobal) => void;
+  page?:          number;
+  size?:          number;
+  onPageChange?:  (n: number) => void;
+  onSizeChange?:  (n: number) => void;
+}
 
 export default function PendientesList({
   onConfirmacion,
@@ -15,7 +23,7 @@ export default function PendientesList({
   size: externalSize,
   onPageChange,
   onSizeChange,
-}) {
+}: Props) {
   const [internalPage, setInternalPage] = useState(0);
   const [internalSize, setInternalSize] = useState(3);
   const [search, setSearch]             = useState("");
@@ -27,14 +35,14 @@ export default function PendientesList({
     useVendedoresPendientes({ page, size, search });
 
   const handlePageChange = onPageChange ?? setInternalPage;
-  const handleSizeChange = onSizeChange ?? ((s) => { setInternalSize(s); setInternalPage(0); });
+  const handleSizeChange = onSizeChange ?? ((s: number) => { setInternalSize(s); setInternalPage(0); });
 
-  const handleSearch = (v) => {
+  const handleSearch = (v: string) => {
     setSearch(v);
     handlePageChange(0);
   };
 
-  const handleAction = (usuario, type) => {
+  const handleAction = (usuario: UsuarioPendiente, type: "aprobar" | "eliminar") => {
     onConfirmacion({
       mensaje: type === "aprobar"
         ? `¿Aprobar a ${usuario.nombre}?`

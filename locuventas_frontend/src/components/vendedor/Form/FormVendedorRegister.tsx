@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "@services/api";
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
@@ -7,14 +7,19 @@ import { validateUser } from "@/utils/user.validator";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-function FormVendedorRegister({ isOpen, setIsOpen }) {
-  const [foto, setFoto] = useState(null);
+interface Props {
+  isOpen:   boolean;
+  setIsOpen: (v: boolean) => void;
+}
+
+function FormVendedorRegister({ isOpen, setIsOpen }: Props) {
+  const [foto, setFoto] = useState<File | null>(null);
   const [nombre, setNombre] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showReminder, setShowReminder] = useState(false);
 
   useEffect(() => {
@@ -50,15 +55,16 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
     const formData = new FormData();
     const userDTO = { nombre, email, password };
     formData.append("user", new Blob([JSON.stringify(userDTO)], { type: "application/json" }));
-    formData.append("foto", foto);
+    formData.append("foto", foto as Blob);
 
     try {
       await apiRequest("auth/register", formData, { isFormData: true, method: "POST" });
       toast.success("¡Registro exitoso!");
       setIsOpen(false);
     } catch (err) {
-      setErrors(err);
-      Object.values(err).forEach((msg) => toast.error(msg));
+      const errorObj = err as Record<string, string>;
+      setErrors(errorObj);
+      Object.values(errorObj).forEach((msg) => toast.error(msg));
     } finally {
       setLoading(false);
     }
@@ -81,9 +87,8 @@ function FormVendedorRegister({ isOpen, setIsOpen }) {
         </div>
       )}
 
-      <UploadAvatar setFile={setFoto} file={foto} />
+      <UploadAvatar setFile={setFoto} file={foto} fotoActualUrl={null} />
       
-      {/* 🛠️ SOLUCIÓN: Agregados los onChange correspondientes a cada campo */}
       <InputFieldsetValidaciones 
         type="text" 
         id="nombre" 
