@@ -1,5 +1,5 @@
-// src/pages/VendedoresPendientesPagina.jsx
-import React, { useState } from "react";
+import { useState } from "react";
+import type { ConfirmacionGlobal } from "@domain/auth.types";
 import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
@@ -8,7 +8,7 @@ import PendientesList from "@components/vendedor/PendientesList";
 export default function VendedoresPendientesPagina() {
   const [page, setPage]             = useState(0);
   const [size, setSize]             = useState(1);
-  const [confirmacion, setConfirmacion] = useState(null);
+  const [confirmacion, setConfirmacion] = useState<ConfirmacionGlobal | null>(null);
 
   return (
     <AppLayout>
