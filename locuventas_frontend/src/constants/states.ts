@@ -15,15 +15,3 @@ export const PAYMENT_STATE_STYLES: Record<EstadoPago, string> = {
 export const getPaymentStateStyle = (estado: EstadoPago): string => {
   return PAYMENT_STATE_STYLES[estado] || PAYMENT_STATE_STYLES[PAYMENT_STATES.PENDIENTE];
 };
-
-export const PRODUCT_STATES = {
-  ACTIVO:   "ACTIVO" as const,
-  EN_VENTA: "EN_VENTA" as const,
-  INACTIVO: "INACTIVO" as const,
-};
-
-export const SELLER_STATES = {
-  PENDIENTE: "PENDIENTE" as const,
-  APROBADO:  "APROBADO" as const,
-  RECHAZADO: "RECHAZADO" as const,
-};

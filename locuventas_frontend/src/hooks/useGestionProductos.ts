@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@services/api";
-import type { SelectOption } from "@/types/producto.types";
+import type { SelectOption } from "@domain/ui.types";
 
 interface FormState {
   nombre:         string;

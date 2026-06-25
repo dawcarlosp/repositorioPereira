@@ -1,4 +1,6 @@
 // src/types/ui.types.ts
+import type { MouseEvent } from "react";
+
 export type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl";
 
 export interface SelectOption {
@@ -9,7 +11,7 @@ export interface SelectOption {
 
 export interface MenuItem {
   label:      string;
-  action?:    () => void;
+  action?:    (e?: MouseEvent) => void;
   route?:     string;
   children?:  MenuItem[];
   panel?:     string;
