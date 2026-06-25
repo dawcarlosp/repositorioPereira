@@ -6,7 +6,7 @@ import { useHeader } from "@context/HeaderContext";
 import type { Auth, ConfirmacionGlobal } from "@domain/auth.types";
 import type { Breakpoint } from "@domain/ui.types";
 
-interface UseHeaderManagerReturn {
+export interface UseHeaderManagerReturn {
   auth:                        Auth;
   headerRef:                   React.RefObject<HTMLElement | null>;
   menuOpen:                    boolean;

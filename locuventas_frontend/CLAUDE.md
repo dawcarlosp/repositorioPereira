@@ -65,9 +65,9 @@ src/
 │   └── dev/
 │       └── SobreMi.jsx     # Página de perfil del desarrollador
 ├── constants/
-│   ├── breakpoints.js      # isMobile(), isBreakpoint() helpers
-│   ├── states.js
-│   └── index.js            # re-exporta todo
+│   ├── breakpoints.ts      # isMobile(), isBreakpoint() helpers
+│   ├── states.ts
+│   └── index.ts            # re-exporta todo
 ├── context/
 │   ├── AuthContext.tsx     # Auth global: token, roles, setAuth, logout
 │   ├── HeaderContext.tsx   # Estado del header: menús, dropdowns, modales
@@ -85,10 +85,10 @@ src/
 │   ├── useFiltrosProducto.ts # Carga países y categorías (catálogos maestros)
 │   ├── useGestionProductos.ts # CRUD productos: form, modales, submit
 │   ├── useHeaderManager.ts # Estado completo del header + logout + confirmación global
-│   ├── useProductos.js     # Fetch paginado de productos con filtros
+│   ├── useProductos.ts     # Fetch paginado de productos con filtros
 │   ├── useResponsiveLayout.ts # isSmall, isMedium, isLarge desde useBreakpoint
-│   ├── useVendedoresPendientes.js # Fetch y acciones sobre vendedores sin rol
-│   └── useVentasManager.js # Fetch ventas, pago, cancelación, detalle
+│   ├── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
+│   └── useVentasManager.ts # Fetch ventas, pago, cancelación, detalle
 ├── layout/
 │   ├── AppLayout.jsx       # Layout principal: aside + main
 │   ├── Aside.jsx
@@ -104,8 +104,8 @@ src/
 │       │   ├── MenuUsuarioDropdown.jsx
 │       │   └── VendedoresDropdown.jsx
 │       └── config/
-│           ├── adminMenuConfig.js    # Árbol de menú admin (datos)
-│           └── userMenuConfig.js     # Árbol de menú usuario (datos)
+│           ├── adminMenuConfig.ts    # Árbol de menú admin (datos)
+│           └── userMenuConfig.ts     # Árbol de menú usuario (datos)
 ├── pages/
 │   ├── Dashboard.jsx           # Vista principal de ventas + carrito
 │   ├── GestionProductosPagina.jsx
@@ -115,11 +115,12 @@ src/
 │   ├── VentasPagina.jsx
 │   └── VentasPendientesPagina.jsx
 ├── services/
-│   └── api.ts              # apiRequest<T>() — cliente HTTP centralizado
+│   ├── api.ts              # apiRequest<T>() — cliente HTTP centralizado
+│   └── venta.service.ts    # descargarTicketPDF
 └── utils/
     ├── imageUtils.ts       # resolveProductImage, resolveCountryImage
-    ├── normalizaMultiValor.js
-    └── user.validator.js
+    ├── normalizaMultiValor.ts
+    └── user.validator.ts
 ```
 
 ## Arquitectura y patrones
@@ -175,17 +176,21 @@ apuntando al trigger. Acepta `side="top|bottom|left|right"`.
 - `hooks/useFiltrosProducto.ts`, `useGestionProductos.ts`, `useHeaderManager.ts`
 - `components/common/InputFieldset.tsx`, `SelectFieldset.tsx`, `UploadComponent.tsx`
 - `components/products/ModalProductoForm.tsx`
+- `hooks/useProductos.ts`
+- `hooks/useVentasManager.ts`
+- `hooks/useVendedoresPendientes.ts`
 - `utils/imageUtils.ts`
+- `utils/user.validator.ts`
+- `app/config/api.ts`
+- `services/venta.service.ts`
+- `constants/breakpoints.ts`, `states.ts`, `index.ts`
+- `layout/Header/config/adminMenuConfig.ts`, `userMenuConfig.ts`
 - `domain/` — todos los tipos base
 
 **Pendiente (por orden):**
-1. `hooks/useCarrito.js`
-2. `hooks/useProductos.js`
-3. `hooks/useVentasManager.js`
-4. `hooks/useVendedoresPendientes.js`
-5. Componentes comunes restantes
-6. Layout y Header
-7. Pages
+1. Componentes comunes restantes
+3. Layout y Header
+4. Pages
 
 **Convenciones durante la migración:**
 - Nunca usar `any` — usar `unknown` y hacer cast explícito
