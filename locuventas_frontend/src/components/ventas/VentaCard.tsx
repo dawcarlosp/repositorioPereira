@@ -1,9 +1,15 @@
-// src/components/ventas/VentaCard.jsx
-import React from "react";
+import type { Venta } from "@domain/venta.types";
 import BotonClaro from "@buttons/BotonClaro";
-import { PAYMENT_STATE_STYLES, getPaymentStateStyle } from "@constants/states";
+import { getPaymentStateStyle } from "@constants/states";
 
-export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto }) {
+interface Props {
+  venta:         Venta;
+  onDetalle:     (v: Venta) => void;
+  onCancelar:    (v: Venta) => void;
+  onCobrarResto: (v: Venta) => void;
+}
+
+export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto }: Props) {
   const fecha = venta.fecha
     ? new Date(venta.fecha).toLocaleString("es-ES", {
         day: "2-digit", month: "2-digit", year: "numeric",
@@ -14,7 +20,6 @@ export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto 
   return (
     <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 w-full transition-all duration-200 hover:border-zinc-600">
 
-      {/* Cabecera */}
       <div className="flex justify-between items-center">
         <span className="font-black text-white text-base">#{venta.id}</span>
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide border ${
@@ -24,7 +29,6 @@ export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto 
         </span>
       </div>
 
-      {/* Info */}
       <div className="flex flex-col gap-1.5 text-xs text-zinc-400">
         <div className="flex justify-between">
           <span>Fecha</span>
@@ -56,7 +60,6 @@ export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto 
         )}
       </div>
 
-      {/* Acciones */}
       <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
         <BotonClaro
           className="!h-8 !text-[11px] !justify-center"

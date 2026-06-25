@@ -1,10 +1,16 @@
-import React from "react";
+import type { VentaDetalle } from "@domain/venta.types";
 import BaseModal from "@components/common/BaseModal";
 import BotonClaro from "@buttons/BotonClaro";
 import Boton from "@buttons/Boton";
 import { VentaService } from "@services/venta.service";
 
-export default function ModalDetalleVenta({ venta, onClose }) {
+interface Props {
+  venta:   VentaDetalle;
+  onClose: () => void;
+  loading?: boolean;
+}
+
+export default function ModalDetalleVenta({ venta, onClose }: Props) {
   if (!venta) return null;
 
   return (

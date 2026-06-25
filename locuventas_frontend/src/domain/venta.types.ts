@@ -17,3 +17,16 @@ export interface LineaVenta {
   cantidad:   number;
   subtotal:   number;
 }
+
+export interface LineaVentaDetalle {
+  productoId:      number;
+  productoNombre:  string;
+  cantidad:        number;
+  subtotal:        number;
+  iva:             number;
+  subtotalConIva:  number;
+}
+
+export interface VentaDetalle extends Venta {
+  lineas: LineaVentaDetalle[];
+}

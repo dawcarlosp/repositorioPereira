@@ -1,20 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
-import type { Venta } from "@domain/venta.types";
-
-interface LineaVentaDetalle {
-  productoId:      number;
-  productoNombre:  string;
-  cantidad:        number;
-  subtotal:        number;
-  iva:             number;
-  subtotalConIva:  number;
-}
-
-interface VentaDetalle extends Venta {
-  lineas: LineaVentaDetalle[];
-}
+import type { Venta, VentaDetalle } from "@domain/venta.types";
 
 interface VentaPageDTO {
   content:     Venta[];

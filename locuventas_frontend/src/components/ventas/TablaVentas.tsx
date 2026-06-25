@@ -1,6 +1,25 @@
-import React from "react";
+import type { Venta } from "@domain/venta.types";
 import DataTable from "@components/common/DataTable";
 import { getPaymentStateStyle } from "@constants/states";
+
+interface Props {
+  ventas:          Venta[];
+  loading:         boolean;
+  onVerDetalle:    (v: Venta) => void;
+  onCancelarVenta: (v: Venta) => void;
+  onCobrarResto:   (v: Venta) => void;
+  size?:           number;
+}
+
+const columnas = [
+  { label: "ID" },
+  { label: "Fecha" },
+  { label: "Vendedor" },
+  { label: "Total", className: "text-right" },
+  { label: "Estado", className: "text-center" },
+  { label: "Cancelada", className: "text-center" },
+  { label: "Acciones", className: "text-right" }
+];
 
 export default function TablaVentas({
   ventas,
@@ -8,33 +27,10 @@ export default function TablaVentas({
   onVerDetalle,
   onCancelarVenta,
   onCobrarResto,
-  paginaActual = 0,
-  totalPaginas = 1,
-  onPageChange,
   size,
-  onSizeChange
-}) {
-  // Definimos las columnas para el Layout
-  const columnas = [
-    { label: "ID" },
-    { label: "Fecha" },
-    { label: "Vendedor" },
-    { label: "Total", className: "text-right" },
-    { label: "Estado", className: "text-center" },
-    { label: "Cancelada", className: "text-center" },
-    { label: "Acciones", className: "text-right" }
-  ];
-
+}: Props) {
   return (
-    <DataTable
-      columnas={columnas}
-      loading={loading}
-      paginaActual={paginaActual}
-      totalPaginas={totalPaginas}
-      onPageChange={onPageChange}
-      size={size}         
-      onSizeChange={onSizeChange}
-    >
+    <DataTable columnas={columnas} loading={loading} size={size}>
       {ventas.length === 0 ? (
         <tr>
           <td colSpan={7} className="py-20 text-center text-zinc-500 italic">
@@ -47,10 +43,8 @@ export default function TablaVentas({
             key={venta.id}
             className="hover:bg-zinc-700/30 transition-colors group text-zinc-300"
           >
-            {/* ID */}
             <td className="px-4 py-4 font-medium">#{venta.id}</td>
 
-            {/* Fecha */}
             <td className="px-4 py-4 text-sm whitespace-nowrap text-zinc-400">
               {venta.fecha ? new Date(venta.fecha).toLocaleString("es-ES", {
                 day: "2-digit", month: "2-digit", year: "numeric",
@@ -58,7 +52,6 @@ export default function TablaVentas({
               }) : "-"}
             </td>
 
-            {/* Vendedor */}
             <td className="px-4 py-4">
               <div className="flex items-center gap-2">
                 <div className="w-7 h-7 rounded-full bg-orange-500/10 flex items-center justify-center text-[10px] text-orange-500 border border-orange-500/20">
@@ -68,12 +61,10 @@ export default function TablaVentas({
               </div>
             </td>
 
-            {/* Total */}
             <td className="px-4 py-4 text-right text-white font-bold">
               {venta.total?.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €
             </td>
 
-            {/* Estado */}
             <td className="px-4 py-4 text-center">
               <span className={`
                 inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wide border
@@ -83,7 +74,6 @@ export default function TablaVentas({
               </span>
             </td>
 
-            {/* Cancelada */}
             <td className="px-4 py-4 text-center">
               {venta.cancelada ? (
                 <span className="text-rose-500 text-xs font-semibold">Anulada</span>
@@ -92,7 +82,6 @@ export default function TablaVentas({
               )}
             </td>
 
-            {/* Acciones */}
             <td className="px-4 py-4">
               <div className="flex justify-end gap-2 opacity-80 group-hover:opacity-100 transition-opacity">
                 <button
@@ -138,5 +127,3 @@ export default function TablaVentas({
     </DataTable>
   );
 }
-
-

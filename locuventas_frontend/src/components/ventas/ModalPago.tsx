@@ -1,24 +1,31 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import BaseModal from "@components/common/BaseModal";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
+
+interface Props {
+  totalPendiente: number;
+  onConfirmar:    (monto: number) => void;
+  onCancelar:     () => void;
+  confirmText?:   string;
+}
 
 export default function ModalPago({
   totalPendiente,
   onConfirmar,
   onCancelar,
   confirmText = "Cobrar",
-}) {
+}: Props) {
   const [monto, setMonto] = useState(totalPendiente || "");
   const [error, setError] = useState("");
 
-  const handleInput = (e) => {
+  const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value.replace(",", ".");
     if (/^\d*\.?\d{0,2}$/.test(val)) setMonto(val);
   };
 
   const handleConfirm = () => {
-    const valor = parseFloat(monto);
+    const valor = parseFloat(monto as string);
     if (!valor || isNaN(valor) || valor <= 0) {
       setError("Introduce un importe válido");
       return;

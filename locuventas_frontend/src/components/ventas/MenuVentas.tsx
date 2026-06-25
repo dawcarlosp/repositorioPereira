@@ -1,12 +1,16 @@
-import React from 'react'
 import { useNavigate, useLocation } from "react-router-dom";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
-function MenuVentas({ closeMenu }) {
+
+interface Props {
+  closeMenu?: () => void;
+}
+
+export default function MenuVentas({ closeMenu }: Props) {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const handleNav = (path) => {
+  const handleNav = (path: string) => {
     navigate(path);
     if (closeMenu) closeMenu(); 
   };
@@ -47,7 +51,3 @@ function MenuVentas({ closeMenu }) {
     </>
   )
 }
-
-export default MenuVentas
-
-
