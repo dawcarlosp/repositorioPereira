@@ -1,7 +1,15 @@
-// src/components/productos/TablaProductos.jsx
+import type { Producto } from "@domain/producto.types";
 import DataTable from "@components/common/DataTable";
 import Boton from "@buttons/Boton";
 import { resolveProductImage } from "@utils/imageUtils";
+
+interface Props {
+  productos:  Producto[];
+  loading:    boolean;
+  size:       number;
+  onEditar:   (p: Producto) => void;
+  onEliminar: (id: number) => void;
+}
 
 const columnas = [
   { label: "ID" },
@@ -19,7 +27,7 @@ export default function TablaProductos({
   size,
   onEditar,
   onEliminar,
-}) {
+}: Props) {
   return (
     <DataTable columnas={columnas} loading={loading} size={size}>
       {productos.length === 0 ? (
@@ -104,5 +112,3 @@ export default function TablaProductos({
     </DataTable>
   );
 }
-
-

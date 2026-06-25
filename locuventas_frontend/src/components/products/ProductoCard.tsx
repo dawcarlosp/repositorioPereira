@@ -1,12 +1,18 @@
-import React from "react";
+import type { Producto } from "@domain/producto.types";
 import { resolveProductImage } from "@utils/imageUtils";
 
-export default function ProductoCard({ producto, cantidad, onAdd }) {
+interface Props {
+  producto:  Producto;
+  cantidad:  number;
+  onAdd:     (p: Producto) => void;
+}
+
+export default function ProductoCard({ producto, cantidad, onAdd }: Props) {
   const hasQuantity = cantidad > 0;
 
   return (
     <div
-      onClick={() => onAdd && onAdd(producto)}
+      onClick={() => onAdd(producto)}
       className={`
         relative overflow-hidden rounded-2xl bg-zinc-900 border transition-all duration-300 group
         flex flex-col p-4 gap-3 w-full max-w-[260px] h-[280px] cursor-pointer select-none
@@ -20,7 +26,6 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
         hover:-translate-y-1
       `}
     >
-      {/* 1. Badge de Cantidad (Elegante) */}
       {hasQuantity && (
         <div className="absolute top-3 right-3 z-10 animate-in zoom-in duration-300">
           <span
@@ -32,7 +37,6 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
         </div>
       )}
 
-      {/* 2. Cabecera: Nombre e ID */}
       <div className="flex flex-col min-h-[44px]">
         <span className="font-bold text-zinc-500 uppercase tracking-widest">
           #{producto.id}
@@ -50,7 +54,6 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
         </h3>
       </div>
 
-      {/* 3. Imagen del Producto */}
       <div className="relative flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
         {producto.foto ? (
           <img
@@ -78,12 +81,9 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
           </div>
         )}
 
-        {/* Overlay de hover sutil */}
         <div className="absolute inset-0 bg-orange-500/0 group-hover:bg-orange-500/5 transition-colors" />
       </div>
-      {/* 4. Info Inferior */}
       <div className="flex flex-col mt-auto pt-2 border-t border-zinc-800/50">
-        {/* Fila 1: Categorías (Ocupa todo el ancho arriba del precio) */}
         {producto.categorias?.length > 0 && (
           <div className="mb-1">
             <span
@@ -97,7 +97,6 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
           </div>
         )}
 
-        {/* Fila 2: Precio y País (Distribución extremos) */}
         <div className="flex justify-between items-end gap-2">
           <div className="flex flex-col">
             <span className="text-base font-black text-white whitespace-nowrap">
@@ -108,7 +107,6 @@ export default function ProductoCard({ producto, cantidad, onAdd }) {
             </span>
           </div>
 
-          {/* País (Tamaño fijo para que no baile) */}
           {producto.paisNombre && (
             <div className="flex items-center gap-1.5 bg-zinc-800/80 px-2 py-1 rounded-md border border-zinc-700 shrink-0">
               {producto.paisFoto && (

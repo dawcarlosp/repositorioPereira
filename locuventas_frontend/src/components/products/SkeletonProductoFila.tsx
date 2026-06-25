@@ -1,5 +1,8 @@
-// src/components/productos/SkeletonProductoFila.jsx
-export default function SkeletonProductoFila({ cols = 5 }) {
+interface Props {
+  cols?: number;
+}
+
+export default function SkeletonProductoFila({ cols = 5 }: Props) {
   return (
     <tr className="animate-pulse border-b border-zinc-800/50">
       {Array.from({ length: cols }).map((_, i) => (

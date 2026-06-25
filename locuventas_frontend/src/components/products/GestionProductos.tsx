@@ -1,5 +1,5 @@
-// src/components/productos/GestionProductos.jsx
-import React, { useState } from "react";
+import { useState } from "react";
+import type { SelectOption } from "@domain/ui.types";
 import useProductos from "@hooks/useProductos";
 import useFiltrosProducto from "@hooks/useFiltrosProducto";
 import useGestionProductos from "@hooks/useGestionProductos";
@@ -14,8 +14,6 @@ import BuscadorInput from "@components/common/BuscadorInput";
 import SelectFiltro from "@components/common/SelectFiltro";
 import FAB from "@components/common/FAB";
 import Boton from "@buttons/Boton";
-import { Donut } from "lucide-react";
-import { toast } from "react-toastify";
 
 const SkeletonProductoCard = () => (
   <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 animate-pulse">
@@ -66,9 +64,9 @@ export default function GestionProductos() {
     onSuccess: () => setPage(0),
   });
 
-  const handleSearch    = (v)   => { setSearch(v);            setPage(0); };
-  const handlePais      = (e)   => { setPaisId(e.target.value);      setPage(0); };
-  const handleCategoria = (e)   => { setCategoriaId(e.target.value); setPage(0); };
+  const handleSearch    = (v: string)   => { setSearch(v);            setPage(0); };
+  const handlePais      = (e: React.ChangeEvent<HTMLSelectElement>)   => { setPaisId(e.target.value);      setPage(0); };
+  const handleCategoria = (e: React.ChangeEvent<HTMLSelectElement>)   => { setCategoriaId(e.target.value); setPage(0); };
   const hayFiltros      = search || paisId || categoriaId;
 
   const paginacion = !loading && totalPages > 1 && (
@@ -77,7 +75,7 @@ export default function GestionProductos() {
       totalPages={totalPages}
       onPageChange={setPage}
       size={size}
-      onSizeChange={(s) => { setSize(s); setPage(0); }}
+      onSizeChange={(s: number) => { setSize(s); setPage(0); }}
     />
   );
 
@@ -87,7 +85,6 @@ export default function GestionProductos() {
         <FAB onClick={() => abrirNuevo(paises)} title="Nuevo Producto" icon="+" />
       )}
 
-      {/* Barra de filtros */}
       <div className="flex flex-wrap items-end gap-3 mb-6">
         <div className="flex-1 min-w-[200px]">
           <BuscadorInput
@@ -131,7 +128,6 @@ export default function GestionProductos() {
         )}
       </div>
 
-      {/* Vista desktop */}
       {!isMobile && (
         <div className="flex flex-col gap-4">
           <TablaProductos
@@ -145,7 +141,6 @@ export default function GestionProductos() {
         </div>
       )}
 
-      {/* Vista móvil */}
       {isMobile && (
         <div className="flex flex-col gap-4 pb-16">
           {loading

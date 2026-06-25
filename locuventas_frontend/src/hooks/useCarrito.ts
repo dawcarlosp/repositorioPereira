@@ -2,7 +2,7 @@
 import { useMemo } from "react";
 import { Producto } from "../domain/producto.types"; // Importar Producto
 
-interface CarritoItem {
+export interface CarritoItem {
   cantidad: number;
   producto: Producto;
 }
