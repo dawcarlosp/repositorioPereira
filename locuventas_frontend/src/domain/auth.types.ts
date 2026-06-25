@@ -1,11 +1,16 @@
-// src/types/auth.types.ts
+// src/domain/auth.types.ts
 export type Role = "ROLE_ADMIN" | "ROLE_VENDEDOR";
 
 export interface Auth {
-  token:  string;
-  nombre: string;
-  email:  string;
+  token:  string | null;
+  nombre: string | null;
   foto:   string | null;
+  email:  string | null;
   roles:  Role[];
-  id:     number;
+}
+
+export interface ConfirmacionGlobal {
+  mensaje:     string;
+  confirmText: string;
+  onConfirmar: () => void;
 }
