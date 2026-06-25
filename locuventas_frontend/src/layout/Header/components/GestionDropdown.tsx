@@ -1,9 +1,14 @@
-// src/components/layout/GestionDropdown.jsx
-import React from "react";
+import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
 import DropdownContainer from "@components/common/DropdownContainer";
 import AdminMenu from "@layout/Header/components/AdminMenu";
 
-export default function GestionDropdown({ isOpen, triggerRef, h }) {
+interface Props {
+  isOpen:      boolean;
+  triggerRef:  React.RefObject<HTMLElement | null>;
+  h:           UseHeaderManagerReturn;
+}
+
+export default function GestionDropdown({ isOpen, triggerRef, h }: Props) {
   return (
     <DropdownContainer
       isOpen={isOpen}

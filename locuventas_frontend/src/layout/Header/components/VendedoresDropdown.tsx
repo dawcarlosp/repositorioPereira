@@ -1,10 +1,13 @@
-// src/layout/Header/components/VendedoresDropdown.jsx
-import React from "react";
 import DropdownContainer from "@components/common/DropdownContainer";
 import useHeaderManager from "@hooks/useHeaderManager";
 import AdminMenu from "@layout/Header/components/AdminMenu";
 
-export default function VendedoresDropdown({ isOpen, triggerRef }) {
+interface Props {
+  isOpen:      boolean;
+  triggerRef:  React.RefObject<HTMLElement | null>;
+}
+
+export default function VendedoresDropdown({ isOpen, triggerRef }: Props) {
   const h = useHeaderManager();
 
   return (
