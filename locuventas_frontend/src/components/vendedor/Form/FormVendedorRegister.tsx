@@ -4,8 +4,7 @@ import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
 import UploadAvatar from "@components/vendedor/UploadAvatar";
 import { validateUser } from "@/utils/user.validator";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 
 interface Props {
   isOpen:   boolean;
@@ -47,7 +46,7 @@ function FormVendedorRegister({ isOpen, setIsOpen }: Props) {
     setTouched({ nombre: true, email: true, password: true, foto: true });
 
     if (Object.keys(validationErrors).length > 0) {
-      toast.error("Revisa los campos marcados.", { containerId: "modal-toast" });
+      toast.error("Revisa los campos marcados.");
       return;
     }
 
@@ -115,12 +114,6 @@ function FormVendedorRegister({ isOpen, setIsOpen }: Props) {
         placeholder="Contraseña" 
         error={errors.password} 
         touched={touched.password} 
-      />
-      <ToastContainer 
-        containerId="modal-toast" 
-        position="top-left" 
-        autoClose={3000} 
-        style={{ zIndex: 999999 }}
       />
     </FormDialog>
   );

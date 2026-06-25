@@ -12,7 +12,7 @@ export interface Auth {
 export interface ConfirmacionGlobal {
   mensaje:     string;
   confirmText: string;
-  onConfirmar: () => void;
+  onConfirmar: () => void | Promise<void>;
 }
 
 export interface UsuarioPendiente {
