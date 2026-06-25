@@ -8,24 +8,31 @@ import { useState } from "react";
 import AlertSimple from "@components/common/AlertSimple";
 import LogoNegocio from "@components/common/LogoNegocio";
 
-function FormVendedorLogin({ setIsOpen }) {
+interface Props {
+  setIsOpen: (v: boolean) => void;
+}
+
+function FormVendedorLogin({ setIsOpen }: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const { setAuth } = useAuth();
   const navigate = useNavigate();
 
   const [mostrarAlerta, setMostrarAlerta] = useState(false);
   const [mensajeAlerta, setMensajeAlerta] = useState("");
 
-  const handleLogin = async (e) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const result = await apiRequest("auth/login", { email, password });
+      const result = await apiRequest<{
+        data: { token: string; roles: string[]; nombre: string; foto: string; email: string };
+        message?: string;
+      }>("auth/login", { email, password });
 
       if (result.data.token) {
         const roles = result.data.roles || [];
@@ -44,11 +51,12 @@ function FormVendedorLogin({ setIsOpen }) {
         setError("No se recibió un token");
       }
     } catch (err) {
-      if (err.message && err.path && err.timestamp) {
-        setMensajeAlerta(err.message);
+      const errorObj = err as { message?: string; path?: string; timestamp?: string };
+      if (errorObj.message && errorObj.path && errorObj.timestamp) {
+        setMensajeAlerta(errorObj.message);
         setMostrarAlerta(true);
-      } else if (err.message) {
-        setError(err.message);
+      } else if (errorObj.message) {
+        setError(errorObj.message);
       } else {
         setError("Error en la autenticación");
       }
