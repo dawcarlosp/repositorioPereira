@@ -1,11 +1,7 @@
-//src/components/dev/SobreMi.jsx
-import React from "react";
-
 const SobreMi = () => (
   <div className="min-h-screen bg-[#0B132B] text-white py-10 px-4 sm:px-8 md:px-16">
     <div className="max-w-4xl mx-auto">
 
-      {/* Encabezado SVG */}
       <a
         href="https://github.com/dawcarlosp"
         target="_blank"
@@ -18,14 +14,12 @@ const SobreMi = () => (
         />
       </a>
 
-      {/* Subtítulo */}
       <p className="text-center italic text-lg mb-6">
         🧠 Siempre aprendiendo | 💻 Apasionado por el desarrollo web moderno
       </p>
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Sobre mí */}
       <h2 className="text-2xl font-bold mb-4">🎓 Sobre mí</h2>
       <ul className="list-disc list-inside space-y-2 text-lg mb-8">
         <li>📍 Desarrollador Web Full Stack Jr.</li>
@@ -36,10 +30,8 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Stack actual */}
       <h2 className="text-2xl font-bold mb-4">💡 Stack actual</h2>
 
-      {/* Backend */}
       <h3 className="text-xl font-semibold mb-2">🔧 Backend</h3>
       <img
         src="https://skillicons.dev/icons?i=java,spring,php,laravel"
@@ -47,7 +39,6 @@ const SobreMi = () => (
         className="h-10 mb-4"
       />
 
-      {/* Frontend */}
       <h3 className="text-xl font-semibold mb-2">🎨 Frontend</h3>
       <div className="flex flex-wrap items-center gap-4 mb-4">
         <img src="https://skillicons.dev/icons?i=html" alt="HTML" className="h-10 w-auto" />
@@ -55,7 +46,6 @@ const SobreMi = () => (
         <img src="https://skillicons.dev/icons?i=js,react,tailwind,bootstrap,vite" alt="Frontend stack" className="h-10 w-auto" />
       </div>
 
-      {/* Base de datos */}
       <h3 className="text-xl font-semibold mb-2">🗃️ Base de Datos</h3>
       <img
         src="https://skillicons.dev/icons?i=mysql,mongodb"
@@ -63,7 +53,6 @@ const SobreMi = () => (
         className="h-10 mb-4"
       />
 
-      {/* Cloud & DevOps */}
       <h3 className="text-xl font-semibold mb-2">☁️ Cloud & DevOps</h3>
       <div className="flex flex-wrap items-center gap-4 mb-8">
         <img src="https://skillicons.dev/icons?i=docker,gcp,git" alt="DevOps stack" className="h-10 w-auto" />
@@ -73,7 +62,6 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Herramientas favoritas */}
       <h2 className="text-2xl font-bold mb-4">🧰 Herramientas favoritas</h2>
       <div className="flex flex-wrap items-center gap-4 mb-8">
         <img src="https://skillicons.dev/icons?i=vscode,postman,mysql" alt="Herramientas" className="h-10 w-auto" />
@@ -83,7 +71,6 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Lenguajes más usados */}
       <h2 className="text-2xl font-bold mb-4">📈 Lenguajes más usados</h2>
       <img
         src="https://github-readme-stats.vercel.app/api/top-langs/?username=dawcarlosp&layout=compact&theme=github_dark&langs_count=8"
@@ -93,7 +80,6 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Estadísticas GitHub */}
       <h2 className="text-2xl font-bold mb-4">📊 Estadísticas de GitHub</h2>
       <img
         src="https://github-readme-stats.vercel.app/api?username=dawcarlosp&show_icons=true&theme=github_dark"
@@ -108,7 +94,6 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Actividad reciente */}
       <h2 className="text-2xl font-bold mb-4">📈 Actividad reciente</h2>
       <img
         src="https://github-readme-activity-graph.vercel.app/graph?username=dawcarlosp&theme=github-dark&hide_border=true"
@@ -118,7 +103,6 @@ const SobreMi = () => (
 
       <hr className="border-[#1B263B] my-8" />
 
-      {/* Contacto */}
       <h2 className="text-2xl font-bold mb-4">📬 Contacto & redes</h2>
       <div className="flex flex-wrap gap-4 items-center mb-8">
         <a href="mailto:dawcarlospereira@gmail.com" target="_blank" rel="noopener noreferrer">
@@ -141,7 +125,6 @@ const SobreMi = () => (
         </a>
       </div>
 
-      {/* Footer SVG */}
       <img
         src="https://raw.githubusercontent.com/dawcarlosp/dawcarlosp/main/assets-perfil/footerPerfil.svg"
         alt="Footer"
