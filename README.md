@@ -117,3 +117,6 @@ docker compose down -v
 
 ##### Proyecto educativo para DAW – IES Juan Bosco
 
+--- 
+
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/dawcarlosp/repositorioPereira)
