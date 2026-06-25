@@ -1,9 +1,11 @@
-// src/components/FooterLogin.jsx
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import Boton from "@buttons/Boton";
 
-export default function FooterLogin({ modo = "perfil" }) {
+interface Props {
+  modo?: "perfil" | "volver";
+}
+
+export default function FooterLogin({ modo = "perfil" }: Props) {
   const navigate = useNavigate();
 
   if (modo === "volver") {
