@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiRequest } from "@services/api";
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
@@ -7,17 +7,22 @@ import { validateUser } from "@/utils/user.validator";
 import { toast } from "react-toastify";
 import { useAuth } from "@context/useAuth";
 
-function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
-  const [foto, setFoto] = useState(null);
+interface Props {
+  isOpen:   boolean;
+  setIsOpen: (v: boolean) => void;
+  usuario:  { nombre?: string; email?: string; foto?: string | null } | null;
+}
+
+function FormEditarPerfil({ isOpen, setIsOpen, usuario }: Props) {
+  const [foto, setFoto] = useState<File | null>(null);
   const [nombre, setNombre] = useState(usuario?.nombre || "");
   const [email, setEmail] = useState(usuario?.email || "");
   const [password, setPassword] = useState("");
-  const [errors, setErrors] = useState({});
-  const [touched, setTouched] = useState({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(false);
   const { setAuth } = useAuth();
 
-  // Sincronizar campos cuando se abre el modal o cambia el usuario
   useEffect(() => {
     if (isOpen) {
       setNombre(usuario?.nombre || "");
@@ -29,7 +34,6 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
     }
   }, [isOpen, usuario]);
 
-  // Validación reactiva
   useEffect(() => {
     setErrors(validateUser({ nombre, email, password, foto }, { validarFoto: false }));
   }, [nombre, email, password, foto]);
@@ -49,13 +53,13 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
 
     setLoading(true);
     const formData = new FormData();
-    const userDTO = { nombre, email };
+    const userDTO: Record<string, string> = { nombre, email };
     if (password.trim()) userDTO.password = password;
     formData.append("user", new Blob([JSON.stringify(userDTO)], { type: "application/json" }));
     if (foto) formData.append("foto", foto);
 
     try {
-      const result = await apiRequest("usuarios/editar-perfil", formData, {
+      const result = await apiRequest<{ foto?: string }>("usuarios/editar-perfil", formData, {
         isFormData: true,
         method: "PUT",
       });
@@ -69,8 +73,9 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
       }));
       setIsOpen(false);
     } catch (err) {
-      setErrors(err);
-      toast.error(err.message || "Error al editar");
+      const errorObj = err as Record<string, string>;
+      setErrors(errorObj);
+      toast.error(errorObj.message || "Error al editar");
     } finally {
       setLoading(false);
     }
@@ -97,7 +102,6 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }) {
         }
       />
 
-      {/* Error de foto separado porque UploadAvatar no usa InputFieldsetValidaciones */}
       {errors.foto && touched.foto && (
         <p className="text-red-400 text-xs text-center -mt-2 mb-1">{errors.foto}</p>
       )}

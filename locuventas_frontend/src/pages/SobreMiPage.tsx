@@ -1,4 +1,3 @@
-// src/pages/SobreMiPage.jsx
 import SobreMi from "@components/dev/SobreMi";
 import FooterLogin from "@components/FooterLogin";
 

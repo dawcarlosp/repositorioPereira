@@ -1,6 +1,5 @@
-import React from "react";
-
 import MenuVentas from "@components/ventas/MenuVentas";
+
 export default function Footer() {
 
   return (

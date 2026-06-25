@@ -2,14 +2,7 @@ import { useState, useEffect } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 import type { ApiResponse, PageDTO } from "@domain/api.types";
-
-interface UsuarioPendiente {
-  id:         number;
-  nombre:     string;
-  email:      string;
-  foto:       string | null;
-  createdAt:  string;
-}
+import type { UsuarioPendiente } from "@domain/auth.types";
 
 interface UseVendedoresPendientesOptions {
   page?:   number;
