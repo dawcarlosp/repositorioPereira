@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@services/api";
 import type { SelectOption } from "@domain/ui.types";
+import type { Producto } from "@domain/producto.types";
 
 interface FormState {
   nombre:         string;
@@ -40,7 +41,7 @@ const API_URL = import.meta.env.VITE_API_URL as string;
 
 export default function useGestionProductos({ onSuccess }: UseGestionProductosOptions) {
   const [form,     setForm]     = useState<FormState>(FORM_INITIAL);
-  const [editando, setEditando] = useState<any | null>(null);
+  const [editando, setEditando] = useState<Producto | null>(null);
   const [showForm, setShowForm] = useState(false);
   const [modal,    setModal]    = useState<ModalState>({ visible: false });
 
@@ -53,7 +54,7 @@ export default function useGestionProductos({ onSuccess }: UseGestionProductosOp
     setShowForm(true);
   };
 
-  const abrirEditar = (prod: any, paises: SelectOption[], categorias: SelectOption[]) => {
+  const abrirEditar = (prod: Producto, paises: SelectOption[], categorias: SelectOption[]) => {
     setEditando(prod);
     const rutaFoto = prod.foto?.includes("/") ? prod.foto : `productos/${prod.foto}`;
 
@@ -87,12 +88,13 @@ export default function useGestionProductos({ onSuccess }: UseGestionProductosOp
       toast.success(id ? "Producto editado" : "Producto creado");
       cerrarForm();
       onSuccess();
-    } catch (err: any) {
-      toast.error(err?.foto ?? err?.error ?? "Error guardando producto");
+    } catch (err: unknown) {
+      const e = err as Record<string, string | undefined>;
+      toast.error(e?.foto ?? e?.error ?? "Error guardando producto");
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent) => {
     e.preventDefault();
     const { nombre, precio, paisId, categoriaIds, foto, iva } = form;
 
@@ -152,11 +154,12 @@ export default function useGestionProductos({ onSuccess }: UseGestionProductosOp
           await apiRequest(`productos/${id}`, null, { method: "DELETE" });
           toast.success("Producto eliminado correctamente.");
           onDeleteSuccess();
-        } catch (err: any) {
-          if (err?.razon === "EN_VENTA") {
+        } catch (err: unknown) {
+          const er = err as Record<string, string | undefined>;
+          if (er?.razon === "EN_VENTA") {
             toast.warn("No puedes eliminar este producto porque ya ha sido vendido.");
           } else {
-            toast.error(err?.error ?? "No se pudo eliminar el producto.");
+            toast.error(er?.error ?? "No se pudo eliminar el producto.");
           }
         }
       },

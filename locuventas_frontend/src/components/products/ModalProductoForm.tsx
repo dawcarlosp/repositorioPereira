@@ -10,7 +10,7 @@ import type { SelectOption } from "@domain/ui.types";
 interface Props {
   visible:         boolean;
   onClose:         () => void;
-  onSubmit:        (e: React.FormEvent) => void;
+  onSubmit:        (e: React.SubmitEvent) => void;
   editando:        unknown;
   nombre:          string;
   setNombre:       (v: string) => void;
