@@ -1,4 +1,4 @@
-import FormVendedorLogin from "@components/vendedor/Form/FormVendedorLogin";
+import FormVendedorLogin from "@/features/auth/components/Form/FormVendedorLogin";
 import FooterLogin from "@components/FooterLogin";
 import AppLayout from "@layout/AppLayout";
 

@@ -5,7 +5,7 @@ import {
   CircleArrowLeft, CircleArrowRight,
   CircleArrowDown, CircleArrowUp,
 } from "lucide-react";
-import PendientesList from "@components/vendedor/PendientesList";
+import PendientesList from "@features/auth/components/PendientesList";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
 import type { MenuItem } from "@domain/ui.types";
 
@@ -18,7 +18,10 @@ interface RecursiveMenuProps {
   h:         UseHeaderManagerReturn;
 }
 
-const PANEL_MAP: Record<string, React.ComponentType<Record<string, unknown>>> = { PendientesList };
+// SOLUCIÓN 1: Usar 'any' temporalmente en las props del mapa dinámico 
+// para que acepte componentes con distintas firmas de props obligatorias.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const PANEL_MAP: Record<string, React.ComponentType<any>> = { PendientesList };
 
 export default function RecursiveMenu({
   items,
@@ -65,7 +68,8 @@ export default function RecursiveMenu({
               <BotonClaro
                 key={item.label}
                 className="!h-9 !text-[10px] !justify-start whitespace-nowrap"
-                onClick={() => { onClose(); item.action(); }}
+                // SOLUCIÓN 2: Uso seguro de la función mediante encadenamiento opcional (?.)
+                onClick={() => { onClose(); item.action?.(); }}
               >
                 {item.label}
               </BotonClaro>
@@ -101,7 +105,8 @@ export default function RecursiveMenu({
           );
         }
 
-        const PanelComponent = hasPanel ? PANEL_MAP[item.panel] : null;
+        // SOLUCIÓN 3: Validar que item.panel exista antes de usarlo como índice del objeto
+        const PanelComponent = item.panel ? PANEL_MAP[item.panel] : null;
 
         return (
           <Fragment key={item.label}>

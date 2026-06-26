@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "@services/api";
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
-import UploadAvatar from "@components/vendedor/UploadAvatar";
+import UploadAvatar from "@/features/auth/components/UploadAvatar";
 import { validateUser } from "@/utils/user.validator";
 import { toast } from "react-toastify";
 import { useAuth } from "@context/useAuth";

@@ -45,7 +45,8 @@
       "@constants/*":  ["./src/constants/*"],
       "@utils/*":      ["./src/utils/*"],
       "@types/*":      ["./src/types/*"],
-      "@domain/*":     ["./src/domain/*"]
+      "@domain/*":     ["./src/domain/*"],
+       "@features/*":     ["./src/features/*"]
     },
 
     // ── Misc ─────────────────────────────────────────────────────

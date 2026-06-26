@@ -23,7 +23,8 @@ export default defineConfig({
       '@services':   path.resolve(__dirname, 'src/services'),
       '@assets':     path.resolve(__dirname, 'src/assets'),
       '@hooks':      path.resolve(__dirname, 'src/hooks'),
-      '@domain':     path.resolve(__dirname, 'src/domain'),  // ← añadir
+      '@domain':     path.resolve(__dirname, 'src/domain'), 
+      '@features':     path.resolve(__dirname, 'src/features')
     },
   },
 });

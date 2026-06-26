@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
-import type { Auth } from "@domain/auth.types";
+import type { Auth } from "@/features/auth/domain/auth.types";
 import Avatar from "@components/common/Avatar";
 import BotonClaro from "@buttons/BotonClaro";
 import DropdownContainer from "@components/common/DropdownContainer";

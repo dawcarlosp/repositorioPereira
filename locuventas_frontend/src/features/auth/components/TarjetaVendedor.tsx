@@ -1,4 +1,4 @@
-import type { UsuarioPendiente } from "@domain/auth.types";
+import type { UsuarioPendiente } from "@/features/auth/domain/auth.types";
 import defaultAvatar from "@/assets/default-avatar.png";
 import BotonClaro from "@buttons/BotonClaro";
 import Boton from "@buttons/Boton";

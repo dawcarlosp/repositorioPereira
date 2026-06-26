@@ -3,7 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useBreakpoint from "@/hooks/useBreakpoint";
-import FormVendedorRegister from "@components/vendedor/Form/FormVendedorRegister";
+import FormVendedorRegister from "@/features/auth/components/Form/FormVendedorRegister";
 import { AppProviders } from "./providers";
 import { AppRoutes } from "./routes";
 import "@/app/App.css";
