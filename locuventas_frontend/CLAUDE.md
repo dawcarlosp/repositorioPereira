@@ -6,12 +6,15 @@ personal y el catálogo.
 
 ## Stack
 
-- **React 19** + **Vite** — framework y bundler
-- **TypeScript** — migración completa al 100%
-- **Tailwind CSS v4** — estilos
-- **React Router v6** — navegación
+- **React 19** + **Vite 6** — framework y bundler
+- **TypeScript** — migración completa (100% `.tsx`/`.ts`)
+- **Tailwind CSS v4** + **@tailwindcss/vite** — estilos
+- **React Router v7** — navegación
 - **React Toastify** — notificaciones
 - **Lucide React** — iconos
+- **FontAwesome** — iconos adicionales
+- **date-fns** — manipulación de fechas
+- **html-to-image** — captura de DOM a imagen
 
 ## Estructura del proyecto
 
@@ -26,27 +29,38 @@ src/
 │       └── api.ts          # API_BASE_URL desde VITE_API_URL
 ├── components/
 │   ├── common/             # Componentes reutilizables genéricos
-│   │   ├── buttons/        # Boton, BotonClaro, BotonCerrar (PENDIENTE: unificar en Button)
+│   │   ├── buttons/        # Boton.tsx, BotonClaro.tsx, BotonCerrar.tsx, MenuButton.tsx
+│   │   ├── AlertSimple.tsx
+│   │   ├── Avatar.tsx
+│   │   ├── BaseModal.tsx
 │   │   ├── BuscadorInput.tsx
+│   │   ├── DataTable.tsx
 │   │   ├── DropdownContainer.tsx
+│   │   ├── Enlace.tsx
+│   │   ├── Error.tsx
+│   │   ├── FAB.tsx
+│   │   ├── FormDialog.tsx
 │   │   ├── InputFieldset.tsx
+│   │   ├── InputFieldsetValidaciones.tsx
+│   │   ├── LogoNegocio.tsx
 │   │   ├── ModalConfirmacion.tsx
 │   │   ├── Paginacion.tsx
+│   │   ├── PrivateRoute.tsx
 │   │   ├── RecursiveMenu.tsx
 │   │   ├── SelectFieldset.tsx
 │   │   ├── SelectFiltro.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
-│   │   ├── TablaLayout.tsx
 │   │   └── UploadComponent.tsx
-│   ├── products/
+│   ├── products/           # Componentes de productos
 │   │   ├── CatalogoProductos.tsx
 │   │   ├── GestionProductos.tsx
 │   │   ├── ModalProductoForm.tsx
 │   │   ├── ProductoCard.tsx
 │   │   ├── ProductoGestionCard.tsx
+│   │   ├── SkeletonProductoFila.tsx
 │   │   └── TablaProductos.tsx
-│   ├── vendedor/
+│   ├── vendedor/           # Componentes de vendedores
 │   │   ├── Form/
 │   │   │   ├── FormEditarPerfil.tsx
 │   │   │   ├── FormVendedorLogin.tsx
@@ -54,16 +68,18 @@ src/
 │   │   ├── PendientesList.tsx
 │   │   ├── TarjetaVendedor.tsx
 │   │   └── UploadAvatar.tsx
-│   ├── ventas/
+│   ├── ventas/             # Componentes de ventas
 │   │   ├── CarritoVentas.tsx
 │   │   ├── ContenedorVentas.tsx
 │   │   ├── DrawerCarrito.tsx
+│   │   ├── MenuVentas.tsx
 │   │   ├── ModalDetalleVenta.tsx
 │   │   ├── ModalPago.tsx
 │   │   ├── TablaVentas.tsx
 │   │   └── VentaCard.tsx
-│   └── dev/
-│       └── SobreMi.tsx
+│   ├── dev/
+│   │   └── SobreMi.tsx     # Página de perfil del desarrollador
+│   └── FooterLogin.tsx
 ├── constants/
 │   ├── breakpoints.ts
 │   ├── states.ts
@@ -75,38 +91,39 @@ src/
 ├── domain/
 │   ├── api.types.ts        # ApiResponse<T>, PageDTO<T>
 │   ├── auth.types.ts       # Auth, Role, ConfirmacionGlobal
-│   ├── producto.types.ts   # Producto, ProductoDTO, FiltrosProducto
+│   ├── producto.types.ts   # Producto, ProductoDTO
 │   ├── ui.types.ts         # SelectOption, Breakpoint, MenuItem
 │   └── venta.types.ts      # Venta, LineaVenta, EstadoPago
 ├── hooks/
-│   ├── useBuscador.ts
-│   ├── useBreakpoint.ts
-│   ├── useCarrito.ts
-│   ├── useFiltrosProducto.ts
-│   ├── useGestionProductos.ts
-│   ├── useHeaderManager.ts
-│   ├── useProductos.ts
-│   ├── useResponsiveLayout.ts
-│   ├── useVendedoresPendientes.ts
-│   └── useVentasManager.ts
+│   ├── useBuscador.ts      # Buscador con debounce, ref de input
+│   ├── useBreakpoint.ts    # Breakpoint actual según window.innerWidth
+│   ├── useCarrito.ts       # Lógica del carrito: base, iva, total
+│   ├── useFiltrosProducto.ts # Carga países y categorías (catálogos maestros)
+│   ├── useGestionProductos.ts # CRUD productos: form, modales, submit
+│   ├── useHeaderManager.ts # Estado completo del header + logout + confirmación global
+│   ├── useProductos.ts     # Fetch paginado de productos con filtros
+│   ├── useResponsiveLayout.ts # isSmall, isMedium, isLarge desde useBreakpoint
+│   ├── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
+│   └── useVentasManager.ts # Fetch ventas, pago, cancelación, detalle
 ├── layout/
-│   ├── AppLayout.tsx
+│   ├── AppLayout.tsx       # Layout principal: aside + main
 │   ├── Aside.tsx
 │   ├── Footer.tsx
 │   ├── Main.tsx
 │   └── Header/
-│       ├── Header.tsx
+│       ├── Header.tsx      # Header sticky con modales globales
 │       ├── NavDesktop.tsx
 │       ├── NavMobile.tsx
 │       ├── components/
-│       │   ├── AdminMenu.tsx
+│       │   ├── AdminMenu.tsx         # Menú admin usando RecursiveMenu
 │       │   ├── GestionDropdown.tsx
-│       │   └── MenuUsuarioDropdown.tsx
+│       │   ├── MenuUsuarioDropdown.tsx
+│       │   └── VendedoresDropdown.tsx
 │       └── config/
 │           ├── adminMenuConfig.ts
 │           └── userMenuConfig.ts
 ├── pages/
-│   ├── Dashboard.tsx
+│   ├── Dashboard.tsx           # Vista principal de ventas + carrito
 │   ├── GestionProductosPagina.tsx
 │   ├── LoginPage.tsx
 │   ├── SobreMiPage.tsx
@@ -118,6 +135,7 @@ src/
 │   └── venta.service.ts
 └── utils/
     ├── imageUtils.ts
+    ├── normalizaMultiValor.ts
     └── user.validator.ts
 ```
 
@@ -131,12 +149,12 @@ src/
 - **`domain/`** — única fuente de verdad para los tipos
 
 ### Menú recursivo
-El menú de administración usa un árbol de datos en `adminMenuConfig.js`
-renderizado por `RecursiveMenu.jsx`. Para añadir una opción nueva solo hay
+El menú de administración usa un árbol de datos en `adminMenuConfig.ts`
+renderizado por `RecursiveMenu.tsx`. Para añadir una opción nueva solo hay
 que tocar el archivo de configuración — no los componentes.
 
-```js
-// adminMenuConfig.js — añadir una entrada es suficiente
+```ts
+// adminMenuConfig.ts — añadir una entrada es suficiente
 { label: "Nueva opción", action: () => navigate("/nueva-ruta") }
 ```
 
@@ -166,9 +184,11 @@ apuntando al trigger. Acepta `side="top|bottom|left|right"`.
 
 ## Convenciones TypeScript
 
+**Estado:** migración completada — 0 archivos `.jsx`/`.js` en `src/`.
+
+**Convenciones:**
 - Nunca usar `any` — usar `unknown` y hacer cast explícito
-- `import type` para imports de solo tipos (requerido por `verbatimModuleSyntax`)
-- Interfaces en `src/domain/` para tipos compartidos, tipos inline para props locales
+- Interfaces en `src/domain/` — nunca definir tipos inline en componentes
 - `Record<string, unknown>` para datos crudos de la API antes de mapear
 
 ## API y backend
