@@ -8,97 +8,21 @@
 ## Estado actual
 
 ```
-✅ Fase 1 — TypeScript (en curso)
+✅ Fase 1 — TypeScript (completada)
 ⬜ Fase 2 — Feature-Based Architecture
 ⬜ Fase 3 — Integración Gemini AI
 ```
 
 ---
 
-## Fase 1 — Migración a TypeScript
+## Fase 1 — Migración a TypeScript ✅
 
-Migración incremental. Los archivos `.jsx` y `.tsx` coexisten gracias a
-`allowJs: true` en `tsconfig.json`. No hay una fecha límite — cada archivo
-se migra cuando se toca por otro motivo.
+Migración completada al 100%. Todos los archivos de `src/` son `.tsx` o `.ts`
+(0 archivos `.jsx`/`.js`).
 
-### Completado
-
-| Archivo                            | Notas                                      |
-|------------------------------------|--------------------------------------------|
-| `services/api.ts`                  | `apiRequest<T>()` genérico                 |
-| `context/AuthContext.tsx`          | Tipos `Auth`, `Role`                       |
-| `context/HeaderContext.tsx`        | Interfaz `HeaderContextValue`              |
-| `context/useAuth.ts`               | Tipado completo                            |
-| `hooks/useBuscador.ts`             | `RefObject<HTMLInputElement \| null>`      |
-| `hooks/useBreakpoint.ts`           | `Breakpoint` como unión de strings         |
-| `hooks/useResponsiveLayout.ts`     | `ResponsiveLayout` interface               |
-| `hooks/useFiltrosProducto.ts`      | `PaisRaw`, `CategoriaRaw` interfaces       |
-| `hooks/useGestionProductos.ts`     | `FormState`, `ModalState` interfaces       |
-| `hooks/useHeaderManager.ts`        | `UseHeaderManagerReturn` interface         |
-| `components/common/InputFieldset.tsx`   | Props tipadas                         |
-| `components/common/SelectFieldset.tsx`  | `SelectOption` de `domain/ui.types`   |
-| `components/common/UploadComponent.tsx` | Bug de imagen en edición corregido    |
-| `components/products/ModalProductoForm.tsx` | `categoriaIds: number[]` unificado |
-| `hooks/useProductos.ts`            | `UseProductosOptions`, `UseProductosReturn`   |
-| `hooks/useVentasManager.ts`        | `VentaDetalle`, `VentaPageDTO`, modales       |
-| `hooks/useVendedoresPendientes.ts` | `UsuarioPendiente`, acciones tipadas         |
-| `utils/user.validator.ts`          | `UserData`, `ValidateOptions`, `Errors`      |
-| `utils/imageUtils.ts`              | `resolveProductImage`, `resolveCountryImage` |
-| `app/config/api.ts`                | `API_BASE_URL` tipado                        |
-| `services/venta.service.ts`        | Solo `descargarTicketPDF` (código muerto eliminado) |
-| `constants/breakpoints.ts`         | Eliminado `2XL`/`2xl` (dead code), tipado con `Breakpoint` |
-| `constants/states.ts`              | `PAYMENT_STATES` tipado con `EstadoPago`     |
-| `constants/index.ts`               | Barrel export                              |
-| `layout/Header/config/adminMenuConfig.ts` | Menú admin tipado con `MenuItem`       |
-| `layout/Header/config/userMenuConfig.ts`  | Menú usuario tipado con `UserMenuItem`  |
-| `domain/api.types.ts`              | `ApiResponse<T>`, `PageDTO<T>`             |
-| `domain/auth.types.ts`             | `Auth`, `Role`, `ConfirmacionGlobal`       |
-| `domain/producto.types.ts`         | `Producto`, `ProductoDTO`                  |
-| `domain/ui.types.ts`               | `SelectOption`, `Breakpoint`, `MenuItem`   |
-| `domain/venta.types.ts`            | `Venta`, `LineaVenta`, `EstadoPago`        |
-
-### Pendiente
-
-Orden recomendado — de menos a más dependencias:
-
-```
-
-components/common/
-  ├── BuscadorInput.jsx       → .tsx
-  ├── Paginacion.jsx          → .tsx
-  ├── ModalConfirmacion.jsx   → .tsx
-  ├── DropdownContainer.jsx   → .tsx
-  ├── RecursiveMenu.jsx       → .tsx
-  ├── SelectFiltro.jsx        → .tsx
-  ├── TablaLayout.jsx         → .tsx
-  └── FAB.jsx                 → .tsx
-
-components/products/
-  ├── TablaProductos.jsx      → .tsx
-  ├── ProductoCard.jsx        → .tsx
-  ├── ProductoGestionCard.jsx → .tsx
-  ├── CatalogoProductos.jsx   → .tsx
-  └── GestionProductos.jsx    → .tsx
-
-components/ventas/
-  ├── VentaCard.jsx           → .tsx
-  ├── ContenedorVentas.jsx    → .tsx
-  ├── TablaVentas.jsx         → .tsx
-  └── CarritoVentas.jsx       → .tsx
-
-components/vendedor/
-  ├── TarjetaVendedor.jsx     → .tsx
-  └── PendientesList.jsx      → .tsx
-
-layout/Header/                → todos los componentes del header
-
-pages/                        → al final, dependen de todo lo anterior
-```
-
-### Reglas durante la migración
+### Reglas aplicadas
 
 - Nunca usar `any` — usar `unknown` con cast explícito cuando sea necesario
-- `import type` para imports de solo tipos (`verbatimModuleSyntax: true`)
 - Tipos nuevos siempre en `src/domain/` — nunca inline en componentes
 - `Record<string, unknown>` para datos crudos de la API antes de mapear
 - Al migrar un hook, añadir el tipo de retorno explícito como interfaz
@@ -136,8 +60,8 @@ src/
 │   │   │   ├── GestionProductos.tsx
 │   │   │   ├── ModalProductoForm.tsx
 │   │   │   ├── ProductoCard.tsx
-│   │   │   ├── TablaProductos.tsx
-│   │   │   └── SkeletonProductoFila.tsx
+│   │   │   ├── ProductoGestionCard.tsx
+│   │   │   └── TablaProductos.tsx
 │   │   └── pages/
 │   │       └── GestionProductosPagina.tsx
 │   │
@@ -149,9 +73,11 @@ src/
 │   │   ├── components/
 │   │   │   ├── CarritoVentas.tsx
 │   │   │   ├── ContenedorVentas.tsx
+│   │   │   ├── MenuVentas.tsx
 │   │   │   ├── TablaVentas.tsx
 │   │   │   ├── VentaCard.tsx
 │   │   │   ├── ModalPago.tsx
+│   │   │   ├── ModalDetalleVenta.tsx
 │   │   │   └── DrawerCarrito.tsx
 │   │   └── pages/
 │   │       ├── Dashboard.tsx
@@ -164,19 +90,36 @@ src/
 │       │   └── useVendedoresPendientes.ts
 │       ├── components/
 │       │   ├── PendientesList.tsx
-│       │   └── TarjetaVendedor.tsx
+│       │   ├── TarjetaVendedor.tsx
+│       │   └── UploadAvatar.tsx
 │       └── pages/
 │           └── VendedoresPendientes.tsx
 │
 ├── shared/                 # NUEVO — lo que antes era common/ + hooks/ globales
 │   ├── components/
 │   │   ├── ui/             # Boton, BotonClaro, InputFieldset, SelectFieldset...
-│   │   ├── layout/         # TablaLayout, Paginacion, FAB...
-│   │   └── feedback/       # ModalConfirmacion, skeletons...
+│   │   ├── data/           # DataTable, Paginacion
+│   │   └── feedback/       # ModalConfirmacion, AlertSimple, skeletons...
 │   ├── hooks/              # useBreakpoint, useResponsiveLayout, useBuscador
 │   └── domain/             ← mover desde src/domain/
 │
-├── layout/                 # Sin cambios
+├── layout/                 # Sin cambios (o mover a shared/layout)
+│   ├── AppLayout.tsx
+│   ├── Aside.tsx
+│   ├── Footer.tsx
+│   ├── Main.tsx
+│   └── Header/
+│       ├── Header.tsx
+│       ├── NavDesktop.tsx
+│       ├── NavMobile.tsx
+│       ├── components/
+│       │   ├── AdminMenu.tsx
+│       │   ├── GestionDropdown.tsx
+│       │   └── MenuUsuarioDropdown.tsx
+│       └── config/
+│           ├── adminMenuConfig.ts
+│           └── userMenuConfig.ts
+│
 └── assets/                 # Sin cambios
 ```
 
@@ -291,7 +234,3 @@ solo en archivos nuevos de las fases 2 y 3.
 Context API es suficiente para la escala actual. Si en el futuro el estado
 global crece significativamente, Zustand sería la opción — pero no antes
 de que haya un problema real de rendimiento o complejidad.
-
-### ❌ Migrar todo a TypeScript de golpe
-La migración incremental con `allowJs: true` permite avanzar sin riesgo.
-Forzar la migración completa introduciría demasiados errores a la vez.

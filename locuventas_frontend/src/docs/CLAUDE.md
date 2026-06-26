@@ -6,18 +6,22 @@ personal y el catálogo.
 
 ## Stack
 
-- **React 19** + **Vite** — framework y bundler
-- **TypeScript** — migración incremental en curso (`.jsx` y `.tsx` coexisten)
-- **Tailwind CSS v4** — estilos
-- **React Router v6** — navegación
+- **React 19** + **Vite 6** — framework y bundler
+- **TypeScript** — migración completa (100% `.tsx`/`.ts`)
+- **Tailwind CSS v4** + **@tailwindcss/vite** — estilos
+- **React Router v7** — navegación
 - **React Toastify** — notificaciones
 - **Lucide React** — iconos
+- **FontAwesome** — iconos adicionales
+- **date-fns** — manipulación de fechas
+- **html-to-image** — captura de DOM a imagen
 
 ## Estructura del proyecto
 
 ```
 src/
 ├── app/                    # Punto de entrada: App, providers, routes
+│   ├── main.tsx            # Entry point (Vite)
 │   ├── App.tsx
 │   ├── providers.tsx       # AuthProvider + HeaderProvider
 │   ├── routes.tsx          # Todas las rutas declaradas
@@ -25,63 +29,74 @@ src/
 │       └── api.ts          # API_BASE_URL desde VITE_API_URL
 ├── components/
 │   ├── common/             # Componentes reutilizables genéricos
-│   │   ├── buttons/        # Boton.jsx, BotonClaro.tsx, BotonCerrar.jsx
-│   │   ├── BuscadorInput.jsx
-│   │   ├── DropdownContainer.jsx
+│   │   ├── buttons/        # Boton.tsx, BotonClaro.tsx, BotonCerrar.tsx, MenuButton.tsx
+│   │   ├── AlertSimple.tsx
+│   │   ├── Avatar.tsx
+│   │   ├── BaseModal.tsx
+│   │   ├── BuscadorInput.tsx
+│   │   ├── DataTable.tsx
+│   │   ├── DropdownContainer.tsx
+│   │   ├── Enlace.tsx
+│   │   ├── Error.tsx
+│   │   ├── FAB.tsx
+│   │   ├── FormDialog.tsx
 │   │   ├── InputFieldset.tsx
-│   │   ├── ModalConfirmacion.jsx
-│   │   ├── Paginacion.jsx
-│   │   ├── RecursiveMenu.jsx
+│   │   ├── InputFieldsetValidaciones.tsx
+│   │   ├── LogoNegocio.tsx
+│   │   ├── ModalConfirmacion.tsx
+│   │   ├── Paginacion.tsx
+│   │   ├── PrivateRoute.tsx
+│   │   ├── RecursiveMenu.tsx
 │   │   ├── SelectFieldset.tsx
-│   │   ├── SelectFiltro.jsx
-│   │   ├── SkeletonProductoCard.jsx
-│   │   ├── SkeletonTarjetaVendedor.jsx
-│   │   ├── TablaLayout.jsx
+│   │   ├── SelectFiltro.tsx
+│   │   ├── SkeletonProductoCard.tsx
+│   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx
 │   ├── products/           # Componentes de productos
-│   │   ├── CatalogoProductos.jsx
-│   │   ├── GestionProductos.jsx
+│   │   ├── CatalogoProductos.tsx
+│   │   ├── GestionProductos.tsx
 │   │   ├── ModalProductoForm.tsx
-│   │   ├── ProductoCard.jsx
-│   │   ├── ProductoGestionCard.jsx
-│   │   ├── SkeletonProductoFila.jsx
-│   │   └── TablaProductos.jsx
+│   │   ├── ProductoCard.tsx
+│   │   ├── ProductoGestionCard.tsx
+│   │   └── TablaProductos.tsx
 │   ├── vendedor/           # Componentes de vendedores
 │   │   ├── Form/
-│   │   │   ├── FormEditarPerfil.jsx
-│   │   │   ├── FormVendedorLogin.jsx
-│   │   │   └── FormVendedorRegister.jsx
-│   │   ├── PendientesList.jsx
-│   │   ├── TarjetaVendedor.jsx
-│   │   └── UploadAvatar.jsx
+│   │   │   ├── FormEditarPerfil.tsx
+│   │   │   ├── FormVendedorLogin.tsx
+│   │   │   └── FormVendedorRegister.tsx
+│   │   ├── PendientesList.tsx
+│   │   ├── TarjetaVendedor.tsx
+│   │   └── UploadAvatar.tsx
 │   ├── ventas/             # Componentes de ventas
-│   │   ├── CarritoVentas.jsx
-│   │   ├── ContenedorVentas.jsx
-│   │   ├── DrawerCarrito.jsx
-│   │   ├── ModalDetalleVenta.jsx
-│   │   ├── ModalPago.jsx
-│   │   ├── TablaVentas.jsx
-│   │   └── VentaCard.jsx
-│   └── dev/
-│       └── SobreMi.jsx     # Página de perfil del desarrollador
+│   │   ├── CarritoVentas.tsx
+│   │   ├── ContenedorVentas.tsx
+│   │   ├── DrawerCarrito.tsx
+│   │   ├── MenuVentas.tsx
+│   │   ├── ModalDetalleVenta.tsx
+│   │   ├── ModalPago.tsx
+│   │   ├── TablaVentas.tsx
+│   │   └── VentaCard.tsx
+│   ├── dev/
+│   │   └── SobreMi.tsx     # Página de perfil del desarrollador
+│   └── FooterLogin.tsx
 ├── constants/
-│   ├── breakpoints.ts      # isMobile(), isBreakpoint() helpers
+│   ├── breakpoints.ts
 │   ├── states.ts
-│   └── index.ts            # re-exporta todo
+│   └── index.ts
 ├── context/
-│   ├── AuthContext.tsx     # Auth global: token, roles, setAuth, logout
-│   ├── HeaderContext.tsx   # Estado del header: menús, dropdowns, modales
-│   └── useAuth.ts          # Hook para consumir AuthContext
-├── domain/                 # Tipos TypeScript (fuente de verdad de tipos)
+│   ├── AuthContext.tsx
+│   ├── HeaderContext.tsx
+│   └── useAuth.ts
+├── domain/
 │   ├── api.types.ts        # ApiResponse<T>, PageDTO<T>
 │   ├── auth.types.ts       # Auth, Role, ConfirmacionGlobal
-│   ├── producto.types.ts   # Producto, ProductoDTO, FiltrosProducto
+│   ├── producto.types.ts   # Producto, ProductoDTO
 │   ├── ui.types.ts         # SelectOption, Breakpoint, MenuItem
 │   └── venta.types.ts      # Venta, LineaVenta, EstadoPago
 ├── hooks/
 │   ├── useBuscador.ts      # Buscador con debounce, ref de input
 │   ├── useBreakpoint.ts    # Breakpoint actual según window.innerWidth
-│   ├── useCarrito.js       # Lógica del carrito: base, iva, total
+│   ├── useCarrito.ts       # Lógica del carrito: base, iva, total
 │   ├── useFiltrosProducto.ts # Carga países y categorías (catálogos maestros)
 │   ├── useGestionProductos.ts # CRUD productos: form, modales, submit
 │   ├── useHeaderManager.ts # Estado completo del header + logout + confirmación global
@@ -90,36 +105,34 @@ src/
 │   ├── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
 │   └── useVentasManager.ts # Fetch ventas, pago, cancelación, detalle
 ├── layout/
-│   ├── AppLayout.jsx       # Layout principal: aside + main
-│   ├── Aside.jsx
-│   ├── Footer.jsx
-│   ├── Main.jsx
+│   ├── AppLayout.tsx       # Layout principal: aside + main
+│   ├── Aside.tsx
+│   ├── Footer.tsx
+│   ├── Main.tsx
 │   └── Header/
-│       ├── Header.jsx      # Header sticky con modales globales
-│       ├── NavDesktop.jsx
-│       ├── NavMobile.jsx
+│       ├── Header.tsx      # Header sticky con modales globales
+│       ├── NavDesktop.tsx
+│       ├── NavMobile.tsx
 │       ├── components/
-│       │   ├── AdminMenu.jsx         # Menú admin usando RecursiveMenu
-│       │   ├── GestionDropdown.jsx
-│       │   ├── MenuUsuarioDropdown.jsx
-│       │   └── VendedoresDropdown.jsx
+│       │   ├── AdminMenu.tsx         # Menú admin usando RecursiveMenu
+│       │   ├── GestionDropdown.tsx
+│       │   └── MenuUsuarioDropdown.tsx
 │       └── config/
-│           ├── adminMenuConfig.ts    # Árbol de menú admin (datos)
-│           └── userMenuConfig.ts     # Árbol de menú usuario (datos)
+│           ├── adminMenuConfig.ts
+│           └── userMenuConfig.ts
 ├── pages/
-│   ├── Dashboard.jsx           # Vista principal de ventas + carrito
-│   ├── GestionProductosPagina.jsx
-│   ├── LoginPage.jsx
-│   ├── SobreMiPage.jsx
-│   ├── VendedoresPendientes.jsx
-│   ├── VentasPagina.jsx
-│   └── VentasPendientesPagina.jsx
+│   ├── Dashboard.tsx           # Vista principal de ventas + carrito
+│   ├── GestionProductosPagina.tsx
+│   ├── LoginPage.tsx
+│   ├── SobreMiPage.tsx
+│   ├── VendedoresPendientes.tsx
+│   ├── VentasPagina.tsx
+│   └── VentasPendientesPagina.tsx
 ├── services/
-│   ├── api.ts              # apiRequest<T>() — cliente HTTP centralizado
-│   └── venta.service.ts    # descargarTicketPDF
+│   ├── api.ts
+│   └── venta.service.ts
 └── utils/
-    ├── imageUtils.ts       # resolveProductImage, resolveCountryImage
-    ├── normalizaMultiValor.ts
+    ├── imageUtils.ts
     └── user.validator.ts
 ```
 
@@ -133,12 +146,12 @@ src/
 - **`domain/`** — única fuente de verdad para los tipos
 
 ### Menú recursivo
-El menú de administración usa un árbol de datos en `adminMenuConfig.js`
-renderizado por `RecursiveMenu.jsx`. Para añadir una opción nueva solo hay
+El menú de administración usa un árbol de datos en `adminMenuConfig.ts`
+renderizado por `RecursiveMenu.tsx`. Para añadir una opción nueva solo hay
 que tocar el archivo de configuración — no los componentes.
 
-```js
-// adminMenuConfig.js — añadir una entrada es suficiente
+```ts
+// adminMenuConfig.ts — añadir una entrada es suficiente
 { label: "Nueva opción", action: () => navigate("/nueva-ruta") }
 ```
 
@@ -150,10 +163,11 @@ Todos los listados paginados siguen el mismo patrón:
 
 ### Skeleton loading
 Cada listado tiene su skeleton que replica la forma visual del item real:
-- `SkeletonProductoCard` → `ProductoSimpleCard`
+- `SkeletonProductoCard` → `ProductoCard`
 - `SkeletonTarjetaVendedor` → `TarjetaVendedor`
-- `SkeletonProductoFila` → fila de `TablaProductos`
-- `SkeletonVentaCard` → `VentaCard` (inline en `ContenedorVentas`)
+- `SkeletonVentaCard` → inline en `ContenedorVentas`
+
+**PENDIENTE:** Unificar en un solo `Skeleton` con `variant="card|row|circle"`.
 
 ### DropdownContainer
 Componente genérico que calcula automáticamente la posición de la flecha
@@ -165,36 +179,12 @@ apuntando al trigger. Acepta `side="top|bottom|left|right"`.
 </DropdownContainer>
 ```
 
-## Migración TypeScript
+## Convenciones TypeScript
 
-**Estado actual:** migración incremental — `.jsx` y `.tsx` coexisten.
+**Estado:** migración completada — 0 archivos `.jsx`/`.js` en `src/`.
 
-**Ya migrados:**
-- `services/api.ts`
-- `context/AuthContext.tsx`, `HeaderContext.tsx`, `useAuth.ts`
-- `hooks/useBuscador.ts`, `useBreakpoint.ts`, `useResponsiveLayout.ts`
-- `hooks/useFiltrosProducto.ts`, `useGestionProductos.ts`, `useHeaderManager.ts`
-- `components/common/InputFieldset.tsx`, `SelectFieldset.tsx`, `UploadComponent.tsx`
-- `components/products/ModalProductoForm.tsx`
-- `hooks/useProductos.ts`
-- `hooks/useVentasManager.ts`
-- `hooks/useVendedoresPendientes.ts`
-- `utils/imageUtils.ts`
-- `utils/user.validator.ts`
-- `app/config/api.ts`
-- `services/venta.service.ts`
-- `constants/breakpoints.ts`, `states.ts`, `index.ts`
-- `layout/Header/config/adminMenuConfig.ts`, `userMenuConfig.ts`
-- `domain/` — todos los tipos base
-
-**Pendiente (por orden):**
-1. Componentes comunes restantes
-3. Layout y Header
-4. Pages
-
-**Convenciones durante la migración:**
+**Convenciones:**
 - Nunca usar `any` — usar `unknown` y hacer cast explícito
-- `import type` para imports de solo tipos (requerido por `verbatimModuleSyntax`)
 - Interfaces en `src/domain/` — nunca definir tipos inline en componentes
 - `Record<string, unknown>` para datos crudos de la API antes de mapear
 
