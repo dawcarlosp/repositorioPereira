@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
 import type { ApiResponse, PageDTO } from "@domain/api.types";
-import type { UsuarioPendiente } from "@domain/auth.types";
+import type { UsuarioPendiente } from "@/features/auth/domain/auth.types";
 
 interface UseVendedoresPendientesOptions {
   page?:   number;

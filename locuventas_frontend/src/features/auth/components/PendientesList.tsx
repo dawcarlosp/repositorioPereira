@@ -1,11 +1,11 @@
 import { useState } from "react";
-import type { ConfirmacionGlobal } from "@domain/auth.types";
-import type { UsuarioPendiente } from "@domain/auth.types";
+import type { ConfirmacionGlobal } from "@/features/auth/domain/auth.types";
+import type { UsuarioPendiente } from "@/features/auth/domain/vendedor.types";
 import useVendedoresPendientes from "@hooks/useVendedoresPendientes";
-import TarjetaVendedor from "@components/vendedor/TarjetaVendedor";
+import TarjetaVendedor from "@/features/auth/components/TarjetaVendedor";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
-import SkeletonTarjetaVendedor from "@components/common/SkeletonTarjetaVendedor";
+import SkeletonTarjetaVendedor from "@/features/auth/components/SkeletonTarjetaVendedor";
 
 const SKELETON_COUNT = 3;
 

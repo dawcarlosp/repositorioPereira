@@ -1,7 +1,7 @@
 // src/context/useAuth.ts
 import { useContext } from "react";
 import { AuthContext } from "@context/AuthContext";
-import type { Auth } from "@domain/auth.types";
+import type { Auth } from "@/features/auth/domain/auth.types";
 
 interface UseAuthReturn {
   auth:    Auth;

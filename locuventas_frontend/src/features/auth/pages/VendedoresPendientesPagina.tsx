@@ -1,9 +1,9 @@
 import { useState } from "react";
-import type { ConfirmacionGlobal } from "@domain/auth.types";
+import type { ConfirmacionGlobal } from "@/features/auth/domain/auth.types";
 import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import PendientesList from "@components/vendedor/PendientesList";
+import PendientesList from "@features/auth/components/PendientesList";
 
 export default function VendedoresPendientesPagina() {
   const [page, setPage]             = useState(0);

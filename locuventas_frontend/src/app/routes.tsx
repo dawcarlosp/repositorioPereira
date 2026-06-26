@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
-import LoginPage from "@pages/LoginPage";
+import LoginPage from "@/features/auth/pages/LoginPage";
 import Dashboard from "@pages/Dashboard";
 import VentasPagina from "@pages/VentasPagina";
-import VentasPendientesPagina from "@pages/VentasPendientesPagina";
-import VendedoresPendientes from "@pages/VendedoresPendientes";
+import VentasPendientesPagina from "@/pages/VentasPendientesPagina";
+import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
 import GestionProductosPagina from "@pages/GestionProductosPagina";
 import SobreMiPage from "@pages/SobreMiPage";
 import PrivateRoute from "@components/common/PrivateRoute";
@@ -47,7 +47,7 @@ export function AppRoutes({ setIsOpen }: AppRoutesProps) {
         path="/vendedores/pendientes"
         element={
           <PrivateRoute>
-            <VendedoresPendientes />
+            <VendedoresPendientesPagina />
           </PrivateRoute>
         }
       />
