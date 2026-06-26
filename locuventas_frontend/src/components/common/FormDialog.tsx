@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import type { ReactNode, FormEvent } from "react";
+import type { ReactNode, SubmitEvent } from "react";
 import Boton from "@buttons/Boton";
 import BotonCerrar from "@buttons/BotonCerrar";
 
 interface FormDialogProps {
   visible:       boolean;
   onClose:       () => void;
-  onSubmit:      (e: FormEvent) => void;
+  onSubmit:      (e: SubmitEvent<HTMLFormElement>) => void;
   titulo:        string;
   botonTexto:    string;
   botonDisabled?: boolean;
