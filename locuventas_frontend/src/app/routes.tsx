@@ -5,7 +5,7 @@ import VentasPagina from "@features/ventas/pages/VentasPagina";
 import VentasPendientesPagina from "@features/ventas/pages/VentasPendientesPagina";
 import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
 import GestionProductosPagina from "@features/productos/pages/GestionProductosPagina";
-import SobreMiPage from "@pages/SobreMiPage";
+import SobreMiPage from "@features/dev/pages/SobreMiPage";
 import PrivateRoute from "@components/common/PrivateRoute";
 
 interface AppRoutesProps {
