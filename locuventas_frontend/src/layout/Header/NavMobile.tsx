@@ -3,7 +3,7 @@ import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
 import type { Auth } from "@/features/auth/domain/auth.types";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
-import MenuVentas from "@components/ventas/MenuVentas";
+import MenuVentas from "@features/ventas/components/MenuVentas";
 import AdminMenu from "@layout/Header/components/AdminMenu";
 
 interface Props {

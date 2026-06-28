@@ -1,4 +1,4 @@
-import type { Venta } from "@domain/venta.types";
+import type { Venta } from "../domain/venta.types";
 import BotonClaro from "@buttons/BotonClaro";
 import { getPaymentStateStyle } from "@constants/states";
 

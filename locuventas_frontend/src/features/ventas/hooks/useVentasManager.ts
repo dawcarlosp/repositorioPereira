@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
-import type { Venta, VentaDetalle } from "@domain/venta.types";
+import type { Venta, VentaDetalle } from "../domain/venta.types";
 
 interface VentaPageDTO {
   content:     Venta[];
