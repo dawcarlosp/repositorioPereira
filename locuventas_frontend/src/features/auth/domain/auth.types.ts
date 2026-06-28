@@ -1,4 +1,4 @@
-// src/domain/auth.types.ts
+// src/features/auth/domain/auth.types.ts
 export type Role = "ROLE_ADMIN" | "ROLE_VENDEDOR";
 
 export interface Auth {

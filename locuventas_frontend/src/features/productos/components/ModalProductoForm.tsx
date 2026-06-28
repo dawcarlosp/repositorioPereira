@@ -1,4 +1,4 @@
-// src/components/products/ModalProductoForm.tsx
+// src/features/productos/components/ModalProductoForm.tsx
 import FormDialog from "@components/common/FormDialog";
 import InputFieldset from "@components/common/InputFieldset";
 import SelectFieldset from "@components/common/SelectFieldset";

@@ -1,4 +1,4 @@
-// src/hooks/useGestionProductos.ts
+// src/features/productos/hooks/useGestionProductos.ts
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@services/api";

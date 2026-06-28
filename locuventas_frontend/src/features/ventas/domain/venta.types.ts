@@ -1,4 +1,4 @@
-// src/types/venta.types.ts
+// src/features/ventas/domain/venta.types.ts
 export type EstadoPago = "PAGADO" | "PARCIAL" | "PENDIENTE";
 
 export interface Venta {

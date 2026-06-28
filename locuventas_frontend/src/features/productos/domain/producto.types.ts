@@ -1,4 +1,4 @@
-// src/types/producto.types.ts
+// src/features/productos/domain/producto.types.ts
 export interface Producto {
   id:          number;
   nombre:      string;
