@@ -29,14 +29,14 @@ src/
 │       └── api.ts          # API_BASE_URL desde VITE_API_URL
 ├── components/
 │   ├── common/             # Componentes reutilizables genéricos
-│   │   ├── buttons/        # Boton.tsx, BotonClaro.tsx, BotonCerrar.tsx, MenuButton.tsx
+│   │   ├── buttons/        # Button.tsx, MenuButton.tsx
 │   │   ├── AlertSimple.tsx
 │   │   ├── Avatar.tsx
 │   │   ├── BaseModal.tsx
 │   │   ├── BuscadorInput.tsx
 │   │   ├── DataTable.tsx
 │   │   ├── DropdownContainer.tsx
-│   │   ├── Enlace.tsx
+
 │   │   ├── Error.tsx
 │   │   ├── FAB.tsx
 │   │   ├── FormDialog.tsx
@@ -159,6 +159,28 @@ apuntando al trigger. Acepta `side="top|bottom|left|right"`.
 </DropdownContainer>
 ```
 
+### Button (variant pattern)
+Componente unificado que reemplaza `Boton`, `BotonClaro`, `BotonCerrar` y `Enlace`.
+Usa una prop `variant` para cambiar de estilo:
+
+```tsx
+type ButtonVariant = "primary" | "secondary" | "link" | "close";
+```
+
+| Variant | Reemplaza | Uso típico |
+|---------|-----------|------------|
+| `primary` (default) | `Boton` | Botón principal con ring púrpura y fondo oscuro |
+| `secondary` | `BotonClaro` | Botón secundario, fondo zinc-800 |
+| `link` | `Enlace` | Texto azul sin fondo, para acciones tipo link |
+| `close` | `BotonCerrar` | Icono X para cerrar modales |
+
+```jsx
+<Button>Enviar</Button>                                          {/* primary */}
+<Button variant="secondary">Cancelar</Button>                    {/* secondary */}
+<Button variant="link" onClick={handleClick}>Regístrate</Button> {/* link */}
+<Button variant="close" onClick={handleClose} />                 {/* close */}
+```
+
 ## Convenciones TypeScript
 
 **Estado:** migración completada — 0 archivos `.jsx`/`.js` en `src/`.
@@ -244,12 +266,12 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 - `dev/` — perfil del desarrollador
 
 ### Fase 2 🔲 — Unificar componentes duplicados
-| Rama | Qué hace |
-|------|----------|
-| `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `Enlace` → `Button` con `variant` |
-| `refactor/phase2-select` | Unificar `SelectFieldset` + `SelectFiltro` → `Select` con `theme` |
-| `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` |
-| `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` |
+| Rama | Qué hace | Estado |
+|------|----------|--------|
+| `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `BotonCerrar`, `Enlace` → `Button` con `variant` | ✅ Mergeado |
+| `refactor/phase2-select` | Unificar `SelectFieldset` + `SelectFiltro` → `Select` con `theme` | 🔲 |
+| `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` | 🔲 |
+| `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` | 🔲 |
 
 ### Fase 3 🔲 — Refactor arquitectura
 - Crear `usePaginatedFetch<T>` genérico para eliminar el patrón repetido en hooks de fetch paginado
@@ -268,17 +290,15 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadmap del CLAUDE.md"**
 
 ### Contexto de la sesión anterior
-- Reorganización feature-based completada: todos los dominios migrados a `src/features/`
-  - `refactor/feature-productos` ✅ mergeado
-  - `refactor/feature-ventas` ✅ mergeado
-  - `refactor/feature-dev` ✅ mergeado
-  - `refactor/migrate-to-feature-structure` (auth) ✅ mergeado
-- `pages/` vacía, `components/` reducido a `common/` + `FooterLogin`
-- `domain/` reducido a tipos compartidos (`api.types`, `ui.types`)
-- Siguiente paso: **Fase 2** (unificar componentes duplicados)
+- **Phase 2: Button unificado** — mergeado ✅
+  - Creado `Button.tsx` con variants `primary|secondary|link|close`
+  - Refactorizado `MenuButton.tsx` para usar `Button variant="secondary"`
+  - Eliminados: `Boton.tsx`, `BotonClaro.tsx`, `BotonCerrar.tsx`, `Enlace.tsx`
+  - 22 archivos actualizados, build verificado
+- Siguiente paso: **Phase 2 — Select** (unificar `SelectFieldset` + `SelectFiltro`)
 
 ### Flujo de trabajo
-- Ramas creadas desde `develop` con nombre `refactor/phaseN-descripcion`
+- Ramas creadas desde `develop` con nombre `refactor/phaseN-descripcion` o `docs/descripcion`
 - Trabajar, commit, push, PR a `develop`
 - Mergear PR en GitHub, luego borrar rama remota
 - `develop` se mergea a `master` solo al completar un hito
