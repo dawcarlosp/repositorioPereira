@@ -52,33 +52,6 @@ src/
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx
-│   ├── products/           # Componentes de productos
-│   │   ├── CatalogoProductos.tsx
-│   │   ├── GestionProductos.tsx
-│   │   ├── ModalProductoForm.tsx
-│   │   ├── ProductoCard.tsx
-│   │   ├── ProductoGestionCard.tsx
-│   │   ├── SkeletonProductoFila.tsx
-│   │   └── TablaProductos.tsx
-│   ├── vendedor/           # Componentes de vendedores
-│   │   ├── Form/
-│   │   │   ├── FormEditarPerfil.tsx
-│   │   │   ├── FormVendedorLogin.tsx
-│   │   │   └── FormVendedorRegister.tsx
-│   │   ├── PendientesList.tsx
-│   │   ├── TarjetaVendedor.tsx
-│   │   └── UploadAvatar.tsx
-│   ├── ventas/             # Componentes de ventas
-│   │   ├── CarritoVentas.tsx
-│   │   ├── ContenedorVentas.tsx
-│   │   ├── DrawerCarrito.tsx
-│   │   ├── MenuVentas.tsx
-│   │   ├── ModalDetalleVenta.tsx
-│   │   ├── ModalPago.tsx
-│   │   ├── TablaVentas.tsx
-│   │   └── VentaCard.tsx
-│   ├── dev/
-│   │   └── SobreMi.tsx     # Página de perfil del desarrollador
 │   └── FooterLogin.tsx
 ├── constants/
 │   ├── breakpoints.ts
@@ -88,23 +61,34 @@ src/
 │   ├── AuthContext.tsx
 │   ├── HeaderContext.tsx
 │   └── useAuth.ts
-├── domain/
+├── domain/                 # Tipos compartidos entre features
 │   ├── api.types.ts        # ApiResponse<T>, PageDTO<T>
-│   ├── auth.types.ts       # Auth, Role, ConfirmacionGlobal
-│   ├── producto.types.ts   # Producto, ProductoDTO
-│   ├── ui.types.ts         # SelectOption, Breakpoint, MenuItem
-│   └── venta.types.ts      # Venta, LineaVenta, EstadoPago
-├── hooks/
+│   └── ui.types.ts         # SelectOption, Breakpoint, MenuItem
+├── features/               # Código organizado por dominio de negocio
+│   ├── auth/               # Autenticación y gestión de vendedores
+│   │   ├── components/     # PendientesList, TarjetaVendedor, FormLogin...
+│   │   ├── domain/         # auth.types.ts, vendedor.types.ts
+│   │   ├── hooks/          # useLogin, useRegister, useEditarPerfil
+│   │   └── pages/          # LoginPage, VendedoresPendientesPagina
+│   ├── dev/                # Perfil del desarrollador
+│   │   ├── components/     # SobreMi.tsx
+│   │   └── pages/          # SobreMiPage.tsx
+│   ├── productos/          # Catálogo y gestión de productos
+│   │   ├── components/     # CatalogoProductos, GestionProductos, ...
+│   │   ├── domain/         # producto.types.ts
+│   │   ├── hooks/          # useProductos, useGestionProductos, useFiltrosProducto
+│   │   └── pages/          # GestionProductosPagina.tsx
+│   └── ventas/             # Ventas, carrito y cobros
+│       ├── components/     # CarritoVentas, ContenedorVentas, ModalPago...
+│       ├── domain/         # venta.types.ts
+│       ├── hooks/          # useCarrito, useVentasManager
+│       └── pages/          # Dashboard, VentasPagina, VentasPendientesPagina
+├── hooks/                  # Hooks globales y compartidos
 │   ├── useBuscador.ts      # Buscador con debounce, ref de input
 │   ├── useBreakpoint.ts    # Breakpoint actual según window.innerWidth
-│   ├── useCarrito.ts       # Lógica del carrito: base, iva, total
-│   ├── useFiltrosProducto.ts # Carga países y categorías (catálogos maestros)
-│   ├── useGestionProductos.ts # CRUD productos: form, modales, submit
 │   ├── useHeaderManager.ts # Estado completo del header + logout + confirmación global
-│   ├── useProductos.ts     # Fetch paginado de productos con filtros
 │   ├── useResponsiveLayout.ts # isSmall, isMedium, isLarge desde useBreakpoint
-│   ├── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
-│   └── useVentasManager.ts # Fetch ventas, pago, cancelación, detalle
+│   └── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
 ├── layout/
 │   ├── AppLayout.tsx       # Layout principal: aside + main
 │   ├── Aside.tsx
@@ -117,36 +101,29 @@ src/
 │       ├── components/
 │       │   ├── AdminMenu.tsx         # Menú admin usando RecursiveMenu
 │       │   ├── GestionDropdown.tsx
-│       │   ├── MenuUsuarioDropdown.tsx
-│       │   └── VendedoresDropdown.tsx
+│       │   └── MenuUsuarioDropdown.tsx
 │       └── config/
 │           ├── adminMenuConfig.ts
 │           └── userMenuConfig.ts
-├── pages/
-│   ├── Dashboard.tsx           # Vista principal de ventas + carrito
-│   ├── GestionProductosPagina.tsx
-│   ├── LoginPage.tsx
-│   ├── SobreMiPage.tsx
-│   ├── VendedoresPendientes.tsx
-│   ├── VentasPagina.tsx
-│   └── VentasPendientesPagina.tsx
 ├── services/
 │   ├── api.ts
 │   └── venta.service.ts
 └── utils/
     ├── imageUtils.ts
-    ├── normalizaMultiValor.ts
     └── user.validator.ts
 ```
 
 ## Arquitectura y patrones
 
 ### Separación de responsabilidades
-- **`pages/`** — solo orquesta: instancia hooks, pasa props, renderiza modales
-- **`components/`** — solo presentación: recibe props, no llama a la API directamente
-- **`hooks/`** — toda la lógica de negocio y estado
+- **`features/*/pages/`** — solo orquesta: instancia hooks, pasa props, renderiza modales
+- **`features/*/components/`** — solo presentación: recibe props, no llama a la API directamente
+- **`features/*/hooks/`** — toda la lógica de negocio y estado del feature
+- **`features/*/domain/`** — tipos específicos del feature
+- **`hooks/`** (raíz) — hooks compartidos entre features (useBreakpoint, useBuscador, etc.)
+- **`components/common/`** — componentes UI reutilizables (botones, modales, inputs)
 - **`services/api.ts`** — única puerta de entrada al backend
-- **`domain/`** — única fuente de verdad para los tipos
+- **`domain/`** (raíz) — tipos compartidos entre features (api.types, ui.types)
 
 ### Menú recursivo
 El menú de administración usa un árbol de datos en `adminMenuConfig.ts`
@@ -253,11 +230,18 @@ npm run preview  # previsualizar build
 
 Resumen de fases planificadas tras la migración TS. Cada fase se trabaja en una rama independiente desde `develop` y se mergea vía PR.
 
-### Fase 1 ✅ — Bugs + dead code (PR #27)
+### Fase 1 ✅ — Bugs + dead code
 - Corregir imports rotos (`useGestionProductos`)
 - Corregir `auth.id` inexistente en `CarritoVentas`
 - Eliminar archivos muertos: `normalizaMultiValor.ts`, `SkeletonProductoFila.tsx`, `VendedoresDropdown.tsx`, `PRODUCT_STATES`, `SELLER_STATES`
 - Unificar `MenuItem` en `@domain/ui.types`
+
+### Reorganización feature-based ✅
+Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domain}/{components,domain,hooks,pages}/`:
+- `auth/` — login, registro, aprobación de vendedores
+- `productos/` — catálogo, gestión CRUD
+- `ventas/` — carrito, ventas, cobros
+- `dev/` — perfil del desarrollador
 
 ### Fase 2 🔲 — Unificar componentes duplicados
 | Rama | Qué hace |
@@ -268,15 +252,9 @@ Resumen de fases planificadas tras la migración TS. Cada fase se trabaja en una
 | `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` |
 
 ### Fase 3 🔲 — Refactor arquitectura
-- Extraer API calls de formularios (`FormVendedorLogin`, `FormEditarPerfil`) a hooks dedicados
-- Crear `usePaginatedFetch<T>` genérico para eliminar el patrón repetido en `useProductos`, `useVentasManager`, `useVendedoresPendientes`
-- Estandarizar detección mobile con `useResponsiveLayout`
-
-### Fase 4 🔲 — Reorganización de directorios
+- Crear `usePaginatedFetch<T>` genérico para eliminar el patrón repetido en hooks de fetch paginado
 - Mover `PrivateRoute` → `app/`
 - Mover `FooterLogin` → `common/`
-- Mover `MenuVentas` → `common/` o `layout/`
-- Mover formularios de login/register → `components/auth/`
 
 ### Notas
 - `ModalConfirmacion.onConfirmar` acepta `() => void` pero se usa como `() => Promise<void>` en `useVentasManager` → ya corregido
@@ -285,15 +263,19 @@ Resumen de fases planificadas tras la migración TS. Cada fase se trabaja en una
 
 ---
 
-## Última sesión (25 Jun 2026)
+## Última sesión (28 Jun 2026)
 
 Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadmap del CLAUDE.md"**
 
 ### Contexto de la sesión anterior
-- Migración TypeScript completada al 100%
-- PR #27 (`refactor/phase1-bugs-deadcode`) pendiente de mergear en `develop`
-- Se estaba evaluando por dónde empezar en **Fase 2** (unificar componentes)
-- Ramas activas: `refactor/phase1-bugs-deadcode` (sin mergear)
+- Reorganización feature-based completada: todos los dominios migrados a `src/features/`
+  - `refactor/feature-productos` ✅ mergeado
+  - `refactor/feature-ventas` ✅ mergeado
+  - `refactor/feature-dev` ✅ mergeado
+  - `refactor/migrate-to-feature-structure` (auth) ✅ mergeado
+- `pages/` vacía, `components/` reducido a `common/` + `FooterLogin`
+- `domain/` reducido a tipos compartidos (`api.types`, `ui.types`)
+- Siguiente paso: **Fase 2** (unificar componentes duplicados)
 
 ### Flujo de trabajo
 - Ramas creadas desde `develop` con nombre `refactor/phaseN-descripcion`

@@ -52,32 +52,6 @@ src/
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx
-│   ├── products/           # Componentes de productos
-│   │   ├── CatalogoProductos.tsx
-│   │   ├── GestionProductos.tsx
-│   │   ├── ModalProductoForm.tsx
-│   │   ├── ProductoCard.tsx
-│   │   ├── ProductoGestionCard.tsx
-│   │   └── TablaProductos.tsx
-│   ├── vendedor/           # Componentes de vendedores
-│   │   ├── Form/
-│   │   │   ├── FormEditarPerfil.tsx
-│   │   │   ├── FormVendedorLogin.tsx
-│   │   │   └── FormVendedorRegister.tsx
-│   │   ├── PendientesList.tsx
-│   │   ├── TarjetaVendedor.tsx
-│   │   └── UploadAvatar.tsx
-│   ├── ventas/             # Componentes de ventas
-│   │   ├── CarritoVentas.tsx
-│   │   ├── ContenedorVentas.tsx
-│   │   ├── DrawerCarrito.tsx
-│   │   ├── MenuVentas.tsx
-│   │   ├── ModalDetalleVenta.tsx
-│   │   ├── ModalPago.tsx
-│   │   ├── TablaVentas.tsx
-│   │   └── VentaCard.tsx
-│   ├── dev/
-│   │   └── SobreMi.tsx     # Página de perfil del desarrollador
 │   └── FooterLogin.tsx
 ├── constants/
 │   ├── breakpoints.ts
@@ -87,47 +61,34 @@ src/
 │   ├── AuthContext.tsx
 │   ├── HeaderContext.tsx
 │   └── useAuth.ts
-├── domain/
+├── domain/                 # Tipos compartidos entre features
 │   ├── api.types.ts        # ApiResponse<T>, PageDTO<T>
-│   ├── auth.types.ts       # Auth, Role, ConfirmacionGlobal
-│   ├── producto.types.ts   # Producto, ProductoDTO
-│   ├── ui.types.ts         # SelectOption, Breakpoint, MenuItem
-│   └── venta.types.ts      # Venta, LineaVenta, EstadoPago
-├── hooks/
+│   └── ui.types.ts         # SelectOption, Breakpoint, MenuItem
+├── features/               # Código organizado por dominio de negocio
+│   ├── auth/               # Autenticación y gestión de vendedores
+│   │   ├── components/     # PendientesList, TarjetaVendedor, FormLogin...
+│   │   ├── domain/         # auth.types.ts, vendedor.types.ts
+│   │   ├── hooks/          # useLogin, useRegister, useEditarPerfil
+│   │   └── pages/          # LoginPage, VendedoresPendientesPagina
+│   ├── dev/                # Perfil del desarrollador
+│   │   ├── components/     # SobreMi.tsx
+│   │   └── pages/          # SobreMiPage.tsx
+│   ├── productos/          # Catálogo y gestión de productos
+│   │   ├── components/     # CatalogoProductos, GestionProductos, ...
+│   │   ├── domain/         # producto.types.ts
+│   │   ├── hooks/          # useProductos, useGestionProductos, useFiltrosProducto
+│   │   └── pages/          # GestionProductosPagina.tsx
+│   └── ventas/             # Ventas, carrito y cobros
+│       ├── components/     # CarritoVentas, ContenedorVentas, ModalPago...
+│       ├── domain/         # venta.types.ts
+│       ├── hooks/          # useCarrito, useVentasManager
+│       └── pages/          # Dashboard, VentasPagina, VentasPendientesPagina
+├── hooks/                  # Hooks globales y compartidos
 │   ├── useBuscador.ts      # Buscador con debounce, ref de input
 │   ├── useBreakpoint.ts    # Breakpoint actual según window.innerWidth
-│   ├── useCarrito.ts       # Lógica del carrito: base, iva, total
-│   ├── useFiltrosProducto.ts # Carga países y categorías (catálogos maestros)
-│   ├── useGestionProductos.ts # CRUD productos: form, modales, submit
 │   ├── useHeaderManager.ts # Estado completo del header + logout + confirmación global
-│   ├── useProductos.ts     # Fetch paginado de productos con filtros
 │   ├── useResponsiveLayout.ts # isSmall, isMedium, isLarge desde useBreakpoint
-│   ├── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
-│   └── useVentasManager.ts # Fetch ventas, pago, cancelación, detalle
-├── layout/
-│   ├── AppLayout.tsx       # Layout principal: aside + main
-│   ├── Aside.tsx
-│   ├── Footer.tsx
-│   ├── Main.tsx
-│   └── Header/
-│       ├── Header.tsx      # Header sticky con modales globales
-│       ├── NavDesktop.tsx
-│       ├── NavMobile.tsx
-│       ├── components/
-│       │   ├── AdminMenu.tsx         # Menú admin usando RecursiveMenu
-│       │   ├── GestionDropdown.tsx
-│       │   └── MenuUsuarioDropdown.tsx
-│       └── config/
-│           ├── adminMenuConfig.ts
-│           └── userMenuConfig.ts
-├── pages/
-│   ├── Dashboard.tsx           # Vista principal de ventas + carrito
-│   ├── GestionProductosPagina.tsx
-│   ├── LoginPage.tsx
-│   ├── SobreMiPage.tsx
-│   ├── VendedoresPendientes.tsx
-│   ├── VentasPagina.tsx
-│   └── VentasPendientesPagina.tsx
+│   └── useVendedoresPendientes.ts # Fetch y acciones sobre vendedores sin rol
 ├── services/
 │   ├── api.ts
 │   └── venta.service.ts
@@ -139,11 +100,14 @@ src/
 ## Arquitectura y patrones
 
 ### Separación de responsabilidades
-- **`pages/`** — solo orquesta: instancia hooks, pasa props, renderiza modales
-- **`components/`** — solo presentación: recibe props, no llama a la API directamente
-- **`hooks/`** — toda la lógica de negocio y estado
+- **`features/*/pages/`** — solo orquesta: instancia hooks, pasa props, renderiza modales
+- **`features/*/components/`** — solo presentación: recibe props, no llama a la API directamente
+- **`features/*/hooks/`** — toda la lógica de negocio y estado del feature
+- **`features/*/domain/`** — tipos específicos del feature
+- **`hooks/`** (raíz) — hooks compartidos entre features (useBreakpoint, useBuscador, etc.)
+- **`components/common/`** — componentes UI reutilizables (botones, modales, inputs)
 - **`services/api.ts`** — única puerta de entrada al backend
-- **`domain/`** — única fuente de verdad para los tipos
+- **`domain/`** (raíz) — tipos compartidos entre features (api.types, ui.types)
 
 ### Menú recursivo
 El menú de administración usa un árbol de datos en `adminMenuConfig.ts`

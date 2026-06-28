@@ -84,10 +84,10 @@ renderizan — los hooks gestionan datos, efectos y acciones.
 
 ### Dónde está implementado
 ```
-src/hooks/useVentasManager.ts
-src/hooks/useGestionProductos.ts
-src/hooks/useCarrito.ts
-src/hooks/useProductos.ts
+src/features/ventas/hooks/useVentasManager.ts
+src/features/productos/hooks/useGestionProductos.ts
+src/features/ventas/hooks/useCarrito.ts
+src/features/productos/hooks/useProductos.ts
 src/hooks/useVendedoresPendientes.ts
 src/hooks/useHeaderManager.ts
 ```
@@ -167,9 +167,9 @@ Separar **qué datos mostrar** (container) de **cómo mostrarlos**
 
 ### Dónde está implementado
 ```
-src/components/ventas/ContenedorVentas.tsx   ← container
-src/components/ventas/TablaVentas.tsx         ← presentational (desktop)
-src/components/ventas/VentaCard.tsx           ← presentational (móvil)
+src/features/ventas/components/ContenedorVentas.tsx   ← container
+src/features/ventas/components/TablaVentas.tsx         ← presentational (desktop)
+src/features/ventas/components/VentaCard.tsx           ← presentational (móvil)
 ```
 
 ### Cómo funciona
@@ -451,7 +451,7 @@ del contenido que va a aparecer, en lugar de un spinner o texto.
 ```
 src/components/common/SkeletonProductoCard.tsx
 src/components/common/SkeletonTarjetaVendedor.tsx
-src/components/ventas/ContenedorVentas.tsx   (SkeletonVentaCard inline)
+src/features/ventas/components/ContenedorVentas.tsx   (SkeletonVentaCard inline)
 ```
 
 ### Cómo funciona
@@ -556,7 +556,7 @@ sea flexible en distintos contextos.
 
 ### Dónde está implementado
 ```
-src/components/vendedor/PendientesList.tsx
+src/features/auth/components/PendientesList.tsx
 ```
 
 ### Cómo funciona
@@ -617,14 +617,14 @@ en componentes desmontados.
 
 ### Dónde está implementado
 ```
-src/hooks/useProductos.ts
+src/features/productos/hooks/useProductos.ts
 src/services/api.ts          (acepta signal en las opciones)
 ```
 
 ### Cómo funciona
 
 ```ts
-// useProductos.ts
+// useProductos (features/productos/hooks/)
 useEffect(() => {
   const controller = new AbortController();
 
