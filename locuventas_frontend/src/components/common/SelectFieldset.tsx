@@ -1,7 +1,5 @@
-// src/components/common/SelectFieldset.tsx
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Search, X } from "lucide-react";
-import useBuscador from "@/hooks/useBuscador";
+import { ChevronDown } from "lucide-react";
+import { useSelectLogic, SelectDropdown, THEME_FIELDSET } from "./SelectBase";
 import type { SelectOption } from "@domain/ui.types";
 
 interface SelectFieldsetProps {
@@ -27,36 +25,7 @@ export default function SelectFieldset({
   disabled = false,
   searchPlaceholder = "Buscar...",
 }: SelectFieldsetProps) {
-  const [open, setOpen] = useState(false);
-  const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
-  const ref = useRef<HTMLDivElement>(null);
-
-  const selectedOption = !multiple
-    ? options.find((opt) => String(opt.value) === String(value))
-    : null;
-
-  const filtered = query.trim()
-    ? options.filter((opt) => opt.label.toLowerCase().includes(query.toLowerCase()))
-    : options;
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setQuery("");
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, [setQuery]);
-
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => searchRef.current?.focus(), 50);
-    } else {
-      setQuery("");
-    }
-  }, [open, setQuery, searchRef]);
+  const { open, setOpen, ref, query, handleChange, handleClear, selectedOption, filtered } = useSelectLogic({ options, value: value as string | number | undefined });
 
   const handleSelect = (optValue: string | number) => {
     onChange({ target: { value: optValue } });
@@ -67,7 +36,7 @@ export default function SelectFieldset({
     return (
       <select
         id={id}
-         value={(Array.isArray(value) ? value : [value]).map(String)}
+        value={(Array.isArray(value) ? value : [value]).map(String)}
         onChange={onChange as React.ChangeEventHandler<HTMLSelectElement>}
         required={required}
         multiple
@@ -105,9 +74,8 @@ export default function SelectFieldset({
         disabled={disabled}
         onClick={() => !disabled && setOpen((o) => !o)}
         className={`
-          w-full h-[52px] flex items-center gap-2.5 px-4
-          bg-white rounded-xl border shadow-md transition-all text-left focus:outline-none
-          ${open     ? "border-purple-500 ring-2 ring-purple-500" : "border-gray-300"}
+          ${THEME_FIELDSET.trigger}
+          ${open ? "border-purple-500 ring-2 ring-purple-500" : "border-gray-300"}
           ${disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer hover:border-purple-400"}
         `}
       >
@@ -125,62 +93,18 @@ export default function SelectFieldset({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2.5 border-b border-gray-100">
-            <Search className="w-4 h-4 text-gray-400 flex-shrink-0" />
-            <input
-              ref={searchRef}
-              type="text"
-              value={query}
-              onChange={(e) => handleChange(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="flex-1 text-sm text-gray-700 bg-transparent focus:outline-none placeholder-gray-400 min-w-0"
-            />
-            {query && (
-              <button type="button" onClick={handleClear} className="text-gray-400 hover:text-gray-600 flex-shrink-0">
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          <ul className="max-h-48 overflow-y-auto custom-scrollbar py-1">
-            {!query && (
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleSelect("")}
-                  className="w-full px-4 py-2.5 text-left text-sm text-gray-400 hover:bg-purple-50 transition-colors"
-                >
-                  Selecciona...
-                </button>
-              </li>
-            )}
-            {filtered.length === 0 ? (
-              <li className="px-4 py-3 text-sm text-gray-400 text-center">
-                Sin resultados para "{query}"
-              </li>
-            ) : (
-              filtered.map((opt) => (
-                <li key={opt.value}>
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(opt.value)}
-                    className={`
-                      w-full px-4 py-2.5 text-left text-sm flex items-center gap-2.5
-                      hover:bg-purple-50 transition-colors
-                      ${String(opt.value) === String(value) ? "bg-purple-50 text-purple-700 font-medium" : "text-gray-700"}
-                    `}
-                  >
-                    {opt.image && (
-                      <img src={opt.image} alt={opt.label} className="w-6 h-4 rounded-sm object-cover flex-shrink-0 shadow-sm" />
-                    )}
-                    <span className="truncate">{opt.label}</span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+        <SelectDropdown
+          query={query}
+          onQueryChange={handleChange}
+          onQueryClear={handleClear}
+          filtered={filtered}
+          options={options}
+          value={value as string | number}
+          onSelect={handleSelect}
+          placeholder="Selecciona..."
+          searchPlaceholder={searchPlaceholder}
+          theme={THEME_FIELDSET}
+        />
       )}
     </div>
   );
