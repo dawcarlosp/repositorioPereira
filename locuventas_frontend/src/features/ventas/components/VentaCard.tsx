@@ -1,5 +1,5 @@
 import type { Venta } from "../domain/venta.types";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 import { getPaymentStateStyle } from "@constants/states";
 
 interface Props {
@@ -61,29 +61,32 @@ export default function VentaCard({ venta, onDetalle, onCancelar, onCobrarResto 
       </div>
 
       <div className="flex flex-col gap-2 pt-2 border-t border-zinc-800">
-        <BotonClaro
+        <Button
+          variant="secondary"
           className="!h-8 !text-[11px] !justify-center"
           onClick={() => onDetalle(venta)}
         >
           Ver detalle
-        </BotonClaro>
+        </Button>
 
         {!venta.cancelada && venta.saldo > 0 && (
-          <BotonClaro
+          <Button
+            variant="secondary"
             className="!h-8 !text-[11px] !justify-center !text-emerald-400 hover:!text-emerald-300"
             onClick={() => onCobrarResto(venta)}
           >
             Cobrar resto
-          </BotonClaro>
+          </Button>
         )}
 
         {!venta.cancelada && (
-          <BotonClaro
+          <Button
+            variant="secondary"
             className="!h-8 !text-[11px] !justify-center !text-rose-400 hover:!text-rose-300"
             onClick={() => onCancelar(venta)}
           >
             Cancelar venta
-          </BotonClaro>
+          </Button>
         )}
       </div>
     </div>

@@ -1,5 +1,5 @@
 import type { Producto } from "../domain/producto.types";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 import { resolveProductImage } from "@utils/imageUtils";
 
 interface Props {
@@ -15,18 +15,20 @@ export default function ProductoGestionCard({ producto, onEditar, onEliminar }: 
       <div className="flex justify-between items-center">
         <span className="font-black text-zinc-500 text-sm">#{producto.id}</span>
         <div className="flex gap-2">
-          <BotonClaro
+          <Button
+            variant="secondary"
             className="!h-8 !text-[11px] !px-3"
             onClick={() => onEditar(producto)}
           >
             Editar
-          </BotonClaro>
-          <BotonClaro
+          </Button>
+          <Button
+            variant="secondary"
             className="!h-8 !text-[11px] !px-3 !text-rose-400 hover:!text-rose-300"
             onClick={() => onEliminar(producto.id)}
           >
             Eliminar
-          </BotonClaro>
+          </Button>
         </div>
       </div>
 

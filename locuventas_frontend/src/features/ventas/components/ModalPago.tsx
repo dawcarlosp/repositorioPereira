@@ -1,7 +1,6 @@
 import { useState } from "react";
 import BaseModal from "@components/common/BaseModal";
-import Boton from "@buttons/Boton";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 
 interface Props {
   totalPendiente: number;
@@ -44,12 +43,12 @@ export default function ModalPago({
       onClose={onCancelar}
       footer={
         <>
-          <BotonClaro onClick={handleConfirm} className="w-full text-base py-3 rounded-xl">
+          <Button variant="secondary" onClick={handleConfirm} className="w-full text-base py-3 rounded-xl">
             {confirmText}
-          </BotonClaro>
-          <Boton onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
+          </Button>
+          <Button onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
             Cancelar
-          </Boton>
+          </Button>
         </>
       }
       contentClassName="flex flex-col gap-4 w-full items-center"

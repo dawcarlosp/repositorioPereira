@@ -1,7 +1,6 @@
 import type { VentaDetalle } from "../domain/venta.types";
 import BaseModal from "@components/common/BaseModal";
-import BotonClaro from "@buttons/BotonClaro";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import { VentaService } from "@services/venta.service";
 
 interface Props {
@@ -22,15 +21,15 @@ export default function ModalDetalleVenta({ venta, onClose }: Props) {
       closeOnOverlayClick={false}
       footer={
         <>
-          <Boton
+          <Button
             onClick={() => VentaService.descargarTicketPDF(venta.id)}
             className="w-full text-base py-3 rounded-xl bg-orange-500 hover:bg-orange-600"
           >
             Descargar ticket
-          </Boton>
-          <BotonClaro onClick={onClose} className="w-full text-base py-3 rounded-xl">
+          </Button>
+          <Button variant="secondary" onClick={onClose} className="w-full text-base py-3 rounded-xl">
             Cerrar
-          </BotonClaro>
+          </Button>
         </>
       }
     >

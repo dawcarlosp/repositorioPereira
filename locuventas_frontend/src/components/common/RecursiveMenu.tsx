@@ -1,5 +1,5 @@
 import { useState, useRef, Fragment } from "react";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 import DropdownContainer from "@components/common/DropdownContainer";
 import {
   CircleArrowLeft, CircleArrowRight,
@@ -52,33 +52,36 @@ export default function RecursiveMenu({
 
         if (!hasChildren && !hasPanel) {
           return (
-            <BotonClaro
+            <Button
+              variant="secondary"
               key={item.label}
               className="!h-9 !text-[10px] !justify-start whitespace-nowrap"
               onClick={() => { onClose(); item.action?.(); }}
             >
               {item.label}
-            </BotonClaro>
+            </Button>
           );
         }
 
         if (useAccordion) {
           if (hasPanel && hasAction) {
             return (
-              <BotonClaro
+              <Button
+                variant="secondary"
                 key={item.label}
                 className="!h-9 !text-[10px] !justify-start whitespace-nowrap"
                 // SOLUCIÓN 2: Uso seguro de la función mediante encadenamiento opcional (?.)
                 onClick={() => { onClose(); item.action?.(); }}
               >
                 {item.label}
-              </BotonClaro>
+              </Button>
             );
           }
 
           return (
             <div key={item.label} className="flex flex-col gap-1">
-              <BotonClaro
+              <Button
+                variant="secondary"
                 onClick={(e) => { e.stopPropagation(); toggle(i); }}
                 className={`!h-9 flex justify-evenly items-center w-full whitespace-nowrap ${
                   isOpen ? "text-orange-400 bg-orange-500/10" : ""
@@ -88,7 +91,7 @@ export default function RecursiveMenu({
                   {isOpen ? <CircleArrowUp size={16} /> : <CircleArrowDown size={16} />}
                   {item.label}
                 </div>
-              </BotonClaro>
+              </Button>
               {isOpen && (
                 <div className="pl-4 flex flex-col gap-1 border-l border-zinc-800 ml-3 my-1 animate-in slide-in-from-top-1">
                   <RecursiveMenu
@@ -110,7 +113,8 @@ export default function RecursiveMenu({
 
         return (
           <Fragment key={item.label}>
-            <BotonClaro
+            <Button
+              variant="secondary"
               ref={(el) => { (triggerRefs.current[i] as { current: HTMLButtonElement | null }).current = el; }}
               onClick={(e) => { e.stopPropagation(); toggle(i); }}
               className={`!h-9 !text-[10px] w-full flex justify-evenly whitespace-nowrap ${
@@ -124,7 +128,7 @@ export default function RecursiveMenu({
                 }
                 {item.label}
               </div>
-            </BotonClaro>
+            </Button>
 
             <DropdownContainer
               isOpen={isOpen}

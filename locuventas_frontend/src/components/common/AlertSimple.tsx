@@ -1,5 +1,5 @@
 import BaseModal from "@components/common/BaseModal";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 
 interface AlertSimpleProps {
   mensaje: string;
@@ -12,9 +12,9 @@ export default function AlertSimple({ mensaje, onClose }: AlertSimpleProps) {
       title={mensaje}
       onClose={onClose}
       footer={
-        <Boton onClick={onClose} className="w-full text-base py-3 rounded-xl">
+        <Button onClick={onClose} className="w-full text-base py-3 rounded-xl">
           Entendido
-        </Boton>
+        </Button>
       }
     />
   );

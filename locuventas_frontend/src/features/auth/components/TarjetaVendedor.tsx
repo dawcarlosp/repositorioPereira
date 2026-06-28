@@ -1,7 +1,6 @@
 import type { UsuarioPendiente } from "@/features/auth/domain/auth.types";
 import defaultAvatar from "@/assets/default-avatar.png";
-import BotonClaro from "@buttons/BotonClaro";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import { formatDistanceToNow } from "date-fns";
 import { es } from "date-fns/locale";
 
@@ -34,8 +33,8 @@ export default function TarjetaVendedor({ usuario, onAprobar, onDenegar }: Props
         </div>
       </div>
       <div className="flex flex-col space-y-2">
-        <BotonClaro onClick={() => onAprobar(usuario)} className="text-[10px] py-1 px-2 uppercase">Aprobar</BotonClaro>
-        <Boton onClick={() => onDenegar(usuario)} className="text-[10px] py-1 px-2 uppercase bg-rose-600 border-none hover:bg-rose-500">Eliminar</Boton>
+        <Button variant="secondary" onClick={() => onAprobar(usuario)} className="text-[10px] py-1 px-2 uppercase">Aprobar</Button>
+        <Button onClick={() => onDenegar(usuario)} className="text-[10px] py-1 px-2 uppercase bg-rose-600 border-none hover:bg-rose-500">Eliminar</Button>
       </div>
     </li>
   );

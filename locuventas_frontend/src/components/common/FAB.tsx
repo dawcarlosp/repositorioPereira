@@ -1,4 +1,4 @@
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import type { ReactNode } from "react";
 
 interface FABProps {
@@ -23,7 +23,7 @@ export default function FAB({
       className="fixed right-6 z-[9999] animate-in fade-in zoom-in duration-300"
       style={{ bottom: `${bottomOffset}rem` }}
     >
-      <Boton
+      <Button
         onClick={onClick}
         className={`
           ${variant}
@@ -42,7 +42,7 @@ export default function FAB({
             {label}
           </span>
         )}
-      </Boton>
+      </Button>
     </div>
   );
 }
