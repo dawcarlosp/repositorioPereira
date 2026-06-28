@@ -1,4 +1,4 @@
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "../domain/producto.types";
 import { resolveProductImage } from "@utils/imageUtils";
 
 interface Props {

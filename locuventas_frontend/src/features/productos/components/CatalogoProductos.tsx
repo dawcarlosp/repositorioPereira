@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "../domain/producto.types";
 import type { CarritoItem } from "@hooks/useCarrito";
 import ProductoCard from "./ProductoCard";
 import SkeletonProductoCard from "@components/common/SkeletonProductoCard";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
 import SelectFiltro from "@components/common/SelectFiltro";
-import useProductos from "@hooks/useProductos";
-import useFiltrosProducto from "@hooks/useFiltrosProducto";
+import useProductos from "../hooks/useProductos";
+import useFiltrosProducto from "../hooks/useFiltrosProducto";
 
 const SKELETON_COUNT = 12;
 

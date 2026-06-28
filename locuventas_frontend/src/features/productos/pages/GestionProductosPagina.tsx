@@ -1,6 +1,6 @@
 import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
-import GestionProductos from "@components/products/GestionProductos";
+import GestionProductos from "../components/GestionProductos";
 
 export default function GestionProductosPagina() {
   return (

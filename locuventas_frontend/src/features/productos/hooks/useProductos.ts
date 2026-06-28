@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "../domain/producto.types";
 import type { ApiResponse, PageDTO } from "@domain/api.types";
 
 interface UseProductosOptions {
