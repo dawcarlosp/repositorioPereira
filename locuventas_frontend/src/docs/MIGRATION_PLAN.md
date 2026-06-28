@@ -9,8 +9,10 @@
 
 ```
 ✅ Fase 1 — TypeScript (completada)
-⬜ Fase 2 — Feature-Based Architecture
-⬜ Fase 3 — Integración Gemini AI
+✅ Reorganización feature-based (completada)
+⬜ Fase 2 — Unificar componentes duplicados
+⬜ Fase 3 — Refactor arquitectura
+⬜ Fase 4 — Integración Gemini AI
 ```
 
 ---
@@ -29,155 +31,64 @@ Migración completada al 100%. Todos los archivos de `src/` son `.tsx` o `.ts`
 
 ---
 
-## Fase 2 — Feature-Based Architecture
+## Reorganización feature-based ✅
 
-**Prerequisito:** Fase 1 completada al 100%.
+Completada. Todos los dominios migrados a `src/features/` siguiendo la
+estructura `{domain}/{components,domain,hooks,pages}/`:
 
-Reorganizar el código por dominio de negocio en lugar de por tipo técnico.
-La migración es **movimiento de archivos** — la lógica no cambia.
+| Rama | Feature | Estado |
+|------|---------|--------|
+| `refactor/migrate-to-feature-structure` | `auth/` | ✅ mergeado |
+| `refactor/feature-productos` | `productos/` | ✅ mergeado |
+| `refactor/feature-ventas` | `ventas/` | ✅ mergeado |
+| `refactor/feature-dev` | `dev/` | ✅ mergeado |
 
-### Estructura objetivo
-
-```
-src/
-├── app/                    # Sin cambios
-│
-├── features/               # NUEVO
-│   ├── auth/
-│   │   ├── index.ts        # Barrel file — API pública del feature
-│   │   ├── AuthContext.tsx ← mover desde context/
-│   │   ├── useAuth.ts      ← mover desde context/
-│   │   ├── FormLogin.tsx   ← mover desde components/vendedor/Form/
-│   │   └── FormRegister.tsx
-│   │
-│   ├── productos/
-│   │   ├── index.ts
-│   │   ├── hooks/
-│   │   │   ├── useProductos.ts
-│   │   │   └── useGestionProductos.ts
-│   │   ├── components/
-│   │   │   ├── CatalogoProductos.tsx
-│   │   │   ├── GestionProductos.tsx
-│   │   │   ├── ModalProductoForm.tsx
-│   │   │   ├── ProductoCard.tsx
-│   │   │   ├── ProductoGestionCard.tsx
-│   │   │   └── TablaProductos.tsx
-│   │   └── pages/
-│   │       └── GestionProductosPagina.tsx
-│   │
-│   ├── ventas/
-│   │   ├── index.ts
-│   │   ├── hooks/
-│   │   │   ├── useVentasManager.ts
-│   │   │   └── useCarrito.ts
-│   │   ├── components/
-│   │   │   ├── CarritoVentas.tsx
-│   │   │   ├── ContenedorVentas.tsx
-│   │   │   ├── MenuVentas.tsx
-│   │   │   ├── TablaVentas.tsx
-│   │   │   ├── VentaCard.tsx
-│   │   │   ├── ModalPago.tsx
-│   │   │   ├── ModalDetalleVenta.tsx
-│   │   │   └── DrawerCarrito.tsx
-│   │   └── pages/
-│   │       ├── Dashboard.tsx
-│   │       ├── VentasPagina.tsx
-│   │       └── VentasPendientesPagina.tsx
-│   │
-│   └── vendedores/
-│       ├── index.ts
-│       ├── hooks/
-│       │   └── useVendedoresPendientes.ts
-│       ├── components/
-│       │   ├── PendientesList.tsx
-│       │   ├── TarjetaVendedor.tsx
-│       │   └── UploadAvatar.tsx
-│       └── pages/
-│           └── VendedoresPendientes.tsx
-│
-├── shared/                 # NUEVO — lo que antes era common/ + hooks/ globales
-│   ├── components/
-│   │   ├── ui/             # Boton, BotonClaro, InputFieldset, SelectFieldset...
-│   │   ├── data/           # DataTable, Paginacion
-│   │   └── feedback/       # ModalConfirmacion, AlertSimple, skeletons...
-│   ├── hooks/              # useBreakpoint, useResponsiveLayout, useBuscador
-│   └── domain/             ← mover desde src/domain/
-│
-├── layout/                 # Sin cambios (o mover a shared/layout)
-│   ├── AppLayout.tsx
-│   ├── Aside.tsx
-│   ├── Footer.tsx
-│   ├── Main.tsx
-│   └── Header/
-│       ├── Header.tsx
-│       ├── NavDesktop.tsx
-│       ├── NavMobile.tsx
-│       ├── components/
-│       │   ├── AdminMenu.tsx
-│       │   ├── GestionDropdown.tsx
-│       │   └── MenuUsuarioDropdown.tsx
-│       └── config/
-│           ├── adminMenuConfig.ts
-│           └── userMenuConfig.ts
-│
-└── assets/                 # Sin cambios
-```
-
-### Barrel files
-
-Cada feature expone solo su API pública. Los componentes internos
-no se exportan — solo lo que otras partes de la app necesitan.
-
-```ts
-// src/features/productos/index.ts
-export { default as CatalogoProductos } from "./components/CatalogoProductos";
-export { default as GestionProductos }  from "./components/GestionProductos";
-export { default as useProductos }      from "./hooks/useProductos";
-export { default as useGestionProductos } from "./hooks/useGestionProductos";
-// TablaProductos, ProductoCard, etc. NO se exportan — son internos
-```
-
-### Path aliases tras la reorganización
-
-```ts
-// vite.config.ts — simplificado
-alias: {
-  "@":        path.resolve(__dirname, "src"),
-  "@features": path.resolve(__dirname, "src/features"),
-  "@shared":  path.resolve(__dirname, "src/shared"),
-  "@app":     path.resolve(__dirname, "src/app"),
-  "@layout":  path.resolve(__dirname, "src/layout"),
-  "@assets":  path.resolve(__dirname, "src/assets"),
-}
-```
-
-### Imports antes y después
-
-```ts
-// Antes
-import CatalogoProductos from "@components/products/CatalogoProductos";
-import useProductos from "@hooks/useProductos";
-
-// Después
-import { CatalogoProductos, useProductos } from "@features/productos";
-```
-
-### Orden de migración de features
-
-Empezar por el feature con menos dependencias externas:
+### Estructura resultante
 
 ```
-1. auth/      ← solo depende de shared/
-2. vendedores/ ← solo depende de shared/ y auth/
-3. productos/ ← depende de shared/ y auth/
-4. ventas/    ← depende de shared/, auth/ y productos/
+src/features/
+├── auth/               # Login, registro, aprobación de vendedores
+│   ├── components/     # PendientesList, TarjetaVendedor, FormLogin...
+│   ├── domain/         # auth.types.ts, vendedor.types.ts
+│   ├── hooks/          # useLogin, useRegister, useEditarPerfil
+│   └── pages/          # LoginPage, VendedoresPendientesPagina
+├── dev/                # Perfil del desarrollador
+│   ├── components/     # SobreMi.tsx
+│   └── pages/          # SobreMiPage.tsx
+├── productos/          # Catálogo y gestión de productos
+│   ├── components/     # CatalogoProductos, GestionProductos, ...
+│   ├── domain/         # producto.types.ts
+│   ├── hooks/          # useProductos, useGestionProductos, useFiltrosProducto
+│   └── pages/          # GestionProductosPagina.tsx
+└── ventas/             # Ventas, carrito y cobros
+    ├── components/     # CarritoVentas, ContenedorVentas, ModalPago...
+    ├── domain/         # venta.types.ts
+    ├── hooks/          # useCarrito, useVentasManager
+    └── pages/          # Dashboard, VentasPagina, VentasPendientesPagina
 ```
 
 ---
 
-## Fase 3 — Integración Gemini AI
+## Fase 2 — Unificar componentes duplicados 🔲
 
-**Prerequisito:** Fase 2 completada.
+| Rama | Qué hace |
+|------|----------|
+| `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `Enlace` → `Button` con `variant` |
+| `refactor/phase2-select` | Unificar `SelectFieldset` + `SelectFiltro` → `Select` con `theme` |
+| `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` |
+| `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` |
+
+## Fase 3 — Refactor arquitectura 🔲
+
+- Crear `usePaginatedFetch<T>` genérico
+- Mover `PrivateRoute` → `app/`
+- Mover `FooterLogin` → `common/`
+
+---
+
+## Fase 4 — Integración Gemini AI 🔲
+
+**Prerequisito:** Fases 1-3 completadas.
 
 ### Casos de uso identificados
 

@@ -31,8 +31,8 @@ onSubmit: (e: SubmitEvent<HTMLFormElement>) => void;
 
 **Archivos corregidos:**
 - `src/components/common/FormDialog.tsx`
-- `src/components/products/ModalProductoForm.tsx`
-- `src/hooks/useGestionProductos.ts`
+- `src/features/productos/components/ModalProductoForm.tsx`
+- `src/features/productos/hooks/useGestionProductos.ts`
 
 ---
 
@@ -56,7 +56,7 @@ catch (err: unknown) {
 ```
 
 **Archivos corregidos:**
-- `src/hooks/useGestionProductos.ts`
+- `src/features/productos/hooks/useGestionProductos.ts`
 
 ---
 
@@ -70,13 +70,13 @@ const abrirEditar = (prod: any, ...) => { ... };
 
 ```tsx
 // ✅ BIEN — importar y usar el tipo de dominio correspondiente
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "@features/productos/domain/producto.types";
 const [editando, setEditando] = useState<Producto | null>(null);
 const abrirEditar = (prod: Producto, ...) => { ... };
 ```
 
 **Archivos corregidos:**
-- `src/hooks/useGestionProductos.ts`
+- `src/features/productos/hooks/useGestionProductos.ts`
 
 ---
 

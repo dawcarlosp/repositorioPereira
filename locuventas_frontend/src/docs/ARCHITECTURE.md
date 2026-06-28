@@ -25,8 +25,8 @@
 
 ## Organización actual
 
-La estructura actual organiza el código por **tipo técnico** — todos los hooks
-juntos, todos los componentes juntos, etc.
+La estructura está organizada por **dominio de negocio** usando carpetas
+`features/`, con componentes UI compartidos en `components/common/`.
 
 ```
 src/
@@ -63,32 +63,6 @@ src/
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx
-│   ├── dev/
-│   │   └── SobreMi.tsx         # Perfil del desarrollador
-│   ├── products/               # Componentes del dominio productos
-│   │   ├── CatalogoProductos.tsx
-│   │   ├── GestionProductos.tsx
-│   │   ├── ModalProductoForm.tsx
-│   │   ├── ProductoCard.tsx
-│   │   ├── ProductoGestionCard.tsx
-│   │   └── TablaProductos.tsx
-│   ├── vendedor/               # Componentes del dominio vendedores
-│   │   ├── Form/
-│   │   │   ├── FormEditarPerfil.tsx
-│   │   │   ├── FormVendedorLogin.tsx
-│   │   │   └── FormVendedorRegister.tsx
-│   │   ├── PendientesList.tsx
-│   │   ├── TarjetaVendedor.tsx
-│   │   └── UploadAvatar.tsx
-│   ├── ventas/                 # Componentes del dominio ventas
-│   │   ├── CarritoVentas.tsx
-│   │   ├── ContenedorVentas.tsx
-│   │   ├── DrawerCarrito.tsx
-│   │   ├── MenuVentas.tsx
-│   │   ├── ModalDetalleVenta.tsx
-│   │   ├── ModalPago.tsx
-│   │   ├── TablaVentas.tsx
-│   │   └── VentaCard.tsx
 │   └── FooterLogin.tsx
 │
 ├── constants/
@@ -101,24 +75,39 @@ src/
 │   ├── HeaderContext.tsx       # Estado del header: menús, dropdowns, modales
 │   └── useAuth.ts              # Hook para consumir AuthContext
 │
-├── domain/                     # Tipos TypeScript — fuente de verdad
+├── domain/                     # Tipos compartidos entre features
 │   ├── api.types.ts            # ApiResponse<T>, PageDTO<T>
-│   ├── auth.types.ts           # Auth, Role, ConfirmacionGlobal
-│   ├── producto.types.ts       # Producto, ProductoDTO
-│   ├── ui.types.ts             # SelectOption, Breakpoint, MenuItem
-│   └── venta.types.ts          # Venta, LineaVenta, EstadoPago
+│   └── ui.types.ts             # SelectOption, Breakpoint, MenuItem
 │
-├── hooks/
+├── features/                   # Código organizado por dominio de negocio
+│   ├── auth/                   # Autenticación y gestión de vendedores
+│   │   ├── components/         # PendientesList, TarjetaVendedor, FormLogin...
+│   │   ├── domain/             # auth.types.ts, vendedor.types.ts
+│   │   ├── hooks/              # useLogin, useRegister, useEditarPerfil
+│   │   └── pages/              # LoginPage, VendedoresPendientesPagina
+│   │
+│   ├── dev/                    # Perfil del desarrollador
+│   │   ├── components/         # SobreMi.tsx
+│   │   └── pages/              # SobreMiPage.tsx
+│   │
+│   ├── productos/              # Catálogo y gestión de productos
+│   │   ├── components/         # CatalogoProductos, GestionProductos, ...
+│   │   ├── domain/             # producto.types.ts
+│   │   ├── hooks/              # useProductos, useGestionProductos, useFiltrosProducto
+│   │   └── pages/              # GestionProductosPagina.tsx
+│   │
+│   └── ventas/                 # Ventas, carrito y cobros
+│       ├── components/         # CarritoVentas, ContenedorVentas, ModalPago...
+│       ├── domain/             # venta.types.ts
+│       ├── hooks/              # useCarrito, useVentasManager
+│       └── pages/              # Dashboard, VentasPagina, VentasPendientesPagina
+│
+├── hooks/                      # Hooks globales y compartidos
 │   ├── useBuscador.ts          # Buscador con debounce
 │   ├── useBreakpoint.ts        # Breakpoint actual
-│   ├── useCarrito.ts           # Cálculos del carrito: base, iva, total
-│   ├── useFiltrosProducto.ts   # Carga países y categorías
-│   ├── useGestionProductos.ts  # CRUD productos
 │   ├── useHeaderManager.ts     # Estado completo del header
-│   ├── useProductos.ts         # Fetch paginado con filtros
 │   ├── useResponsiveLayout.ts  # isSmall, isMedium, isLarge
-│   ├── useVendedoresPendientes.ts
-│   └── useVentasManager.ts     # Fetch ventas, pago, cancelación
+│   └── useVendedoresPendientes.ts
 │
 ├── layout/
 │   ├── AppLayout.tsx           # Layout principal: aside + main
@@ -137,15 +126,6 @@ src/
 │           ├── adminMenuConfig.ts   # Árbol de menú admin (datos)
 │           └── userMenuConfig.ts    # Árbol de menú usuario (datos)
 │
-├── pages/
-│   ├── Dashboard.tsx
-│   ├── GestionProductosPagina.tsx
-│   ├── LoginPage.tsx
-│   ├── SobreMiPage.tsx
-│   ├── VendedoresPendientes.tsx
-│   ├── VentasPagina.tsx
-│   └── VentasPendientesPagina.tsx
-│
 ├── services/
 │   ├── api.ts                  # apiRequest<T>() — cliente HTTP centralizado
 │   └── venta.service.ts        # descargarTicketPDF
@@ -161,17 +141,19 @@ src/
 
 ```
 ┌─────────────────────────────────────┐
-│              pages/                  │  Orquesta: instancia hooks,
+│        features/*/pages/             │  Orquesta: instancia hooks,
 │                                      │  pasa props, renderiza modales
 ├─────────────────────────────────────┤
-│            components/               │  Presentación: recibe props,
+│      features/*/components/          │  Presentación: recibe props,
 │                                      │  no llama a la API directamente
 ├─────────────────────────────────────┤
-│              hooks/                  │  Lógica de negocio y estado
+│        features/*/hooks/             │  Lógica de negocio y estado del feature
+├─────────────────────────────────────┤
+│     hooks/ (raíz) + common/          │  Hooks y componentes compartidos
 ├─────────────────────────────────────┤
 │            services/api.ts           │  Única puerta de entrada al backend
 ├─────────────────────────────────────┤
-│              domain/                 │  Tipos TypeScript compartidos
+│     domain/ (raíz) + features/*/d…   │  Tipos TypeScript compartidos y de feature
 └─────────────────────────────────────┘
 ```
 
@@ -204,11 +186,11 @@ Contextos existentes:
 Toda la lógica de negocio vive en hooks, no en componentes.
 
 ```
-useVentasManager   → fetch, pago, cancelación, detalle de ventas
-useGestionProductos → CRUD completo de productos con form y modales
-useCarrito         → cálculos: base imponible, IVA, total
-useFiltrosProducto → carga países y categorías (catálogos maestros)
-useHeaderManager   → estado global del header + confirmación global
+useVentasManager      → fetch, pago, cancelación, detalle de ventas (features/ventas/)
+useGestionProductos   → CRUD completo de productos con form y modales (features/productos/)
+useCarrito            → cálculos: base imponible, IVA, total (features/ventas/)
+useFiltrosProducto    → carga países y categorías (features/productos/)
+useHeaderManager      → estado global del header + confirmación global (hooks/)
 ```
 
 ### Container / Presentational Pattern
@@ -236,10 +218,10 @@ El menú de administración usa un árbol de datos renderizado por
 Cada listado tiene un skeleton que replica la forma del item real para
 evitar saltos visuales durante la carga.
 
-| Skeleton                  | Item real             |
-|---------------------------|-----------------------|
-| `SkeletonProductoCard`    | `ProductoCard`        |
-| `SkeletonTarjetaVendedor` | `TarjetaVendedor`     |
+| Skeleton                  | Item real                                |
+|---------------------------|------------------------------------------|
+| `SkeletonProductoCard`    | `ProductoCard` (features/productos/)     |
+| `SkeletonTarjetaVendedor` | `TarjetaVendedor` (features/auth/)       |
 | `SkeletonVentaCard`       | `VentaCard` (inline en ContenedorVentas) |
 
 ---
@@ -253,11 +235,14 @@ evitar saltos visuales durante la carga.
 
 ### Hooks
 - Prefijo `use`: `useProductos`, `useCarrito`
+- Cada feature tiene sus hooks en `features/X/hooks/`
+- Los hooks compartidos viven en `hooks/` raíz
 - Devuelven un objeto con propiedades nombradas, nunca un array (salvo
   convención de React como `useState`)
 
 ### Tipos TypeScript
-- Definidos en `src/domain/` — nunca inline en componentes
+- Definidos en `features/*/domain/` para cada dominio
+- Tipos compartidos en `src/domain/` (api.types, ui.types)
 - Nunca `any` — usar `unknown` con cast explícito
 
 ### Paginación
