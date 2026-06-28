@@ -1,4 +1,4 @@
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "../domain/producto.types";
 import DataTable from "@components/common/DataTable";
 import Boton from "@buttons/Boton";
 import { resolveProductImage } from "@utils/imageUtils";

@@ -6,7 +6,7 @@ import Aside from "@layout/Aside";
 import Main from "@layout/Main";
 import { useHeader } from "@context/HeaderContext";
 import CarritoVenta from "@components/ventas/CarritoVentas";
-import CatalogoProductos from "@components/products/CatalogoProductos";
+import CatalogoProductos from "@features/productos/components/CatalogoProductos";
 import ModalPago from "@components/ventas/ModalPago";
 import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
 import { apiRequest } from "@services/api";

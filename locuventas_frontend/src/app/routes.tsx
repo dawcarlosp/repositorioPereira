@@ -4,7 +4,7 @@ import Dashboard from "@pages/Dashboard";
 import VentasPagina from "@pages/VentasPagina";
 import VentasPendientesPagina from "@/pages/VentasPendientesPagina";
 import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
-import GestionProductosPagina from "@pages/GestionProductosPagina";
+import GestionProductosPagina from "@features/productos/pages/GestionProductosPagina";
 import SobreMiPage from "@pages/SobreMiPage";
 import PrivateRoute from "@components/common/PrivateRoute";
 

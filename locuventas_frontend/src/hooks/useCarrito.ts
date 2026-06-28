@@ -1,6 +1,6 @@
 // src/hooks/useCarrito.ts
 import { useMemo } from "react";
-import { Producto } from "../domain/producto.types"; // Importar Producto
+import type { Producto } from "@features/productos/domain/producto.types";
 
 export interface CarritoItem {
   cantidad: number;

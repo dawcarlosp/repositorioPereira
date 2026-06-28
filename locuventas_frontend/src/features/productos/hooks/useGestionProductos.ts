@@ -3,7 +3,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { apiRequest } from "@services/api";
 import type { SelectOption } from "@domain/ui.types";
-import type { Producto } from "@domain/producto.types";
+import type { Producto } from "../domain/producto.types";
 
 interface FormState {
   nombre:         string;
