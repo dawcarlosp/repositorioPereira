@@ -1,6 +1,5 @@
 import { useNavigate, useLocation } from "react-router-dom";
-import Boton from "@buttons/Boton";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 
 interface Props {
   closeMenu?: () => void;
@@ -38,13 +37,13 @@ export default function MenuVentas({ closeMenu }: Props) {
       {menuItems.map((item) => (
         <div key={item.path} className="w-full md:max-w-xs">
           {item.active ? (
-            <Boton disabled={true} className="w-full opacity-80 ring-1 ring-orange-500/50">
+            <Button disabled={true} className="w-full opacity-80 ring-1 ring-orange-500/50">
               {item.label}
-            </Boton>
+            </Button>
           ) : (
-            <BotonClaro onClick={() => handleNav(item.path)} className="w-full">
+            <Button variant="secondary" onClick={() => handleNav(item.path)} className="w-full">
               {item.label}
-            </BotonClaro>
+            </Button>
           )}
         </div>
       ))}

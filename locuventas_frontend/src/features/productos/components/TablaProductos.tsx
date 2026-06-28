@@ -1,6 +1,6 @@
 import type { Producto } from "../domain/producto.types";
 import DataTable from "@components/common/DataTable";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import { resolveProductImage } from "@utils/imageUtils";
 
 interface Props {
@@ -92,18 +92,18 @@ export default function TablaProductos({
 
             <td className="px-4 py-4">
               <div className="flex justify-end gap-2 opacity-70 group-hover:opacity-100 transition-opacity">
-                <Boton
+                <Button
                   onClick={() => onEditar(p)}
                   className="!px-3 !py-1 w-auto text-xs"
                 >
                   Editar
-                </Boton>
-                <Boton
+                </Button>
+                <Button
                   onClick={() => onEliminar(p.id)}
                   className="!px-3 !py-1 w-auto text-xs !ring-rose-500 hover:!bg-rose-500"
                 >
                   Eliminar
-                </Boton>
+                </Button>
               </div>
             </td>
           </tr>

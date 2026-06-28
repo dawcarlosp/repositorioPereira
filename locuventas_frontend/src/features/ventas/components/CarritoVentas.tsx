@@ -1,8 +1,7 @@
 import { useAuth } from "@context/useAuth";
 import { useCarrito } from "../hooks/useCarrito";
 import type { CarritoItem } from "../hooks/useCarrito";
-import Boton from "@buttons/Boton";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 
 interface Props {
   carga:          CarritoItem[];
@@ -101,20 +100,21 @@ export default function CarritoVenta({ carga, quitarProducto, onGuardar, onCobra
         </div>
 
         <div className="flex flex-col gap-2">
-          <Boton 
+          <Button 
             onClick={onCobrar}
             disabled={carga.length === 0}
             className="w-full !py-4 !bg-orange-500 !text-black font-black uppercase text-xs tracking-[2px] hover:!bg-orange-400 disabled:opacity-30"
           >
             Finalizar y Cobrar
-          </Boton>
-          <BotonClaro 
+          </Button>
+          <Button 
+            variant="secondary"
             onClick={onGuardar}
             disabled={carga.length === 0}
             className="w-full !py-3 !border-zinc-700 !text-zinc-400 hover:!text-white text-xs uppercase font-bold tracking-widest disabled:opacity-30"
           >
             Guardar en Espera
-          </BotonClaro>
+          </Button>
         </div>
       </div>
     </div>

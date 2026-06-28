@@ -13,7 +13,7 @@ import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
 import SelectFiltro from "@components/common/SelectFiltro";
 import FAB from "@components/common/FAB";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 
 const SkeletonProductoCard = () => (
   <div className="rounded-2xl bg-zinc-900 border border-zinc-700 flex flex-col gap-3 p-4 animate-pulse">
@@ -122,9 +122,9 @@ export default function GestionProductos() {
           </button>
         )}
         {!isMobile && (
-          <Boton onClick={() => abrirNuevo(paises)} className="ml-auto">
+          <Button onClick={() => abrirNuevo(paises)} className="ml-auto">
             + Agregar producto
-          </Boton>
+          </Button>
         )}
       </div>
 

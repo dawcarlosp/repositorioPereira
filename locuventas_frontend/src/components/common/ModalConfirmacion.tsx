@@ -1,6 +1,5 @@
 import BaseModal from "@components/common/BaseModal";
-import Boton from "@buttons/Boton";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 
 interface ModalConfirmacionProps {
   mensaje:      string;
@@ -21,12 +20,12 @@ export default function ModalConfirmacion({
       onClose={onCancelar}
       footer={
         <>
-          <BotonClaro onClick={onConfirmar} className="w-full text-base py-3 rounded-xl">
+          <Button variant="secondary" onClick={onConfirmar} className="w-full text-base py-3 rounded-xl">
             {confirmText}
-          </BotonClaro>
-          <Boton onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
+          </Button>
+          <Button onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
             Cancelar
-          </Boton>
+          </Button>
         </>
       }
     />

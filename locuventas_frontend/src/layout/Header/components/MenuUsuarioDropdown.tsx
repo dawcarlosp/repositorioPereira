@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
 import type { Auth } from "@/features/auth/domain/auth.types";
 import Avatar from "@components/common/Avatar";
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 import DropdownContainer from "@components/common/DropdownContainer";
 import useResponsiveLayout from "@hooks/useResponsiveLayout";
 import { userMenuConfig } from "@layout/Header/config/userMenuConfig";
@@ -67,7 +67,8 @@ export default function MenuUsuarioDropdown({
 
         <div className="flex flex-col gap-1.5">
           {items.map((item) => (
-            <BotonClaro
+            <Button
+              variant="secondary"
               key={item.label}
               className={`!justify-start !text-[11px] uppercase tracking-wider font-bold h-9 ${
                 item.danger ? "hover:!text-rose-500" : ""
@@ -82,7 +83,7 @@ export default function MenuUsuarioDropdown({
               }}
             >
               {item.label}
-            </BotonClaro>
+            </Button>
           ))}
         </div>
       </DropdownContainer>

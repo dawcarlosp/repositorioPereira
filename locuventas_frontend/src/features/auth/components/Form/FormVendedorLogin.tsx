@@ -1,7 +1,6 @@
 // src/features/auth/components/Form/FormVendedorLogin.tsx
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import InputFieldset from "@components/common/InputFieldset";
-import Enlace from "@components/common/Enlace";
 import AlertSimple from "@components/common/AlertSimple";
 import LogoNegocio from "@components/common/LogoNegocio";
 import useLogin from "@features/auth/hooks/useLogin";
@@ -60,15 +59,15 @@ export default function FormVendedorLogin({ setIsOpen }: Props) {
           </p>
         )}
 
-        <Boton disabled={loading}>
+        <Button disabled={loading}>
           {loading ? "Cargando..." : "Iniciar Sesión"}
-        </Boton>
+        </Button>
 
         <div className="flex flex-col xs:flex-row items-center justify-center gap-2 mt-2 text-sm text-center">
           <p className="text-white">¿No tienes cuenta?</p>
-          <Enlace onClick={(e) => { e.preventDefault(); setIsOpen(true); }}>
+          <Button variant="link" onClick={(e) => { e.preventDefault(); setIsOpen(true); }}>
             Regístrate
-          </Enlace>
+          </Button>
         </div>
       </form>
 

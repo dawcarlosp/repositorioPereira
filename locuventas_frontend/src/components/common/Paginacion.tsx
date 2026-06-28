@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 
 interface PaginacionProps {
   page:         number;
@@ -69,13 +69,13 @@ export default function Paginacion({ page, totalPages, onPageChange, size, onSiz
       </div>
 
       <div className="flex items-center gap-4">
-        <Boton
+        <Button
           disabled={page === 0}
           onClick={() => onPageChange(page - 1)}
           className="!px-3 !py-1 w-auto"
         >
           &lt;
-        </Boton>
+        </Button>
 
         <div className="flex items-center gap-1 text-sm text-zinc-400 font-medium uppercase tracking-tighter">
           <span>Página</span>
@@ -84,13 +84,13 @@ export default function Paginacion({ page, totalPages, onPageChange, size, onSiz
           <b className="text-white">{totalPages || 1}</b>
         </div>
 
-        <Boton
+        <Button
           disabled={page + 1 >= totalPages}
           onClick={() => onPageChange(page + 1)}
           className="!px-3 !py-1 w-auto"
         >
           &gt;
-        </Boton>
+        </Button>
       </div>
     </div>
   );
