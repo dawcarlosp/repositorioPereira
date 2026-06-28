@@ -37,16 +37,14 @@
       "@/*":           ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@hooks/*":      ["./src/hooks/*"],
-      "@pages/*":      ["./src/pages/*"],
       "@layout/*":     ["./src/layout/*"],
       "@context/*":    ["./src/context/*"],
       "@services/*":   ["./src/services/*"],
       "@buttons/*":    ["./src/components/common/buttons/*"],
       "@constants/*":  ["./src/constants/*"],
       "@utils/*":      ["./src/utils/*"],
-      "@types/*":      ["./src/types/*"],
       "@domain/*":     ["./src/domain/*"],
-       "@features/*":     ["./src/features/*"]
+      "@features/*":     ["./src/features/*"]
     },
 
     // ── Misc ─────────────────────────────────────────────────────

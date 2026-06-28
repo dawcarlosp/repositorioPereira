@@ -1,4 +1,4 @@
-// src/types/ui.types.ts
+// src/domain/ui.types.ts
 import type { MouseEvent } from "react";
 
 export type Breakpoint = "xs" | "sm" | "md" | "lg" | "xl";

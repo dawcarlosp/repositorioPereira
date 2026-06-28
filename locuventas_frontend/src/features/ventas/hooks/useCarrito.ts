@@ -1,4 +1,4 @@
-// src/hooks/useCarrito.ts
+// src/features/ventas/hooks/useCarrito.ts
 import { useMemo } from "react";
 import type { Producto } from "@features/productos/domain/producto.types";
 

@@ -1,4 +1,4 @@
-// src/hooks/useFiltrosProducto.ts
+// src/features/productos/hooks/useFiltrosProducto.ts
 import { useState, useEffect } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
