@@ -1,4 +1,4 @@
-import type { VentaDetalle } from "@domain/venta.types";
+import type { VentaDetalle } from "../domain/venta.types";
 import BaseModal from "@components/common/BaseModal";
 import BotonClaro from "@buttons/BotonClaro";
 import Boton from "@buttons/Boton";

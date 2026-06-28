@@ -1,8 +1,8 @@
 import { Route, Routes } from "react-router-dom";
 import LoginPage from "@/features/auth/pages/LoginPage";
-import Dashboard from "@pages/Dashboard";
-import VentasPagina from "@pages/VentasPagina";
-import VentasPendientesPagina from "@/pages/VentasPendientesPagina";
+import Dashboard from "@features/ventas/pages/Dashboard";
+import VentasPagina from "@features/ventas/pages/VentasPagina";
+import VentasPendientesPagina from "@features/ventas/pages/VentasPendientesPagina";
 import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
 import GestionProductosPagina from "@features/productos/pages/GestionProductosPagina";
 import SobreMiPage from "@pages/SobreMiPage";

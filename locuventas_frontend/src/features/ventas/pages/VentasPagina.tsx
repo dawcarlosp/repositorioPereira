@@ -1,10 +1,10 @@
 import AppLayout from "@layout/AppLayout";
 import Main from "@layout/Main";
-import ContenedorVentas from "@components/ventas/ContenedorVentas";
-import useVentasManager from "@hooks/useVentasManager";
-import ModalPago from "@components/ventas/ModalPago";
+import ContenedorVentas from "../components/ContenedorVentas";
+import useVentasManager from "../hooks/useVentasManager";
+import ModalPago from "../components/ModalPago";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import ModalDetalleVenta from "@components/ventas/ModalDetalleVenta";
+import ModalDetalleVenta from "../components/ModalDetalleVenta";
 
 export default function VentasPagina() {
   const {

@@ -1,4 +1,4 @@
-import type { EstadoPago } from "@domain/venta.types";
+import type { EstadoPago } from "@features/ventas/domain/venta.types";
 
 export const PAYMENT_STATES: Record<string, EstadoPago> = {
   PAGADO:   "PAGADO",

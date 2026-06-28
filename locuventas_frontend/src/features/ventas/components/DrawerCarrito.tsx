@@ -1,5 +1,5 @@
-import type { CarritoItem } from "@hooks/useCarrito";
-import CarritoVenta from "@components/ventas/CarritoVentas";
+import type { CarritoItem } from "../hooks/useCarrito";
+import CarritoVenta from "./CarritoVentas";
 
 interface Props {
   isOpen:         boolean;

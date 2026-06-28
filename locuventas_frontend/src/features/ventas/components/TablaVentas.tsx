@@ -1,4 +1,4 @@
-import type { Venta } from "@domain/venta.types";
+import type { Venta } from "../domain/venta.types";
 import DataTable from "@components/common/DataTable";
 import { getPaymentStateStyle } from "@constants/states";
 

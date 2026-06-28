@@ -1,6 +1,6 @@
-import type { Venta } from "@domain/venta.types";
-import TablaVentas from "@components/ventas/TablaVentas";
-import VentaCard from "@components/ventas/VentaCard";
+import type { Venta } from "../domain/venta.types";
+import TablaVentas from "./TablaVentas";
+import VentaCard from "./VentaCard";
 import Paginacion from "@components/common/Paginacion";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { isBreakpoint } from "@constants/breakpoints";

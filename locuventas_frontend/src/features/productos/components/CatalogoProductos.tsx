@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import type { Producto } from "../domain/producto.types";
-import type { CarritoItem } from "@hooks/useCarrito";
+import type { CarritoItem } from "@features/ventas/hooks/useCarrito";
 import ProductoCard from "./ProductoCard";
 import SkeletonProductoCard from "@components/common/SkeletonProductoCard";
 import Paginacion from "@components/common/Paginacion";

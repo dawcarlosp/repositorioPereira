@@ -1,6 +1,6 @@
 import { useAuth } from "@context/useAuth";
-import { useCarrito } from "@hooks/useCarrito";
-import type { CarritoItem } from "@hooks/useCarrito";
+import { useCarrito } from "../hooks/useCarrito";
+import type { CarritoItem } from "../hooks/useCarrito";
 import Boton from "@buttons/Boton";
 import BotonClaro from "@buttons/BotonClaro";
 
