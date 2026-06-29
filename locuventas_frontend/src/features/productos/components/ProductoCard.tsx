@@ -57,7 +57,7 @@ export default function ProductoCard({ producto, cantidad, onAdd }: Props) {
       <div className="relative flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
         {producto.foto ? (
           <img
-            src={resolveProductImage(producto.foto)}
+            src={resolveProductImage(producto.foto) ?? undefined}
             alt={producto.nombre}
             className="h-24 w-24 object-contain transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

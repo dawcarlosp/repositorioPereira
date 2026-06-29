@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import type { ReactNode, SubmitEvent } from "react";
+import type { ReactNode, ReactEventHandler, SubmitEvent } from "react";
 import Button from "@buttons/Button";
 
 interface FormDialogProps {
@@ -31,11 +31,11 @@ export default function FormDialog({
     if (visible) {
       setRender(true);
       requestAnimationFrame(() => setAnimState("open"));
-    } else {
-      setAnimState("closing");
-      const t = setTimeout(() => setRender(false), 300);
-      return () => clearTimeout(t);
+      return;
     }
+    setAnimState("closing");
+    const t = setTimeout(() => setRender(false), 300);
+    return () => clearTimeout(t);
   }, [visible]);
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function FormDialog({
     setTimeout(() => onClose(), 280);
   };
 
-  const handleCancel = (e: Event) => {
+  const handleCancel: ReactEventHandler<HTMLDialogElement> = (e) => {
     e.preventDefault();
     handleClose();
   };

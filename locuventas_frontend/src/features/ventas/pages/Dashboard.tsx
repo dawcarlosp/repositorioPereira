@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { Venta, VentaDetalle } from "../domain/venta.types";
 import type { CarritoItem } from "../hooks/useCarrito";
+import type { Producto } from "@features/productos/domain/producto.types";
 import AppLayout from "@layout/AppLayout";
 import Aside from "@layout/Aside";
 import Main from "@layout/Main";
@@ -40,19 +41,16 @@ function Dashboard() {
     setPage(0);
   };
 
-  function agregarProducto(prod: { id: number; precio: number; iva: number }) {
+  function agregarProducto(prod: Producto) {
     setCarga((prev) => {
       const idx = prev.findIndex((item) => item.producto.id === prod.id);
       if (idx >= 0) {
+        const item = prev[idx]!;
         const newCarga = [...prev];
-        newCarga[idx] = {
-          ...newCarga[idx],
-          cantidad: newCarga[idx].cantidad + 1,
-        };
+        newCarga[idx] = { ...item, cantidad: item.cantidad + 1 };
         return newCarga;
-      } else {
-        return [...prev, { producto: prod as never, cantidad: 1 }];
       }
+      return [...prev, { producto: prod, cantidad: 1 }];
     });
   }
 
@@ -60,16 +58,13 @@ function Dashboard() {
     setCarga((prev) => {
       const idx = prev.findIndex((item) => item.producto.id === id);
       if (idx === -1) return prev;
-      if (prev[idx].cantidad === 1) {
-        return prev.filter((item) => item.producto.id !== id);
-      } else {
-        const newCarga = [...prev];
-        newCarga[idx] = {
-          ...newCarga[idx],
-          cantidad: newCarga[idx].cantidad - 1,
-        };
-        return newCarga;
+      const item = prev[idx]!;
+      if (item.cantidad === 1) {
+        return prev.filter((i) => i.producto.id !== id);
       }
+      const newCarga = [...prev];
+      newCarga[idx] = { ...item, cantidad: item.cantidad - 1 };
+      return newCarga;
     });
   }
 
@@ -166,7 +161,6 @@ function Dashboard() {
           carga={carga}
           agregarProducto={agregarProducto}
           page={page}
-          totalPages={totalPages}
           setTotalPages={setTotalPages}
           onPageChange={setPage}
           size={size}
@@ -216,7 +210,7 @@ function Dashboard() {
       {modalAbierto && ventaEnCurso && (
         <ModalPago
           totalPendiente={
-            ventaEnCurso.total?.toFixed(2) ?? ventaEnCurso.saldo?.toFixed(2)
+            ventaEnCurso.total ?? ventaEnCurso.saldo ?? 0
           }
           onConfirmar={confirmarPago}
           onCancelar={() => {

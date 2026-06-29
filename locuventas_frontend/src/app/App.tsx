@@ -27,9 +27,7 @@ export default function App() {
           closeOnClick
           pauseOnHover
           draggable
-          portalId="toast-portal"
           toastClassName="bg-white/30 backdrop-blur-lg text-gray-900 rounded-xl p-4 shadow-lg border border-white/40"
-          bodyClassName="text-sm font-medium"
         />
       </BrowserRouter>
     </AppProviders>

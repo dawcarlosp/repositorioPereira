@@ -1,12 +1,12 @@
 import type { Breakpoint } from "@domain/ui.types";
 
-export const BREAKPOINTS: Record<string, Breakpoint> = {
-  XS: "xs",
-  SM: "sm",
-  MD: "md",
-  LG: "lg",
-  XL: "xl",
-};
+export const BREAKPOINTS = {
+  XS: "xs" as const,
+  SM: "sm" as const,
+  MD: "md" as const,
+  LG: "lg" as const,
+  XL: "xl" as const,
+} as const;
 
 type GroupName = "MOBILE" | "TABLET" | "DESKTOP" | "NOT_MOBILE" | "NOT_DESKTOP" | "SMALL_SCREENS";
 

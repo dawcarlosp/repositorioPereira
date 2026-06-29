@@ -52,8 +52,8 @@ export default function CatalogoProductos({
     carga.find((i) => i.producto.id === id)?.cantidad ?? 0;
 
   const handleSearch = (v: string) => { setSearch(v); onPageChange(0); };
-  const handlePais = (e: React.ChangeEvent<HTMLSelectElement>) => { setPaisId(e.target.value); onPageChange(0); };
-  const handleCategoria = (e: React.ChangeEvent<HTMLSelectElement>) => { setCategoriaId(e.target.value); onPageChange(0); };
+  const handlePais = (value: string) => { setPaisId(value); onPageChange(0); };
+  const handleCategoria = (value: string) => { setCategoriaId(value); onPageChange(0); };
 
   return (
     <div className="w-full flex flex-col gap-4">

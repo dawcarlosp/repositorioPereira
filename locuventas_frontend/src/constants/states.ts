@@ -1,10 +1,10 @@
 import type { EstadoPago } from "@features/ventas/domain/venta.types";
 
-export const PAYMENT_STATES: Record<string, EstadoPago> = {
-  PAGADO:   "PAGADO",
-  PARCIAL:  "PARCIAL",
-  PENDIENTE: "PENDIENTE",
-};
+export const PAYMENT_STATES = {
+  PAGADO: "PAGADO" as const,
+  PARCIAL: "PARCIAL" as const,
+  PENDIENTE: "PENDIENTE" as const,
+} as const;
 
 export const PAYMENT_STATE_STYLES: Record<EstadoPago, string> = {
   [PAYMENT_STATES.PAGADO]:    "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",

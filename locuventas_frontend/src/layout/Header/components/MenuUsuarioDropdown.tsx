@@ -41,7 +41,7 @@ export default function MenuUsuarioDropdown({
       >
         <Avatar
           src={fotoUrl}
-          alt={usuario.nombre}
+          alt={usuario.nombre ?? undefined}
           className={
             isOpen
               ? "border-purple-500 scale-105 shadow-[0_0_15px_rgba(249,115,22,0.4)]"
