@@ -65,12 +65,11 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }: Props) {
       });
 
       toast.success("Perfil actualizado");
-      setAuth((prev) => ({
-        ...prev,
+      setAuth({
         nombre,
         email,
-        foto: result.foto || prev.foto,
-      }));
+        foto: result.foto ?? null,
+      });
       setIsOpen(false);
     } catch (err) {
       const errorObj = err as Record<string, string>;
