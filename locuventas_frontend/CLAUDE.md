@@ -274,7 +274,7 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 | `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `BotonCerrar`, `Enlace` → `Button` con `variant` | ✅ Mergeado |
 | `refactor/phase2-select` | Extraer lógica compartida en `SelectBase` + renombrar `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` | ✅ Mergeado |
 | `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` | ✅ |
-| `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` | 🔲 |
+| `refactor/phase2-skeleton` | Extraer skeletons inline a archivos independientes: `SkeletonVentaCard`, `SkeletonProductoGestionCard` | ✅ |
 
 ### Fase 3 🔲 — Refactor arquitectura
 - Crear `usePaginatedFetch<T>` genérico para eliminar el patrón repetido en hooks de fetch paginado
@@ -306,7 +306,13 @@ Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadma
   - Eliminados: `UploadComponent.tsx`, `features/auth/components/UploadAvatar.tsx`
   - 3 imports actualizados (ModalProductoForm, FormEditarPerfil, FormVendedorRegister)
   - Build verificado
-- Siguiente paso: **Phase 2 — Skeleton** (unificar en `Skeleton` con `variant`)
+- **Phase 2: Skeleton** — skeletons inline extraídos a archivos independientes ✅
+  - `SkeletonVentaCard.tsx` creado en `features/ventas/components/`
+  - `SkeletonProductoGestionCard.tsx` creado en `features/productos/components/`
+  - Eliminada duplicación inline en `ContenedorVentas.tsx` y `GestionProductos.tsx`
+  - `SkeletonProductoCard` (standalone, catálogo) y `FilaSkeleton` (DataTable) quedan como están
+  - Build verificado
+- Siguiente paso: **Fase 3 — Refactor arquitectura** (usePaginatedFetch, mover PrivateRoute → app/, FooterLogin → common/)
 
 ### Convención de nombres de ramas
 

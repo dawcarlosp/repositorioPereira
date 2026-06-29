@@ -78,7 +78,7 @@ src/features/
 | `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `Enlace` → `Button` con `variant` | ✅ |
 | `refactor/rename-selects` | Extraer lógica compartida en `SelectBase` + renombrar `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` | ✅ |
 | **`refactor/phase2-upload`** | **Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape`** | **✅** |
-| `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` | 🔲 |
+| `refactor/phase2-skeleton` | Extraer skeletons inline a archivos independientes: `SkeletonVentaCard`, `SkeletonProductoGestionCard` | ✅ |
 
 ## Fase 3 — Refactor arquitectura 🔲
 
