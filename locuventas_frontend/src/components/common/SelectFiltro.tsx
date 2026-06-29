@@ -1,6 +1,5 @@
-import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Search, X } from "lucide-react";
-import useBuscador from "@hooks/useBuscador";
+import { ChevronDown, X } from "lucide-react";
+import { useSelectLogic, SelectDropdown, THEME_FILTER } from "./SelectBase";
 import type { SelectOption } from "@domain/ui.types";
 
 interface SelectFiltroProps {
@@ -22,39 +21,10 @@ export default function SelectFiltro({
   disabled = false,
   searchPlaceholder = "Buscar...",
 }: SelectFiltroProps) {
-  const [open, setOpen] = useState(false);
-  const { query, setQuery, inputRef: searchRef, handleChange, handleClear } = useBuscador();
-  const ref = useRef<HTMLDivElement>(null);
+  const { open, setOpen, ref, query, handleChange, handleClear, selectedOption, filtered } = useSelectLogic({ options, value });
 
-  const selectedOption = options.find((opt) => String(opt.value) === String(value));
-
-  const filtered = query.trim()
-    ? options.filter((opt) =>
-        opt.label.toLowerCase().includes(query.toLowerCase())
-      )
-    : options;
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-        setQuery("");
-      }
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  useEffect(() => {
-    if (open) {
-      setTimeout(() => searchRef.current?.focus(), 50);
-    } else {
-      setQuery("");
-    }
-  }, [open]);
-
-  const handleSelect = (optValue: string) => {
-    onChange?.({ target: { value: optValue } });
+  const handleSelect = (optValue: string | number) => {
+    onChange?.({ target: { value: String(optValue) } });
     setOpen(false);
   };
 
@@ -70,9 +40,7 @@ export default function SelectFiltro({
         disabled={disabled}
         onClick={handleToggle}
         className={`
-          w-full h-9 flex items-center gap-2 px-3
-          bg-zinc-800 rounded-xl border transition-all text-left
-          focus:outline-none text-[11px]
+          ${THEME_FILTER.trigger}
           ${open
             ? "border-purple-500 ring-1 ring-purple-500"
             : "border-zinc-700 hover:border-zinc-500"
@@ -113,74 +81,18 @@ export default function SelectFiltro({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full min-w-[160px] bg-zinc-900 border border-zinc-700 rounded-xl shadow-2xl overflow-hidden">
-          <div className="flex items-center gap-2 px-3 py-2 border-b border-zinc-800">
-            <Search className="w-3.5 h-3.5 text-zinc-500 flex-shrink-0" />
-            <input
-              ref={searchRef}
-              type="text"
-              value={query}
-              onChange={(e) => handleChange(e.target.value)}
-              placeholder={searchPlaceholder}
-              className="flex-1 text-[11px] text-white bg-transparent focus:outline-none placeholder-zinc-600 min-w-0"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={handleClear}
-                className="text-zinc-500 hover:text-white flex-shrink-0"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            )}
-          </div>
-
-          <ul className="max-h-48 overflow-y-auto custom-scrollbar py-1">
-            {!query && (
-              <li>
-                <button
-                  type="button"
-                  onClick={() => handleSelect("")}
-                  className="w-full px-3 py-2 text-left text-[11px] text-zinc-600 hover:text-zinc-400 hover:bg-zinc-800 transition-colors"
-                >
-                  {placeholder}
-                </button>
-              </li>
-            )}
-
-            {filtered.length === 0 ? (
-              <li className="px-3 py-3 text-[11px] text-zinc-600 text-center italic">
-                Sin resultados para "{query}"
-              </li>
-            ) : (
-              filtered.map((opt) => (
-                <li key={opt.value}>
-                  <button
-                    type="button"
-                    onClick={() => handleSelect(String(opt.value))}
-                    className={`
-                      w-full px-3 py-2 text-left text-[11px] flex items-center gap-2
-                      transition-colors
-                      ${String(opt.value) === String(value)
-                        ? "bg-purple-500/10 text-purple-400"
-                        : "text-zinc-300 hover:bg-zinc-800 hover:text-white"
-                      }
-                    `}
-                  >
-                    {opt.image && (
-                      <img
-                        src={opt.image}
-                        alt={opt.label}
-                        className="w-5 h-3.5 rounded-sm object-cover flex-shrink-0"
-                      />
-                    )}
-                    <span className="truncate">{opt.label}</span>
-                  </button>
-                </li>
-              ))
-            )}
-          </ul>
-        </div>
+        <SelectDropdown
+          query={query}
+          onQueryChange={handleChange}
+          onQueryClear={handleClear}
+          filtered={filtered}
+          options={options}
+          value={value}
+          onSelect={handleSelect}
+          placeholder={placeholder}
+          searchPlaceholder={searchPlaceholder}
+          theme={THEME_FILTER}
+        />
       )}
     </div>
   );
