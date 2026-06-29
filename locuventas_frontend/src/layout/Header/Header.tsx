@@ -38,7 +38,7 @@ export default function Header() {
     mensaje={h.confirmacionGlobal.mensaje}
     confirmText={h.confirmacionGlobal.confirmText}
     onConfirmar={() => {
-      h.confirmacionGlobal.onConfirmar();
+      h.confirmacionGlobal!.onConfirmar();
       h.cerrarConfirmacionGlobal();
     }}
     onCancelar={h.cerrarConfirmacionGlobal}
@@ -56,7 +56,7 @@ export default function Header() {
       <FormEditarPerfil
         isOpen={h.modalEditar}
         setIsOpen={h.setModalEditar}
-        usuario={{ nombre, email, foto }}
+        usuario={{ nombre: nombre ?? undefined, email: email ?? undefined, foto: foto ?? undefined }}
       /> )}
     </header>
   );
