@@ -2,7 +2,7 @@ import { ChevronDown } from "lucide-react";
 import { useSelectLogic, SelectDropdown, THEME_FIELDSET } from "./SelectBase";
 import type { SelectOption } from "@domain/ui.types";
 
-interface SelectFieldsetProps {
+interface SelectFormProps {
   id:                string;
   value:             string | number | (string | number)[];
   onChange:          (e: React.ChangeEvent<HTMLSelectElement> | { target: { value: string | number } }) => void;
@@ -14,7 +14,7 @@ interface SelectFieldsetProps {
   searchPlaceholder?: string;
 }
 
-export default function SelectFieldset({
+export default function SelectForm({
   id,
   value,
   onChange,
@@ -24,7 +24,7 @@ export default function SelectFieldset({
   multiple = false,
   disabled = false,
   searchPlaceholder = "Buscar...",
-}: SelectFieldsetProps) {
+}: SelectFormProps) {
   const { open, setOpen, ref, query, handleChange, handleClear, selectedOption, filtered } = useSelectLogic({ options, value: value as string | number | undefined });
 
   const handleSelect = (optValue: string | number) => {

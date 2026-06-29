@@ -2,7 +2,7 @@ import { ChevronDown, X } from "lucide-react";
 import { useSelectLogic, SelectDropdown, THEME_FILTER } from "./SelectBase";
 import type { SelectOption } from "@domain/ui.types";
 
-interface SelectFiltroProps {
+interface SelectFilterProps {
   id?:               string;
   value?:            string | number;
   onChange?:         (e: { target: { value: string } }) => void;
@@ -12,7 +12,7 @@ interface SelectFiltroProps {
   searchPlaceholder?: string;
 }
 
-export default function SelectFiltro({
+export default function SelectFilter({
   id,
   value,
   onChange,
@@ -20,7 +20,7 @@ export default function SelectFiltro({
   options = [],
   disabled = false,
   searchPlaceholder = "Buscar...",
-}: SelectFiltroProps) {
+}: SelectFilterProps) {
   const { open, setOpen, ref, query, handleChange, handleClear, selectedOption, filtered } = useSelectLogic({ options, value });
 
   const handleSelect = (optValue: string | number) => {

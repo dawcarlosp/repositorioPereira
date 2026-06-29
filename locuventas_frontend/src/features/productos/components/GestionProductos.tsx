@@ -11,7 +11,7 @@ import ModalProductoForm from "./ModalProductoForm";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
-import SelectFiltro from "@components/common/SelectFiltro";
+import SelectFilter from "@components/common/SelectFilter";
 import FAB from "@components/common/FAB";
 import Button from "@buttons/Button";
 
@@ -94,7 +94,7 @@ export default function GestionProductos() {
           />
         </div>
         <div className="w-44">
-          <SelectFiltro
+          <SelectFilter
             id="filtro-pais"
             value={paisId}
             onChange={handlePais}
@@ -104,7 +104,7 @@ export default function GestionProductos() {
           />
         </div>
         <div className="w-44">
-          <SelectFiltro
+          <SelectFilter
             id="filtro-categoria"
             value={categoriaId}
             onChange={handleCategoria}

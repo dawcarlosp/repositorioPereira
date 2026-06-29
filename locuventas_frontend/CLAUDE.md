@@ -47,8 +47,9 @@ src/
 │   │   ├── Paginacion.tsx
 │   │   ├── PrivateRoute.tsx
 │   │   ├── RecursiveMenu.tsx
-│   │   ├── SelectFieldset.tsx
-│   │   ├── SelectFiltro.tsx
+│   │   ├── SelectBase.tsx
+│   │   ├── SelectForm.tsx
+│   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx
@@ -265,11 +266,13 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 - `ventas/` — carrito, ventas, cobros
 - `dev/` — perfil del desarrollador
 
-### Fase 2 🔲 — Unificar componentes duplicados
+### Fase 2 🔲 — Refactor de componentes duplicados
+
+> **Nota:** `SelectFieldset` + `SelectFiltro` no se unificaron porque tienen props muy divergentes (`multiple`, `required`, firma de `onChange`, etc.). Se extrajo lógica compartida en `SelectBase` y se renombraron.
 | Rama | Qué hace | Estado |
 |------|----------|--------|
 | `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `BotonCerrar`, `Enlace` → `Button` con `variant` | ✅ Mergeado |
-| `refactor/phase2-select` | Unificar `SelectFieldset` + `SelectFiltro` → `Select` con `theme` | 🔲 |
+| `refactor/phase2-select` | Extraer lógica compartida en `SelectBase` + renombrar `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` | ✅ Mergeado |
 | `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` | 🔲 |
 | `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` | 🔲 |
 
@@ -295,10 +298,26 @@ Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadma
   - Refactorizado `MenuButton.tsx` para usar `Button variant="secondary"`
   - Eliminados: `Boton.tsx`, `BotonClaro.tsx`, `BotonCerrar.tsx`, `Enlace.tsx`
   - 22 archivos actualizados, build verificado
-- Siguiente paso: **Phase 2 — Select** (unificar `SelectFieldset` + `SelectFiltro`)
+- **Phase 2: Select** — extraído `SelectBase` con lógica compartida, renombrados `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` ✅
+- Siguiente paso: **Phase 2 — Upload** (unificar `UploadComponent` + `UploadAvatar`)
+
+### Convención de nombres de ramas
+
+```
+{tipo}/{descripcion-corta-con-guiones}
+```
+
+| Tipo      | Uso                          | Ejemplos |
+|-----------|------------------------------|----------|
+| `refactor`| Refactor de código existente | `refactor/phase2-button`, `refactor/rename-selects` |
+| `feature` | Nueva funcionalidad          | `feature-backend`, `feature-frontend` |
+| `fix`     | Corrección de bugs           | `fix/react19-deprecations` |
+| `docs`    | Documentación                | `docs/update-claude-md`, `docs/update-documentation` |
+| `hotfix`  | Parche urgente a master      | `hotfix-fronted` |
 
 ### Flujo de trabajo
-- Ramas creadas desde `develop` con nombre `refactor/phaseN-descripcion` o `docs/descripcion`
-- Trabajar, commit, push, PR a `develop`
-- Mergear PR en GitHub, luego borrar rama remota
-- `develop` se mergea a `master` solo al completar un hito
+1. Crear rama desde `develop` con el nombre adecuado
+2. Trabajar, commit, push
+3. Crear PR a `develop`
+4. Mergear PR en GitHub, luego borrar rama remota
+5. `develop` se mergea a `master` solo al completar un hito

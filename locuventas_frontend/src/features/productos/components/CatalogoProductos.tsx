@@ -5,7 +5,7 @@ import ProductoCard from "./ProductoCard";
 import SkeletonProductoCard from "@components/common/SkeletonProductoCard";
 import Paginacion from "@components/common/Paginacion";
 import BuscadorInput from "@components/common/BuscadorInput";
-import SelectFiltro from "@components/common/SelectFiltro";
+import SelectFilter from "@components/common/SelectFilter";
 import useProductos from "../hooks/useProductos";
 import useFiltrosProducto from "../hooks/useFiltrosProducto";
 
@@ -68,7 +68,7 @@ export default function CatalogoProductos({
         </div>
 
         <div className="w-44">
-          <SelectFiltro
+          <SelectFilter
             id="filtro-pais"
             value={paisId}
             onChange={handlePais}
@@ -79,7 +79,7 @@ export default function CatalogoProductos({
         </div>
 
         <div className="w-44">
-          <SelectFiltro
+          <SelectFilter
             id="filtro-categoria"
             value={categoriaId}
             onChange={handleCategoria}

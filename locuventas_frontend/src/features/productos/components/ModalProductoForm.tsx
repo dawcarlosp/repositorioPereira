@@ -1,7 +1,7 @@
 // src/features/productos/components/ModalProductoForm.tsx
 import FormDialog from "@components/common/FormDialog";
 import InputFieldset from "@components/common/InputFieldset";
-import SelectFieldset from "@components/common/SelectFieldset";
+import SelectForm from "@components/common/SelectForm";
 import UploadComponent from "@components/common/UploadComponent";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { isMobile as checkIsMobile } from "@constants/breakpoints";
@@ -103,7 +103,7 @@ export default function ModalProductoForm({
 
       <div className="w-full max-w-xs flex-shrink-0">
         <p className="text-white font-semibold text-xs mb-1">Selecciona un país *</p>
-        <SelectFieldset
+        <SelectForm
           id="pais"
           value={paisId}
           onChange={(e) => setPaisId(Number(e.target.value))}
@@ -117,7 +117,7 @@ export default function ModalProductoForm({
         <p className="text-white font-semibold text-xs mb-1">Selecciona categorías *</p>
 
         {!isMobile ? (
-          <SelectFieldset
+          <SelectForm
             id="categorias"
             value={categoriaIds}
 
