@@ -45,8 +45,8 @@ export default function GestionProductos() {
   });
 
   const handleSearch    = (v: string)   => { setSearch(v);            setPage(0); };
-  const handlePais      = (e: React.ChangeEvent<HTMLSelectElement>)   => { setPaisId(e.target.value);      setPage(0); };
-  const handleCategoria = (e: React.ChangeEvent<HTMLSelectElement>)   => { setCategoriaId(e.target.value); setPage(0); };
+  const handlePais      = (v: string)   => { setPaisId(v);      setPage(0); };
+  const handleCategoria = (e: string)   => { setCategoriaId(e); setPage(0); };
   const hayFiltros      = search || paisId || categoriaId;
 
   const paginacion = !loading && totalPages > 1 && (
@@ -62,7 +62,8 @@ export default function GestionProductos() {
   return (
     <>
       {isMobile && (
-        <FAB onClick={() => abrirNuevo(paises)} title="Nuevo Producto" icon="+" />
+        <FAB onClick={() => abrirNuevo(paises)} 
+        title="Nuevo Producto" icon="+" />
       )}
 
       <div className="flex flex-wrap items-end gap-3 mb-6">

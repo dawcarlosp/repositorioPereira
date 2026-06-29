@@ -1,6 +1,6 @@
-import type { Producto } from "../domain/producto.types";
+import type { Producto } from "@features/productos/domain/producto.types";
 import Button from "@buttons/Button";
-import { resolveProductImage } from "@utils/imageUtils";
+import { resolveProductImageWithFallback } from "@utils/imageUtils";
 
 interface Props {
   producto:   Producto;
@@ -35,7 +35,7 @@ export default function ProductoGestionCard({ producto, onEditar, onEliminar }: 
       <div className="flex justify-center items-center h-28 bg-zinc-800/50 rounded-xl border border-zinc-700/30 overflow-hidden">
         {producto.foto ? (
           <img
-            src={resolveProductImage(producto.foto)}
+            src={resolveProductImageWithFallback(producto.foto, " ")}
             alt={producto.nombre}
             className="h-24 w-auto object-contain"
           />

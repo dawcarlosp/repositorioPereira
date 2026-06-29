@@ -15,13 +15,16 @@ interface FormState {
   fotoUrlEdicion: string | null;
 }
 
-interface ModalState {
-  visible:      boolean;
-  mensaje?:     string;
-  confirmText?: string;
-  onConfirmar?: () => Promise<void>;
-  onCancelar?:  () => void;
-}
+type ModalState =
+   | { visible: false }
+  | {
+      visible:     true;
+      mensaje:     string;
+      confirmText: string;
+      onConfirmar: () => Promise<void>;
+      onCancelar?: () => void;
+    };
+
 
 interface UseGestionProductosOptions {
   onSuccess: () => void;

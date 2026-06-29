@@ -5,7 +5,7 @@ import type { SelectOption } from "@domain/ui.types";
 interface SelectFilterProps {
   id?:               string;
   value?:            string | number;
-  onChange?:         (e: { target: { value: string } }) => void;
+  onChange?:        (value: string) => void;
   placeholder?:      string;
   options?:          SelectOption[];
   disabled?:         boolean;
@@ -24,7 +24,7 @@ export default function SelectFilter({
   const { open, setOpen, ref, query, handleChange, handleClear, selectedOption, filtered } = useSelectLogic({ options, value });
 
   const handleSelect = (optValue: string | number) => {
-    onChange?.({ target: { value: String(optValue) } });
+    onChange?.(String(optValue));
     setOpen(false);
   };
 
