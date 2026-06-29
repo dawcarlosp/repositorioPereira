@@ -276,12 +276,12 @@ export default function RecursiveMenu({ items, depth = 0, ... }) {
     <div>
       {items.map((item) => {
         if (!item.children) {
-          return <BotonClaro onClick={item.action}>{item.label}</BotonClaro>;
+          return <Button onClick={item.action}>{item.label}</Button>;
         }
 
         return (
           <Fragment key={item.label}>
-            <BotonClaro onClick={() => toggle(i)}>{item.label}</BotonClaro>
+            <Button onClick={() => toggle(i)}>{item.label}</Button>
 
             <DropdownContainer isOpen={isOpen} side="right">
               {/* Llamada recursiva con depth + 1 */}

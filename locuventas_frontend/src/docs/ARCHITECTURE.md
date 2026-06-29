@@ -40,7 +40,7 @@ src/
 │
 ├── components/
 │   ├── common/                 # Componentes reutilizables sin dominio
-│   │   ├── buttons/            # Boton.tsx, BotonClaro.tsx, BotonCerrar.tsx, MenuButton.tsx
+│   │   ├── buttons/            # Button.tsx, MenuButton.tsx
 │   │   ├── AlertSimple.tsx
 │   │   ├── Avatar.tsx
 │   │   ├── BaseModal.tsx
@@ -58,8 +58,9 @@ src/
 │   │   ├── Paginacion.tsx
 │   │   ├── PrivateRoute.tsx
 │   │   ├── RecursiveMenu.tsx
-│   │   ├── SelectFieldset.tsx
-│   │   ├── SelectFiltro.tsx
+│   │   ├── SelectBase.tsx
+│   │   ├── SelectForm.tsx
+│   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
 │   │   └── UploadComponent.tsx

@@ -69,12 +69,14 @@ src/features/
 
 ---
 
-## Fase 2 — Unificar componentes duplicados 🔲
+## Fase 2 — Refactor de componentes duplicados 🔲
+
+> **Nota:** `SelectFieldset` + `SelectFiltro` no se unificaron en un solo componente porque tienen demasiadas props divergentes (`multiple`, `required`, firma de `onChange`, etc.). En su lugar se extrajo la lógica compartida en `SelectBase` y se renombraron para claridad.
 
 | Rama | Qué hace |
 |------|----------|
 | `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `Enlace` → `Button` con `variant` |
-| `refactor/phase2-select` | Unificar `SelectFieldset` + `SelectFiltro` → `Select` con `theme` |
+| `refactor/phase2-select` | Extraer lógica compartida en `SelectBase` + renombrar `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` |
 | `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` |
 | `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` |
 
