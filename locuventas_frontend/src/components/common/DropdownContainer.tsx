@@ -96,7 +96,7 @@ export default function DropdownContainer({
     right:  { wrapperStyle: { right: 0, top: arrowPos ?? undefined, transform: "translateY(-50%)" }, diamondStyle: { right: "-7px" }, borders: "border-r border-t border-purple-500" },
   };
 
-  const { wrapperStyle, diamondStyle, borders } = arrowConfigs[resolvedSide];
+  const { wrapperStyle, diamondStyle, borders } = arrowConfigs[resolvedSide]!;
 
   return (
     <div
