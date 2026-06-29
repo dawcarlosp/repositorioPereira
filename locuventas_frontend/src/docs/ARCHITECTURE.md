@@ -63,7 +63,7 @@ src/
 │   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
-│   │   └── UploadComponent.tsx
+│   │   └── ImageUpload.tsx
 │   └── FooterLogin.tsx
 │
 ├── constants/

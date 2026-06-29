@@ -1,7 +1,7 @@
 // src/features/auth/components/Form/FormVendedorRegister.tsx
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
-import UploadAvatar from "@features/auth/components/UploadAvatar";
+import ImageUpload from "@components/common/ImageUpload";
 import useRegister from "@features/auth/hooks/useRegister";
 
 interface Props {
@@ -40,7 +40,7 @@ export default function FormVendedorRegister({ isOpen, setIsOpen }: Props) {
         </div>
       )}
 
-      <UploadAvatar setFile={setFoto} file={foto} fotoActualUrl={null} />
+      <ImageUpload setFile={setFoto} file={foto} fotoActualUrl={null} shape="circle" />
 
       <InputFieldsetValidaciones
         type="text"
