@@ -52,7 +52,7 @@ src/
 │   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   ├── SkeletonTarjetaVendedor.tsx
-│   │   └── UploadComponent.tsx
+│   │   └── ImageUpload.tsx
 │   └── FooterLogin.tsx
 ├── constants/
 │   ├── breakpoints.ts
@@ -273,7 +273,7 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 |------|----------|--------|
 | `refactor/phase2-button` | Unificar `Boton`, `BotonClaro`, `BotonCerrar`, `Enlace` → `Button` con `variant` | ✅ Mergeado |
 | `refactor/phase2-select` | Extraer lógica compartida en `SelectBase` + renombrar `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` | ✅ Mergeado |
-| `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` | 🔲 |
+| `refactor/phase2-upload` | Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape` | ✅ |
 | `refactor/phase2-skeleton` | Unificar `SkeletonProductoCard`, `SkeletonTarjetaVendedor` e inlines → `Skeleton` con `variant` | 🔲 |
 
 ### Fase 3 🔲 — Refactor arquitectura
@@ -288,7 +288,7 @@ Se migraron todos los dominios a `src/features/` siguiendo la estructura `{domai
 
 ---
 
-## Última sesión (28 Jun 2026)
+## Última sesión (29 Jun 2026)
 
 Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadmap del CLAUDE.md"**
 
@@ -299,7 +299,14 @@ Para retomar el trabajo, abrir el chat y empezar con: **"Continúa con el roadma
   - Eliminados: `Boton.tsx`, `BotonClaro.tsx`, `BotonCerrar.tsx`, `Enlace.tsx`
   - 22 archivos actualizados, build verificado
 - **Phase 2: Select** — extraído `SelectBase` con lógica compartida, renombrados `SelectFieldset` → `SelectForm`, `SelectFiltro` → `SelectFilter` ✅
-- Siguiente paso: **Phase 2 — Upload** (unificar `UploadComponent` + `UploadAvatar`)
+  - Documentada la decisión de no unificar (props muy divergentes) en MIGRATION_PLAN.md
+  - Documentada convención de nombres de ramas y flujo de trabajo en CLAUDE.md
+- **Phase 2: Upload** — unificado `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape="square" | "circle"` ✅
+  - `ImageUpload.tsx` creado en `common/`
+  - Eliminados: `UploadComponent.tsx`, `features/auth/components/UploadAvatar.tsx`
+  - 3 imports actualizados (ModalProductoForm, FormEditarPerfil, FormVendedorRegister)
+  - Build verificado
+- Siguiente paso: **Phase 2 — Skeleton** (unificar en `Skeleton` con `variant`)
 
 ### Convención de nombres de ramas
 

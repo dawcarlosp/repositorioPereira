@@ -2,7 +2,7 @@
 import FormDialog from "@components/common/FormDialog";
 import InputFieldset from "@components/common/InputFieldset";
 import SelectForm from "@components/common/SelectForm";
-import UploadComponent from "@components/common/UploadComponent";
+import ImageUpload from "@components/common/ImageUpload";
 import useBreakpoint from "@hooks/useBreakpoint";
 import { isMobile as checkIsMobile } from "@constants/breakpoints";
 import type { SelectOption } from "@domain/ui.types";
@@ -63,7 +63,7 @@ export default function ModalProductoForm({
       botonTexto={editando ? "Guardar Cambios" : "Registrar Producto"}
       botonDisabled={sinPaises}
     >
-      <UploadComponent
+      <ImageUpload
         setFile={setFoto}
         file={foto}
         fotoActualUrl={fotoUrlEdicion}

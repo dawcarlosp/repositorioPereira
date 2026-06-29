@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { apiRequest } from "@services/api";
 import FormDialog from "@components/common/FormDialog";
 import InputFieldsetValidaciones from "@components/common/InputFieldsetValidaciones";
-import UploadAvatar from "@/features/auth/components/UploadAvatar";
+import ImageUpload from "@components/common/ImageUpload";
 import { validateUser } from "@/utils/user.validator";
 import { toast } from "react-toastify";
 import { useAuth } from "@context/useAuth";
@@ -92,7 +92,7 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }: Props) {
       botonTexto={loading ? "Actualizando..." : "Actualizar"}
       botonDisabled={loading}
     >
-      <UploadAvatar
+      <ImageUpload
         setFile={setFoto}
         file={foto}
         fotoActualUrl={
@@ -100,6 +100,7 @@ function FormEditarPerfil({ isOpen, setIsOpen, usuario }: Props) {
             ? `${import.meta.env.VITE_API_URL}/imagenes/vendedores/${usuario.foto}`
             : null
         }
+        shape="circle"
       />
 
       {errors.foto && touched.foto && (
