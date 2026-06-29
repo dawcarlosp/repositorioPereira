@@ -7,6 +7,7 @@ interface FABProps {
   onClick?: () => void;
   index?:   number;
   variant?: string;
+  title?: string;
 }
 
 export default function FAB({
@@ -15,6 +16,7 @@ export default function FAB({
   onClick,
   index = 0,
   variant = "!bg-zinc-900",
+  title
 }: FABProps) {
   const bottomOffset = 1.5 + (index * 4.75);
 
@@ -25,6 +27,7 @@ export default function FAB({
     >
       <Button
         onClick={onClick}
+        title={title}
         className={`
           ${variant}
           !h-16 !rounded-full !px-4

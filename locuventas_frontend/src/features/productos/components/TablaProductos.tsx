@@ -1,7 +1,7 @@
 import type { Producto } from "../domain/producto.types";
 import DataTable from "@components/common/DataTable";
 import Button from "@buttons/Button";
-import { resolveProductImage } from "@utils/imageUtils";
+import {resolveProductImageWithFallback } from "@utils/imageUtils";
 
 interface Props {
   productos:  Producto[];
@@ -47,7 +47,7 @@ export default function TablaProductos({
             <td className="px-4 py-4">
               {p.foto ? (
                 <img
-                  src={resolveProductImage(p.foto)}
+                  src={resolveProductImageWithFallback(p.foto, "")}
                   alt={p.nombre}
                   className="w-12 h-10 object-cover rounded-lg border border-zinc-700"
                 />

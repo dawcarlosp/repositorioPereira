@@ -6,7 +6,7 @@ const API_URL = import.meta.env.VITE_API_URL as string;
  * Resuelve la URL completa de la imagen de un producto.
  * Si `foto` ya contiene "/", se usa tal cual como ruta relativa.
  */
-export const resolveProductImage = (foto: string | null | undefined): string | null => {
+export const resolveProductImage = (foto: string | null | undefined): string | null  => {
   if (!foto) return null;
   const path = foto.includes("/") ? foto : `productos/${foto}`;
   return `${API_URL}/imagenes/${path}`;
