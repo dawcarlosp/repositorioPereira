@@ -84,7 +84,7 @@ export default function useGestionProductos({ onSuccess }: UseGestionProductosOp
     setForm(FORM_INITIAL);
   };
 
-  const guardarProducto = async (formData: FormData, id: number | null, method: string) => {
+  const guardarProducto = async (formData: FormData, id: number | null, method: "POST" | "PUT") => {
     const endpoint = id ? `productos/${id}` : "productos";
     try {
       await apiRequest(endpoint, formData, { method, isFormData: true });
