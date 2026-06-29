@@ -55,7 +55,7 @@ export default function VentasPagina() {
         <ModalConfirmacion
           mensaje={modalConfirmacion.mensaje}
           confirmText="Sí, cancelar"
-          onConfirmar={modalConfirmacion.onConfirmar}
+          onConfirmar={modalConfirmacion.onConfirmar ?? undefined}
           onCancelar={() => setModalConfirmacion((m) => ({ ...m, visible: false }))}
         />
       )}
