@@ -6,7 +6,7 @@ import VentasPendientesPagina from "@features/ventas/pages/VentasPendientesPagin
 import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
 import GestionProductosPagina from "@features/productos/pages/GestionProductosPagina";
 import SobreMiPage from "@features/dev/pages/SobreMiPage";
-import PrivateRoute from "@components/common/PrivateRoute";
+import PrivateRoute from "@/app/PrivateRoute";
 
 interface AppRoutesProps {
   setIsOpen: (v: boolean) => void;

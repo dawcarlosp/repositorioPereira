@@ -10,8 +10,8 @@
 ```
 ✅ Fase 1 — TypeScript (completada)
 ✅ Reorganización feature-based (completada)
-⬜ Fase 2 — Unificar componentes duplicados
-⬜ Fase 3 — Refactor arquitectura
+✅ Fase 2 — Unificar componentes duplicados
+✅ Fase 3 — Refactor arquitectura
 ⬜ Fase 4 — Integración Gemini AI
 ```
 
@@ -80,11 +80,13 @@ src/features/
 | **`refactor/phase2-upload`** | **Unificar `UploadComponent` + `UploadAvatar` → `ImageUpload` con `shape`** | **✅** |
 | `refactor/phase2-skeleton` | Extraer skeletons inline a archivos independientes: `SkeletonVentaCard`, `SkeletonProductoGestionCard` | ✅ |
 
-## Fase 3 — Refactor arquitectura 🔲
+## Fase 3 — Refactor arquitectura ✅
 
-- Crear `usePaginatedFetch<T>` genérico
-- Mover `PrivateRoute` → `app/`
-- Mover `FooterLogin` → `common/`
+| Rama | Qué hace | Estado |
+|------|----------|--------|
+| `docs/infinite-loop` | Crear `usePaginatedFetch<T>` genérico y refactorizar hooks | ✅ |
+| `docs/infinite-loop` | Mover `PrivateRoute` → `app/` | ✅ |
+| `docs/infinite-loop` | Mover `FooterLogin` → `components/common/` | ✅ |
 
 ---
 

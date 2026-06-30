@@ -34,6 +34,7 @@ src/
 │   ├── main.tsx                # Entry point (Vite)
 │   ├── App.tsx                 # Componente raíz
 │   ├── providers.tsx           # Composición de providers globales
+│   ├── PrivateRoute.tsx        # Guard de rutas protegidas
 │   ├── routes.tsx              # Declaración de rutas
 │   └── config/
 │       └── api.ts              # API_BASE_URL desde VITE_API_URL
@@ -49,21 +50,20 @@ src/
 │   │   ├── DropdownContainer.tsx
 │   │   ├── Error.tsx
 │   │   ├── FAB.tsx
+│   │   ├── FooterLogin.tsx
 │   │   ├── FormDialog.tsx
 │   │   ├── InputFieldset.tsx
 │   │   ├── InputFieldsetValidaciones.tsx
+│   │   ├── ImageUpload.tsx
 │   │   ├── LogoNegocio.tsx
 │   │   ├── ModalConfirmacion.tsx
 │   │   ├── Paginacion.tsx
-│   │   ├── PrivateRoute.tsx
 │   │   ├── RecursiveMenu.tsx
 │   │   ├── SelectBase.tsx
 │   │   ├── SelectForm.tsx
 │   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
-│   │   ├── SkeletonTarjetaVendedor.tsx
-│   │   └── ImageUpload.tsx
-│   └── FooterLogin.tsx
+│   │   └── SkeletonTarjetaVendedor.tsx
 │
 ├── constants/
 │   ├── breakpoints.ts          # Breakpoint helpers
@@ -106,6 +106,7 @@ src/
 │   ├── useBuscador.ts          # Buscador con debounce
 │   ├── useBreakpoint.ts        # Breakpoint actual
 │   ├── useHeaderManager.ts     # Estado completo del header
+│   ├── usePaginatedFetch.ts    # Fetch paginado genérico con AbortController
 │   ├── useResponsiveLayout.ts  # isSmall, isMedium, isLarge
 │   └── useVendedoresPendientes.ts
 │
@@ -190,6 +191,7 @@ useVentasManager      → fetch, pago, cancelación, detalle de ventas (features
 useGestionProductos   → CRUD completo de productos con form y modales (features/productos/)
 useCarrito            → cálculos: base imponible, IVA, total (features/ventas/)
 useFiltrosProducto    → carga países y categorías (features/productos/)
+usePaginatedFetch     → fetch paginado genérico con AbortController (hooks/)
 useHeaderManager      → estado global del header + confirmación global (hooks/)
 ```
 

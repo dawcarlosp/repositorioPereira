@@ -10,36 +10,35 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Iteración** | 0 |
+| **Iteración** | 1 |
 | **Rama activa** | `docs/infinite-loop` |
-| **Último commit** | `7f66da0` — Merge pull request #47 |
+| **Último commit** | `8a8b7f6` — docs: implementa sistema de documentación para bucle infinito de IA |
 | **Branch base** | `develop` |
-| **Estado del build** | 🟢 Pendiente de verificar |
-| **PR abierto** | Ninguno |
+| **Estado del build** | 🟢 Build exitoso |
+| **PR abierto** | `docs/infinite-loop` → `develop` |
 
 ---
 
 ## Qué se hizo en la iteración anterior
 
-Esta es la **iteración 0** — se creó el sistema de documentación para el bucle infinito:
+**Iteración 1 — Fase 3: Refactor arquitectura**
 
-- [x] Crear `SESSION.md` — handoff entre sesiones de IA
-- [x] Crear `CHANGELOG.md` — registro cronológico de cambios
-- [x] Crear `TASKS.md` — cola de tareas priorizada
-- [x] Crear `DECISIONS.md` — registro de decisiones de arquitectura
-- [x] Crear `KNOWN_ISSUES.md` — bugs y deuda técnica conocidos
-- [x] Reestructurar `CLAUDE.md` — separar contenido estático del dinámico
-- [ ] Verificar `npm run build` tras los cambios
-- [ ] Push y PR a `develop`
+- [x] Crear `usePaginatedFetch<T>` hook genérico en `src/hooks/usePaginatedFetch.ts`
+- [x] Refactorizar `useProductos` para usar `usePaginatedFetch`
+- [x] Refactorizar `useVentasManager` para usar `usePaginatedFetch`
+- [x] Refactorizar `useVendedoresPendientes` para usar `usePaginatedFetch`
+- [x] Mover `PrivateRoute` → `src/app/PrivateRoute.tsx` (actualizar import en `routes.tsx`)
+- [x] Mover `FooterLogin` → `src/components/common/FooterLogin.tsx` (actualizar imports en `LoginPage.tsx`, `SobreMiPage.tsx`)
+- [x] Build verificado: `npm run build` exitoso
+- [x] Actualizar `ARCHITECTURE.md` con nuevas ubicaciones
 
 ---
 
-## Siguiente tarea
+## Siguientes tareas
 
-**Fase 3 — Refactor arquitectura** (ver `TASKS.md` para detalles):
-1. Crear `usePaginatedFetch<T>` genérico
-2. Mover `PrivateRoute` → `app/`
-3. Mover `FooterLogin` → `common/`
+1. **Fase 4 — Integración Gemini AI** (ver `TASKS.md`)
+2. **Bugs y mejoras**: B.1 Eliminar `AlertSimple`, B.2 Refactor `useHeaderManager`, B.4 Unificar skeletons
+3. **Tests**: T.1 Tests unitarios a hooks, T.2 Tests de integración
 
 ---
 

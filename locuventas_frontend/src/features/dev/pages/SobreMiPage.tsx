@@ -1,5 +1,5 @@
 import SobreMi from "../components/SobreMi";
-import FooterLogin from "@components/FooterLogin";
+import FooterLogin from "@components/common/FooterLogin";
 
 export default function SobreMiPage() {
   return (

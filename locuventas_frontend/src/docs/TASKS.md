@@ -7,16 +7,16 @@
 
 ---
 
-## Fase 3 — Refactor arquitectura
+## Fase 3 — Refactor arquitectura ✅
 
 | # | Tarea | Estado | Iteración | Notas |
 |---|-------|--------|-----------|-------|
-| 3.1 | Crear `usePaginatedFetch<T>` hook genérico | `pending` | — | Unifica el patrón repetido de fetch paginado en useProductos, useVentasManager, useVendedoresPendientes |
-| 3.2 | Refactorizar `useProductos` para usar `usePaginatedFetch` | `pending` | — | Depende de 3.1 |
-| 3.3 | Refactorizar `useVentasManager` para usar `usePaginatedFetch` | `pending` | — | Depende de 3.1 |
-| 3.4 | Refactorizar `useVendedoresPendientes` para usar `usePaginatedFetch` | `pending` | — | Depende de 3.1 |
-| 3.5 | Mover `PrivateRoute` → `app/` | `pending` | — | Está en `components/common/`, debe estar en `app/` |
-| 3.6 | Mover `FooterLogin` → `components/common/` | `pending` | — | Está en `components/` raíz, debe estar en `components/common/` |
+| 3.1 | Crear `usePaginatedFetch<T>` hook genérico | `done` | 1 | En `src/hooks/usePaginatedFetch.ts`. Soporta extractData personalizado, AbortController, refresh() |
+| 3.2 | Refactorizar `useProductos` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Build verificado |
+| 3.3 | Refactorizar `useVentasManager` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Usa `refresh()` tras pago/cancelación |
+| 3.4 | Refactorizar `useVendedoresPendientes` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Eliminado `useEffect` redundante |
+| 3.5 | Mover `PrivateRoute` → `app/` | `done` | 1 | Ahora en `src/app/PrivateRoute.tsx`. Import actualizado en `routes.tsx` |
+| 3.6 | Mover `FooterLogin` → `components/common/` | `done` | 1 | Ahora en `src/components/common/FooterLogin.tsx`. Imports actualizados |
 
 ## Fase 4 — Integración Gemini AI (requiere Fase 3)
 
