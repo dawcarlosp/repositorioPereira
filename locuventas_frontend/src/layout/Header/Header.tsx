@@ -4,7 +4,7 @@ import useHeaderManager from "@hooks/useHeaderManager";
 import NavDesktop from "@layout/Header/NavDesktop";
 import NavMobile from "@layout/Header/NavMobile";
 import ModalConfirmacion from "@components/common/ModalConfirmacion";
-import FormEditarPerfil from "@components/vendedor/Form/FormEditarPerfil";
+import FormEditarPerfil from "@/features/auth/components/Form/FormEditarPerfil";
 import LogoNegocio from "@components/common/LogoNegocio";
 
 export default function Header() {
@@ -38,7 +38,7 @@ export default function Header() {
     mensaje={h.confirmacionGlobal.mensaje}
     confirmText={h.confirmacionGlobal.confirmText}
     onConfirmar={() => {
-      h.confirmacionGlobal.onConfirmar();
+      h.confirmacionGlobal!.onConfirmar();
       h.cerrarConfirmacionGlobal();
     }}
     onCancelar={h.cerrarConfirmacionGlobal}
@@ -56,7 +56,7 @@ export default function Header() {
       <FormEditarPerfil
         isOpen={h.modalEditar}
         setIsOpen={h.setModalEditar}
-        usuario={{ nombre, email, foto }}
+        usuario={{ nombre: nombre ?? undefined, email: email ?? undefined, foto: foto ?? undefined }}
       /> )}
     </header>
   );

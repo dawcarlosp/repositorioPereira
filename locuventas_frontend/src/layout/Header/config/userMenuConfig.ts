@@ -1,13 +1,7 @@
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
+import type { MenuItem } from "@domain/ui.types";
 
-interface UserMenuItem {
-  label:   string;
-  action?: (e?: React.MouseEvent) => void;
-  route?:  string;
-  danger?: boolean;
-}
-
-export const userMenuConfig = (h: UseHeaderManagerReturn): UserMenuItem[] => [
+export const userMenuConfig = (h: UseHeaderManagerReturn): MenuItem[] => [
   {
     label: "Editar Perfil",
     action: () => {

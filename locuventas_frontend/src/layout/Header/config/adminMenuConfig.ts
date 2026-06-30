@@ -1,15 +1,7 @@
 import { toast } from "react-toastify";
 import type { NavigateFunction } from "react-router-dom";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
-
-interface MenuItem {
-  label:       string;
-  action?:     () => void;
-  children?:   MenuItem[];
-  panel?:      string;
-  panelWidth?: string;
-  panelProps?: Record<string, unknown>;
-}
+import type { MenuItem } from "@domain/ui.types";
 
 export const adminMenuConfig = (navigate: NavigateFunction, h: UseHeaderManagerReturn): MenuItem[] => [
   {

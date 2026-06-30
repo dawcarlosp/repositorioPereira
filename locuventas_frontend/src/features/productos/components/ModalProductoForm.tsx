@@ -1,0 +1,159 @@
+// src/features/productos/components/ModalProductoForm.tsx
+import FormDialog from "@components/common/FormDialog";
+import InputFieldset from "@components/common/InputFieldset";
+import SelectForm from "@components/common/SelectForm";
+import ImageUpload from "@components/common/ImageUpload";
+import useBreakpoint from "@hooks/useBreakpoint";
+import { isMobile as checkIsMobile } from "@constants/breakpoints";
+import type { SelectOption } from "@domain/ui.types";
+
+interface Props {
+  visible:         boolean;
+  onClose:         () => void;
+  onSubmit:        (e: React.SubmitEvent) => void;
+  editando:        unknown;
+  nombre:          string;
+  setNombre:       (v: string) => void;
+  precio:          string;
+  setPrecio:       (v: string) => void;
+  iva:             string;
+  setIva:          (v: string) => void;
+  paisId:          number | "";
+  setPaisId:       (v: number | "") => void;
+  categoriaIds:    number[];
+  setCategoriaIds: (v: number[]) => void;
+  foto:            File | null;
+  setFoto:         (v: File | null) => void;
+  fotoUrlEdicion:  string | null;
+  paises:          SelectOption[];
+  categorias:      SelectOption[];
+}
+
+export default function ModalProductoForm({
+  visible, onClose, onSubmit, editando,
+  nombre, setNombre,
+  precio, setPrecio,
+  iva, setIva,
+  paisId, setPaisId,
+  categoriaIds, setCategoriaIds,
+  foto, setFoto,
+  fotoUrlEdicion,
+  paises,
+  categorias,
+}: Props) {
+  const bp       = useBreakpoint();
+  const isMobile = checkIsMobile(bp);
+  const sinPaises = paises.length === 0;
+
+  const toggleCategoria = (id: number, checked: boolean) =>
+
+    setCategoriaIds(
+      checked
+        ? [...categoriaIds, id]
+        : categoriaIds.filter((c) => c !== id)
+    );
+
+
+  return (
+    <FormDialog
+      visible={visible}
+      onClose={onClose}
+      onSubmit={onSubmit}
+      titulo={`${editando ? "Editar" : "Agregar"} Producto`}
+      botonTexto={editando ? "Guardar Cambios" : "Registrar Producto"}
+      botonDisabled={sinPaises}
+    >
+      <ImageUpload
+        setFile={setFoto}
+        file={foto}
+        fotoActualUrl={fotoUrlEdicion}
+        disabled={sinPaises}
+        className="flex-shrink-0"
+      />
+
+      {sinPaises && (
+        <div className="bg-white text-red-700 text-xs font-medium py-1.5 px-3 rounded shadow text-center w-full max-w-xs flex-shrink-0">
+          Para agregar productos primero debes cargar al menos un país.
+        </div>
+      )}
+
+      <InputFieldset
+        id="nombre"
+        value={nombre}
+        onChange={(e) => setNombre(e.target.value)}
+        placeholder="Nombre del producto"
+        required
+      />
+      <InputFieldset
+        id="precio"
+        value={precio}
+        onChange={(e) => setPrecio(e.target.value)}
+        placeholder="Precio"
+        type="number"
+        required
+      />
+      <InputFieldset
+        id="iva"
+        value={iva}
+        onChange={(e) => setIva(e.target.value)}
+        placeholder="IVA (%)"
+        type="number"
+        required
+      />
+
+      <div className="w-full max-w-xs flex-shrink-0">
+        <p className="text-white font-semibold text-xs mb-1">Selecciona un país *</p>
+        <SelectForm
+          id="pais"
+          value={paisId}
+          onChange={(e) => setPaisId(Number(e.target.value))}
+          required
+          disabled={sinPaises}
+          options={paises}
+        />
+      </div>
+
+      <div className="w-full max-w-xs flex-shrink-0">
+        <p className="text-white font-semibold text-xs mb-1">Selecciona categorías *</p>
+
+        {!isMobile ? (
+          <SelectForm
+            id="categorias"
+            value={categoriaIds}
+
+            onChange={(e) => {
+              const select = e.target as unknown as HTMLSelectElement;
+              setCategoriaIds(
+                Array.from(select.selectedOptions, (opt) => Number(opt.value))
+              );
+            }}
+
+            required
+            multiple
+            disabled={sinPaises}
+            options={categorias}
+          />
+        ) : (
+          <div className="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto p-2 bg-black/10 rounded-lg custom-scrollbar">
+            {categorias.map((cat) => (
+              <label
+                key={cat.value}
+                className="flex items-center gap-1.5 text-gray-100 text-xs bg-black/20 rounded-lg px-2 py-1.5 cursor-pointer select-none active:bg-black/30"
+              >
+                <input
+                  type="checkbox"
+                  value={cat.value}
+
+                  onChange={(e) => toggleCategoria(Number(cat.value), e.target.checked)}
+
+                  className="accent-orange-400"
+                />
+                {cat.label}
+              </label>
+            ))}
+          </div>
+        )}
+      </div>
+    </FormDialog>
+  );
+}

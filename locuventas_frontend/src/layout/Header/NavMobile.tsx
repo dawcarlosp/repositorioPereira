@@ -1,9 +1,8 @@
 import { useRef, useEffect, useState } from "react";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
-import type { Auth } from "@domain/auth.types";
-import Boton from "@buttons/Boton";
-import BotonClaro from "@buttons/BotonClaro";
-import MenuVentas from "@components/ventas/MenuVentas";
+import type { Auth } from "@/features/auth/domain/auth.types";
+import Button from "@buttons/Button";
+import MenuVentas from "@features/ventas/components/MenuVentas";
 import AdminMenu from "@layout/Header/components/AdminMenu";
 
 interface Props {
@@ -66,16 +65,18 @@ export default function NavMobile({ h, esAdmin, usuario }: Props) {
                 <p className="text-zinc-500 text-xs">{email}</p>
               </div>
 
-              <BotonClaro
+              <Button
+                variant="secondary"
                 onClick={() => {
                   h.setModalEditar(true);
                   h.closeAll();
                 }}
               >
                 Editar Perfil
-              </BotonClaro>
+              </Button>
 
-              <BotonClaro
+              <Button
+                variant="secondary"
                 className="w-full bg-rose-500/10 text-rose-500 border-rose-500/20 hover:text-rose-500"
                 onClick={() => {
                   h.setMostrarConfirmacionLogout(true);
@@ -83,7 +84,7 @@ export default function NavMobile({ h, esAdmin, usuario }: Props) {
                 }}
               >
                 Cerrar Sesión
-              </BotonClaro>
+              </Button>
             </div>
           </div>
         </div>

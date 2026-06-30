@@ -1,9 +1,8 @@
 import { useRef } from "react";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
-import Boton from "@buttons/Boton";
+import Button from "@buttons/Button";
 import GestionDropdown from "@layout/Header/components/GestionDropdown";
 import MenuUsuarioDropdown from "@layout/Header/components/MenuUsuarioDropdown";
-import BotonClaro from "@buttons/BotonClaro";
 
 interface Props {
   h:         UseHeaderManagerReturn;
@@ -21,21 +20,22 @@ export default function NavDesktop({ h, esAdmin }: Props) {
       {esAdmin && (
         <div className="relative">
           {isGestionOpen ? (
-            <Boton
+            <Button
               ref={btnAdminRef}
               disabled={true}
               className="px-4 py-2 opacity-90 ring-1 ring-orange-500/50 shadow-[0_0_15px_rgba(249,115,22,0.3)]"
             >
               Panel de Administrador
-            </Boton>
+            </Button>
           ) : (
-            <BotonClaro
+            <Button
+              variant="secondary"
               ref={btnAdminRef}
               onClick={() => h.setActiveDropdown("gestion")}
               className="px-4 py-2 border-orange-500/30 text-orange-400"
             >
               Panel de Administrador
-            </BotonClaro>
+            </Button>
           )}
 
           <GestionDropdown isOpen={isGestionOpen} triggerRef={btnAdminRef} h={h} />

@@ -84,10 +84,10 @@ renderizan — los hooks gestionan datos, efectos y acciones.
 
 ### Dónde está implementado
 ```
-src/hooks/useVentasManager.ts
-src/hooks/useGestionProductos.ts
-src/hooks/useCarrito.js
-src/hooks/useProductos.ts
+src/features/ventas/hooks/useVentasManager.ts
+src/features/productos/hooks/useGestionProductos.ts
+src/features/ventas/hooks/useCarrito.ts
+src/features/productos/hooks/useProductos.ts
 src/hooks/useVendedoresPendientes.ts
 src/hooks/useHeaderManager.ts
 ```
@@ -167,9 +167,9 @@ Separar **qué datos mostrar** (container) de **cómo mostrarlos**
 
 ### Dónde está implementado
 ```
-src/components/ventas/ContenedorVentas.jsx   ← container
-src/components/ventas/TablaVentas.jsx         ← presentational (desktop)
-src/components/ventas/VentaCard.jsx           ← presentational (móvil)
+src/features/ventas/components/ContenedorVentas.tsx   ← container
+src/features/ventas/components/TablaVentas.tsx         ← presentational (desktop)
+src/features/ventas/components/VentaCard.tsx           ← presentational (móvil)
 ```
 
 ### Cómo funciona
@@ -208,9 +208,9 @@ export default function ContenedorVentas({ ventas, loading, ...props }) {
 // TablaVentas — solo sabe renderizar una tabla, no decide cuándo usarse
 export default function TablaVentas({ ventas, loading, onVerDetalle, ... }) {
   return (
-    <TablaLayout columnas={columnas} loading={loading}>
+    <DataTable columnas={columnas} loading={loading}>
       {ventas.map(v => <tr key={v.id}>...</tr>)}
-    </TablaLayout>
+    </DataTable>
   );
 }
 ```
@@ -231,25 +231,10 @@ interna sin exponer demasiadas props al padre.
 
 ### Dónde está implementado
 ```
-src/components/common/TablaLayout.jsx
-src/components/common/DropdownContainer.jsx
+src/components/common/DropdownContainer.tsx
 ```
 
 ### Cómo funciona
-
-```tsx
-// TablaLayout — el padre decide el contenido, el layout gestiona
-// estructura, skeleton, scroll horizontal y paginación
-<TablaLayout columnas={columnas} loading={loading} size={size}>
-  {/* children es el tbody — el padre controla las filas */}
-  {productos.map(p => (
-    <tr key={p.id}>
-      <td>{p.nombre}</td>
-      <td>{p.precio}€</td>
-    </tr>
-  ))}
-</TablaLayout>
-```
 
 ```tsx
 // DropdownContainer — gestiona posicionamiento, flecha y animación
@@ -279,7 +264,7 @@ código para cada nivel.
 
 ### Dónde está implementado
 ```
-src/components/common/RecursiveMenu.jsx
+src/components/common/RecursiveMenu.tsx
 ```
 
 ### Cómo funciona
@@ -291,12 +276,12 @@ export default function RecursiveMenu({ items, depth = 0, ... }) {
     <div>
       {items.map((item) => {
         if (!item.children) {
-          return <BotonClaro onClick={item.action}>{item.label}</BotonClaro>;
+          return <Button onClick={item.action}>{item.label}</Button>;
         }
 
         return (
           <Fragment key={item.label}>
-            <BotonClaro onClick={() => toggle(i)}>{item.label}</BotonClaro>
+            <Button onClick={() => toggle(i)}>{item.label}</Button>
 
             <DropdownContainer isOpen={isOpen} side="right">
               {/* Llamada recursiva con depth + 1 */}
@@ -330,16 +315,16 @@ Añadir o modificar opciones del menú no requiere tocar ningún componente.
 
 ### Dónde está implementado
 ```
-src/layout/Header/config/adminMenuConfig.js   ← datos
-src/layout/Header/config/userMenuConfig.js    ← datos
-src/components/common/RecursiveMenu.jsx       ← renderer genérico
-src/layout/Header/components/AdminMenu.jsx    ← punto de entrada
+src/layout/Header/config/adminMenuConfig.ts   ← datos
+src/layout/Header/config/userMenuConfig.ts    ← datos
+src/components/common/RecursiveMenu.tsx       ← renderer genérico
+src/layout/Header/components/AdminMenu.tsx    ← punto de entrada
 ```
 
 ### Cómo funciona
 
-```js
-// adminMenuConfig.js — solo datos, sin JSX
+```ts
+// adminMenuConfig.ts — solo datos, sin JSX
 export const adminMenuConfig = (navigate, h) => [
   {
     label:  "Catálogo",
@@ -365,7 +350,7 @@ export const adminMenuConfig = (navigate, h) => [
 ```
 
 ```tsx
-// AdminMenu.jsx — no sabe nada de las opciones concretas
+// AdminMenu.tsx — no sabe nada de las opciones concretas
 export default function AdminMenu({ h, showTitle = false }) {
   const items = adminMenuConfig(navigate, h);
   return <RecursiveMenu items={items} onClose={h.closeAll} />;
@@ -374,9 +359,9 @@ export default function AdminMenu({ h, showTitle = false }) {
 
 ### Añadir una nueva opción al menú
 
-Solo hay que tocar `adminMenuConfig.js`:
+Solo hay que tocar `adminMenuConfig.ts`:
 
-```js
+```ts
 // Añadir "Reportes" sin tocar ningún componente
 {
   label:  "Reportes",
@@ -400,7 +385,7 @@ del usuario, de forma declarativa en la definición de rutas.
 
 ### Dónde está implementado
 ```
-src/components/common/PrivateRoute.jsx
+src/components/common/PrivateRoute.tsx
 src/app/routes.tsx
 ```
 
@@ -464,11 +449,9 @@ del contenido que va a aparecer, en lugar de un spinner o texto.
 
 ### Dónde está implementado
 ```
-src/components/common/SkeletonProductoCard.jsx
-src/components/common/SkeletonTarjetaVendedor.jsx
-src/components/products/SkeletonProductoFila.jsx
-src/components/ventas/ContenedorVentas.jsx   (SkeletonVentaCard inline)
-src/components/common/TablaLayout.jsx         (FilaSkeleton inline)
+src/components/common/SkeletonProductoCard.tsx
+src/components/common/SkeletonTarjetaVendedor.tsx
+src/features/ventas/components/SkeletonVentaCard.tsx
 ```
 
 ### Cómo funciona
@@ -508,9 +491,8 @@ export default function SkeletonTarjetaVendedor() {
 ### Regla de nomenclatura
 ```
 Skeleton{NombreDelComponenteReal}
-SkeletonProductoCard   → ProductoSimpleCard
+SkeletonProductoCard   → ProductoCard
 SkeletonTarjetaVendedor → TarjetaVendedor
-SkeletonProductoFila   → fila de TablaProductos
 ```
 
 ### Cuándo crear un nuevo skeleton
@@ -574,7 +556,7 @@ sea flexible en distintos contextos.
 
 ### Dónde está implementado
 ```
-src/components/vendedor/PendientesList.jsx
+src/features/auth/components/PendientesList.tsx
 ```
 
 ### Cómo funciona
@@ -635,14 +617,14 @@ en componentes desmontados.
 
 ### Dónde está implementado
 ```
-src/hooks/useProductos.ts
+src/features/productos/hooks/useProductos.ts
 src/services/api.ts          (acepta signal en las opciones)
 ```
 
 ### Cómo funciona
 
 ```ts
-// useProductos.ts
+// useProductos (features/productos/hooks/)
 useEffect(() => {
   const controller = new AbortController();
 
@@ -690,7 +672,7 @@ la petición.
 ### Dónde está implementado
 ```
 src/hooks/useBuscador.ts
-src/components/common/BuscadorInput.jsx
+src/components/common/BuscadorInput.tsx
 ```
 
 ### Cómo funciona
@@ -750,7 +732,7 @@ remota, cálculos pesados) en cada pulsación de tecla.
 | Provider                  | Prop drilling               | `AuthContext`, `HeaderContext`         |
 | Custom Hook               | Lógica en componentes       | `useVentasManager`, `useCarrito`       |
 | Container / Presentational| Lógica mezclada con UI      | `ContenedorVentas`                    |
-| Compound Component        | Props API rígida            | `TablaLayout`, `DropdownContainer`    |
+| Compound Component        | Props API rígida            | `DropdownContainer`                    |
 | Recursive Render          | Árboles de profundidad variable | `RecursiveMenu`                   |
 | Config-Driven UI          | Opciones hardcodeadas en JSX| `adminMenuConfig`, `RecursiveMenu`    |
 | Guard                     | Rutas sin protección        | `PrivateRoute`, `routes.tsx`          |

@@ -1,4 +1,4 @@
-import MenuVentas from "@components/ventas/MenuVentas";
+import MenuVentas from "@features/ventas/components/MenuVentas";
 
 export default function Footer() {
 

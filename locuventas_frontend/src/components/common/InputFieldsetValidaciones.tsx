@@ -11,6 +11,7 @@ interface InputFieldsetValidacionesProps {
   error?:       string | null;
   touched?:     boolean;
   onBlur?:      () => void;
+  autoComplete?: string;
 }
 
 export default function InputFieldsetValidaciones({
@@ -23,6 +24,7 @@ export default function InputFieldsetValidaciones({
   error = null,
   touched = false,
   onBlur,
+  autoComplete,
 }: InputFieldsetValidacionesProps) {
   const isValid = touched && !error && value;
   const isInvalid = touched && !!error;
@@ -42,12 +44,13 @@ export default function InputFieldsetValidaciones({
 
       <InputFieldset
         type={type}
-        id={id}
-        value={value}
-        onChange={onChange}
-        placeholder={placeholder}
+        id={id ?? ""}
+        value={value ?? ""}
+        onChange={onChange ?? (() => {})}
+        placeholder={placeholder ?? ""}
         required={required}
-        onBlur={onBlur}
+        onBlur={onBlur ? () => onBlur() : undefined}
+        autoComplete={autoComplete}
         customClasses={validationStyles}
       />
 

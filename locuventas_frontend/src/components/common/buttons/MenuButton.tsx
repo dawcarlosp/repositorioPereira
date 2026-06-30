@@ -1,4 +1,4 @@
-import BotonClaro from "@buttons/BotonClaro";
+import Button from "@buttons/Button";
 import {
   CircleArrowLeft,
   CircleArrowRight,
@@ -51,7 +51,8 @@ export default function MenuButton({
   };
 
   return (
-    <BotonClaro
+    <Button
+      variant="secondary"
       ref={ref}
       onClick={onClick}
       className={`
@@ -64,6 +65,6 @@ export default function MenuButton({
         {renderIcon()}
         <span>{label}</span>
       </div>
-    </BotonClaro>
+    </Button>
   );
 }

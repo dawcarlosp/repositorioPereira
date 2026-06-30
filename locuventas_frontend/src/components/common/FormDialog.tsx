@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import type { ReactNode, FormEvent } from "react";
-import Boton from "@buttons/Boton";
-import BotonCerrar from "@buttons/BotonCerrar";
+import type { ReactNode, ReactEventHandler, SubmitEvent } from "react";
+import Button from "@buttons/Button";
 
 interface FormDialogProps {
   visible:       boolean;
   onClose:       () => void;
-  onSubmit:      (e: FormEvent) => void;
+  onSubmit:      (e: SubmitEvent<HTMLFormElement>) => void;
   titulo:        string;
   botonTexto:    string;
   botonDisabled?: boolean;
@@ -32,11 +31,11 @@ export default function FormDialog({
     if (visible) {
       setRender(true);
       requestAnimationFrame(() => setAnimState("open"));
-    } else {
-      setAnimState("closing");
-      const t = setTimeout(() => setRender(false), 300);
-      return () => clearTimeout(t);
+      return;
     }
+    setAnimState("closing");
+    const t = setTimeout(() => setRender(false), 300);
+    return () => clearTimeout(t);
   }, [visible]);
 
   useEffect(() => {
@@ -51,7 +50,7 @@ export default function FormDialog({
     setTimeout(() => onClose(), 280);
   };
 
-  const handleCancel = (e: Event) => {
+  const handleCancel: ReactEventHandler<HTMLDialogElement> = (e) => {
     e.preventDefault();
     handleClose();
   };
@@ -101,7 +100,7 @@ export default function FormDialog({
         <h2 className="text-lg sm:text-xl font-bold text-white drop-shadow-md leading-tight">
           {titulo}
         </h2>
-        <BotonCerrar type="button" onClick={handleClose} />
+        <Button variant="close" type="button" onClick={handleClose} />
       </div>
 
       <form
@@ -125,13 +124,13 @@ export default function FormDialog({
         </div>
 
         <div className="flex-shrink-0 w-full max-w-xs mx-auto mt-4">
-          <Boton
+          <Button
             type="submit"
             disabled={botonDisabled}
             className="w-full"
           >
             {botonTexto}
-          </Boton>
+          </Button>
         </div>
       </form>
     </dialog>
