@@ -5,8 +5,9 @@ import VentasPagina from "@features/ventas/pages/VentasPagina";
 import VentasPendientesPagina from "@features/ventas/pages/VentasPendientesPagina";
 import VendedoresPendientesPagina from "@/features/auth/pages/VendedoresPendientesPagina";
 import GestionProductosPagina from "@features/productos/pages/GestionProductosPagina";
+import GestionCategoriasPagina from "@features/categorias/pages/GestionCategoriasPagina";
 import SobreMiPage from "@features/dev/pages/SobreMiPage";
-import PrivateRoute from "@components/common/PrivateRoute";
+import PrivateRoute from "@/app/PrivateRoute";
 
 interface AppRoutesProps {
   setIsOpen: (v: boolean) => void;
@@ -56,6 +57,14 @@ export function AppRoutes({ setIsOpen }: AppRoutesProps) {
         element={
           <PrivateRoute>
             <GestionProductosPagina />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/categorias/gestion"
+        element={
+          <PrivateRoute>
+            <GestionCategoriasPagina />
           </PrivateRoute>
         }
       />

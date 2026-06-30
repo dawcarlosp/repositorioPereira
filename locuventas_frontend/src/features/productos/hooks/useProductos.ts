@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { apiRequest } from "@services/api";
+import { useMemo } from "react";
+import usePaginatedFetch from "@hooks/usePaginatedFetch";
 import { toast } from "react-toastify";
 import type { Producto } from "../domain/producto.types";
 import type { ApiResponse, PageDTO } from "@domain/api.types";
@@ -25,40 +25,22 @@ export default function useProductos({
   paisId = null,
   categoriaId = null,
 }: UseProductosOptions = {}): UseProductosReturn {
-  const [productos,   setProductos]   = useState<Producto[]>([]);
-  const [loading,     setLoading]     = useState(true);
-  const [totalPages,  setTotalPages]  = useState(0);
-
-  useEffect(() => {
-    const controller = new AbortController();
-
-    const fetchProductos = async () => {
-      setLoading(true);
-      try {
-        const params = new URLSearchParams({ page: String(page), size: String(size) });
-        if (search.trim())       params.set("search", search.trim());
-        if (paisId)              params.set("paisId", String(paisId));
-        if (categoriaId)         params.set("categoriaId", String(categoriaId));
-
-        const datos = await apiRequest<ApiResponse<PageDTO<Producto>>>(
-          `productos?${params}`,
-          null,
-          { method: "GET", signal: controller.signal }
-        );
-        setProductos(datos.data?.content ?? []);
-        setTotalPages(datos.data?.totalPages ?? 0);
-      } catch (err) {
-        if ((err as Error)?.name !== "AbortError") {
-          toast.error("Error cargando el catálogo");
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProductos();
-    return () => controller.abort();
+  const url = useMemo(() => {
+    const params = new URLSearchParams({ page: String(page), size: String(size) });
+    if (search.trim())       params.set("search", search.trim());
+    if (paisId)              params.set("paisId", String(paisId));
+    if (categoriaId)         params.set("categoriaId", String(categoriaId));
+    return `productos?${params}`;
   }, [page, size, search, paisId, categoriaId]);
 
-  return { productos, loading, totalPages };
+  const { data, loading, totalPages } = usePaginatedFetch<Producto, ApiResponse<PageDTO<Producto>>>({
+    url,
+    extractData: (res) => ({
+      content: res.data?.content ?? [],
+      totalPages: res.data?.totalPages ?? 0,
+    }),
+    onError: () => toast.error("Error cargando el catálogo"),
+  });
+
+  return { productos: data, loading, totalPages };
 }

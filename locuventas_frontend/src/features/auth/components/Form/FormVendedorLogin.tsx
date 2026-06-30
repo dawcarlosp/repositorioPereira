@@ -1,7 +1,7 @@
 // src/features/auth/components/Form/FormVendedorLogin.tsx
 import Button from "@buttons/Button";
 import InputFieldset from "@components/common/InputFieldset";
-import AlertSimple from "@components/common/AlertSimple";
+import ModalConfirmacion from "@components/common/ModalConfirmacion";
 import LogoNegocio from "@components/common/LogoNegocio";
 import useLogin from "@features/auth/hooks/useLogin";
 
@@ -72,7 +72,7 @@ export default function FormVendedorLogin({ setIsOpen }: Props) {
       </form>
 
       {mostrarAlerta && (
-        <AlertSimple mensaje={mensajeAlerta} onClose={cerrarAlerta} />
+        <ModalConfirmacion mensaje={mensajeAlerta} confirmText="Entendido" onConfirmar={cerrarAlerta} />
       )}
     </>
   );

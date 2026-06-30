@@ -1,5 +1,5 @@
 import FormVendedorLogin from "@/features/auth/components/Form/FormVendedorLogin";
-import FooterLogin from "@components/FooterLogin";
+import FooterLogin from "@components/common/FooterLogin";
 import AppLayout from "@layout/AppLayout";
 
 interface Props {

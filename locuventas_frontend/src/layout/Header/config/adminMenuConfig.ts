@@ -1,4 +1,3 @@
-import { toast } from "react-toastify";
 import type { NavigateFunction } from "react-router-dom";
 import type { UseHeaderManagerReturn } from "@hooks/useHeaderManager";
 import type { MenuItem } from "@domain/ui.types";
@@ -28,6 +27,6 @@ export const adminMenuConfig = (navigate: NavigateFunction, h: UseHeaderManagerR
   },
   {
     label: "Categorías",
-    action: () => toast.dark("Próximamente..."),
+    action: () => navigate("/categorias/gestion"),
   },
 ];

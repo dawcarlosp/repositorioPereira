@@ -1,10 +1,8 @@
-// src/hooks/useHeaderManager.ts
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@context/useAuth";
 import { useHeader } from "@context/HeaderContext";
 import type { Auth, ConfirmacionGlobal } from "@/features/auth/domain/auth.types";
-import type { Breakpoint } from "@domain/ui.types";
 
 export interface UseHeaderManagerReturn {
   auth:                        Auth;
@@ -21,19 +19,10 @@ export interface UseHeaderManagerReturn {
   setMostrarConfirmacionLogout:(v: boolean) => void;
   handleLogout:                () => void;
   closeAll:                    () => void;
-  breakpoint:                  Breakpoint;
   confirmacionGlobal:          ConfirmacionGlobal | null;
   abrirConfirmacionGlobal:     (config: ConfirmacionGlobal) => void;
   cerrarConfirmacionGlobal:    () => void;
 }
-
-const getBreakpoint = (): Breakpoint => {
-  const w = window.innerWidth;
-  if (w < 640)  return "xs";
-  if (w < 768)  return "sm";
-  if (w < 1024) return "md";
-  return "lg";
-};
 
 export default function useHeaderManager(): UseHeaderManagerReturn {
   const { auth, setAuth }  = useAuth();
@@ -50,8 +39,6 @@ export default function useHeaderManager(): UseHeaderManagerReturn {
 
   const [confirmacionGlobal, setConfirmacionGlobal] =
     useState<ConfirmacionGlobal | null>(null);
-
-  const [breakpoint, setBreakpoint] = useState<Breakpoint>(getBreakpoint);
 
   const abrirConfirmacionGlobal = (config: ConfirmacionGlobal): void => {
     setConfirmacionGlobal(config);
@@ -71,13 +58,6 @@ export default function useHeaderManager(): UseHeaderManagerReturn {
     closeAll();
     navigate("/");
   };
-
-  // Resize
-  useEffect(() => {
-    const handleResize = (): void => setBreakpoint(getBreakpoint());
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   // Click outside
   useEffect(() => {
@@ -101,7 +81,6 @@ export default function useHeaderManager(): UseHeaderManagerReturn {
     mostrarConfirmacionLogout,   setMostrarConfirmacionLogout,
     handleLogout,
     closeAll,
-    breakpoint,
     confirmacionGlobal,
     abrirConfirmacionGlobal,
     cerrarConfirmacionGlobal,
