@@ -65,12 +65,12 @@ src/
 │   ├── main.tsx
 │   ├── App.tsx
 │   ├── providers.tsx           # AuthProvider + HeaderProvider
+│   ├── PrivateRoute.tsx        # Guard de rutas protegidas
 │   ├── routes.tsx
 │   └── config/api.ts           # API_BASE_URL
 ├── components/
 │   ├── common/                 # Componentes reutilizables
 │   │   ├── buttons/            # Button.tsx, MenuButton.tsx
-│   │   ├── AlertSimple.tsx
 │   │   ├── Avatar.tsx
 │   │   ├── BaseModal.tsx
 │   │   ├── BuscadorInput.tsx
@@ -78,6 +78,7 @@ src/
 │   │   ├── DropdownContainer.tsx
 │   │   ├── Error.tsx
 │   │   ├── FAB.tsx
+│   │   ├── FooterLogin.tsx
 │   │   ├── FormDialog.tsx
 │   │   ├── ImageUpload.tsx
 │   │   ├── InputFieldset.tsx
@@ -85,14 +86,12 @@ src/
 │   │   ├── LogoNegocio.tsx
 │   │   ├── ModalConfirmacion.tsx
 │   │   ├── Paginacion.tsx
-│   │   ├── PrivateRoute.tsx
 │   │   ├── RecursiveMenu.tsx
 │   │   ├── SelectBase.tsx
 │   │   ├── SelectForm.tsx
 │   │   ├── SelectFilter.tsx
 │   │   ├── SkeletonProductoCard.tsx
 │   │   └── SkeletonTarjetaVendedor.tsx
-│   └── FooterLogin.tsx
 ├── constants/
 │   ├── breakpoints.ts
 │   ├── states.ts

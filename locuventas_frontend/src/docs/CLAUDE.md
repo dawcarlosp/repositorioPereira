@@ -30,7 +30,7 @@ src/
 ├── components/
 │   ├── common/             # Componentes reutilizables genéricos
 │   │   ├── buttons/        # Button.tsx, MenuButton.tsx
-│   │   ├── AlertSimple.tsx
+│   │   ├── FooterLogin.tsx
 │   │   ├── Avatar.tsx
 │   │   ├── BaseModal.tsx
 │   │   ├── BuscadorInput.tsx

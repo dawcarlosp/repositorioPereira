@@ -10,9 +10,9 @@
 
 | Campo | Valor |
 |-------|-------|
-| **Iteración** | 1 |
+| **Iteración** | 2 |
 | **Rama activa** | `docs/infinite-loop` |
-| **Último commit** | `8a8b7f6` — docs: implementa sistema de documentación para bucle infinito de IA |
+| **Último commit** | `9331970` — feat: implementa usePaginatedFetch<T> hook genérico y completa Fase 3 |
 | **Branch base** | `develop` |
 | **Estado del build** | 🟢 Build exitoso |
 | **PR abierto** | `docs/infinite-loop` → `develop` |
@@ -21,23 +21,20 @@
 
 ## Qué se hizo en la iteración anterior
 
-**Iteración 1 — Fase 3: Refactor arquitectura**
+**Iteración 2 — Bugs y mejoras**
 
-- [x] Crear `usePaginatedFetch<T>` hook genérico en `src/hooks/usePaginatedFetch.ts`
-- [x] Refactorizar `useProductos` para usar `usePaginatedFetch`
-- [x] Refactorizar `useVentasManager` para usar `usePaginatedFetch`
-- [x] Refactorizar `useVendedoresPendientes` para usar `usePaginatedFetch`
-- [x] Mover `PrivateRoute` → `src/app/PrivateRoute.tsx` (actualizar import en `routes.tsx`)
-- [x] Mover `FooterLogin` → `src/components/common/FooterLogin.tsx` (actualizar imports en `LoginPage.tsx`, `SobreMiPage.tsx`)
+- [x] B.1: Eliminar `AlertSimple` (redundante con `ModalConfirmacion`)
+- [x] B.2: Eliminar `breakpoint` duplicado de `useHeaderManager` (usaba su propio `getBreakpoint` en vez de `useBreakpoint`)
+- [x] Eliminar `AlertSimple.tsx` y actualizar `FormVendedorLogin.tsx` para usar `ModalConfirmacion`
+- [x] Simplificar `ModalConfirmacion`: el botón cancelar es opcional (modo single-button)
 - [x] Build verificado: `npm run build` exitoso
-- [x] Actualizar `ARCHITECTURE.md` con nuevas ubicaciones
 
 ---
 
 ## Siguientes tareas
 
 1. **Fase 4 — Integración Gemini AI** (ver `TASKS.md`)
-2. **Bugs y mejoras**: B.1 Eliminar `AlertSimple`, B.2 Refactor `useHeaderManager`, B.4 Unificar skeletons
+2. **Bugs y mejoras**: B.3 `ComponentType<any>` en `PANEL_MAP`, B.4 Unificar skeletons
 3. **Tests**: T.1 Tests unitarios a hooks, T.2 Tests de integración
 
 ---

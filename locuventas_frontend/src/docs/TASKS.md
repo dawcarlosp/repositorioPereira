@@ -15,10 +15,10 @@
 | 3.2 | Refactorizar `useProductos` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Build verificado |
 | 3.3 | Refactorizar `useVentasManager` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Usa `refresh()` tras pago/cancelación |
 | 3.4 | Refactorizar `useVendedoresPendientes` para usar `usePaginatedFetch` | `done` | 1 | Misma interfaz externa. Eliminado `useEffect` redundante |
-| 3.5 | Mover `PrivateRoute` → `app/` | `done` | 1 | Ahora en `src/app/PrivateRoute.tsx`. Import actualizado en `routes.tsx` |
-| 3.6 | Mover `FooterLogin` → `components/common/` | `done` | 1 | Ahora en `src/components/common/FooterLogin.tsx`. Imports actualizados |
+| 3.5 | Mover `PrivateRoute` → `app/` | `done` | 1 | Ahora en `src/app/PrivateRoute.tsx` |
+| 3.6 | Mover `FooterLogin` → `components/common/` | `done` | 1 | Ahora en `src/components/common/FooterLogin.tsx` |
 
-## Fase 4 — Integración Gemini AI (requiere Fase 3)
+## Fase 4 — Integración Gemini AI
 
 | # | Tarea | Estado | Iteración | Notas |
 |---|-------|--------|-----------|-------|
@@ -32,8 +32,8 @@
 
 | # | Tarea | Estado | Iteración | Notas |
 |---|-------|--------|-----------|-------|
-| B.1 | Eliminar `AlertSimple` (redundante con `ModalConfirmacion`) | `pending` | — | Es `ModalConfirmacion` sin botón cancelar |
-| B.2 | Refactorizar `useHeaderManager` para no duplicar lógica de `useBreakpoint` | `pending` | — | Duplica lógica de breakpoints |
+| B.1 | Eliminar `AlertSimple` (redundante con `ModalConfirmacion`) | `done` | 2 | Eliminado. `ModalConfirmacion` ahora soporta single-button. Build verificado |
+| B.2 | Eliminar `breakpoint` duplicado de `useHeaderManager` | `done` | 2 | Eliminado `getBreakpoint()` y estado. Ningún consumidor lo usaba |
 | B.3 | Eliminar `ComponentType<any>` en `PANEL_MAP` de `RecursiveMenu` | `pending` | — | Pendiente de encontrar alternativa limpia |
 | B.4 | Unificar skeletons en un solo `Skeleton` con `variant` | `pending` | — | Propuesto: `variant="card\|row\|circle"` |
 

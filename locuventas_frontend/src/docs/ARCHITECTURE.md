@@ -42,7 +42,6 @@ src/
 ├── components/
 │   ├── common/                 # Componentes reutilizables sin dominio
 │   │   ├── buttons/            # Button.tsx, MenuButton.tsx
-│   │   ├── AlertSimple.tsx
 │   │   ├── Avatar.tsx
 │   │   ├── BaseModal.tsx
 │   │   ├── BuscadorInput.tsx
