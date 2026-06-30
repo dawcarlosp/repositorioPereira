@@ -146,7 +146,7 @@ Todos los listados paginados siguen el mismo patrón:
 Cada listado tiene su skeleton que replica la forma visual del item real:
 - `SkeletonProductoCard` → `ProductoCard`
 - `SkeletonTarjetaVendedor` → `TarjetaVendedor`
-- `SkeletonVentaCard` → inline en `ContenedorVentas`
+- `SkeletonVentaCard` → `VentaCard` (`features/ventas/components/SkeletonVentaCard.tsx`)
 
 **PENDIENTE:** Unificar en un solo `Skeleton` con `variant="card|row|circle"`.
 
