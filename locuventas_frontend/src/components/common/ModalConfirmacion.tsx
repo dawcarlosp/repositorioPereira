@@ -19,14 +19,20 @@ export default function ModalConfirmacion({
       title={mensaje}
       onClose={onCancelar}
       footer={
-        <>
-          <Button variant="secondary" onClick={onConfirmar} className="w-full text-base py-3 rounded-xl">
+        onCancelar ? (
+          <>
+            <Button variant="secondary" onClick={onConfirmar} className="w-full text-base py-3 rounded-xl">
+              {confirmText}
+            </Button>
+            <Button onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
+              Cancelar
+            </Button>
+          </>
+        ) : (
+          <Button onClick={onConfirmar ?? onCancelar} className="w-full text-base py-3 rounded-xl">
             {confirmText}
           </Button>
-          <Button onClick={onCancelar} className="w-full text-base py-3 rounded-xl">
-            Cancelar
-          </Button>
-        </>
+        )
       }
     />
   );

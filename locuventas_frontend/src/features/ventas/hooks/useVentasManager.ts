@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { apiRequest } from "@services/api";
 import { toast } from "react-toastify";
+import usePaginatedFetch from "@hooks/usePaginatedFetch";
 import type { Venta, VentaDetalle } from "../domain/venta.types";
 
 interface VentaPageDTO {
@@ -46,10 +47,7 @@ export default function useVentasManager(
   tipo: "todas" | "pendientes" = "todas",
   pageInitial = 0,
 ): UseVentasManagerReturn {
-  const [ventas, setVentas] = useState<Venta[]>([]);
-  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(pageInitial);
-  const [totalPages, setTotalPages] = useState(0);
   const [size, setSize] = useState(6);
   const [modalPago, setModalPago] = useState<ModalPagoState>({
     visible: false,
@@ -64,30 +62,21 @@ export default function useVentasManager(
   const [ventaDetalle, setVentaDetalle] = useState<VentaDetalle | null>(null);
   const [detalleCargando, setDetalleCargando] = useState(false);
 
-  const fetchVentas = useCallback(
-    async (p: number, s: number) => {
-      setLoading(true);
-      try {
-        const endpoint = tipo === "pendientes"
-          ? `ventas/pendientes?page=${p}&size=${s}`
-          : `ventas?page=${p}&size=${s}`;
+  const endpoint = tipo === "pendientes" ? "ventas/pendientes" : "ventas";
 
-        const datos = await apiRequest<VentaPageDTO>(endpoint, null, { method: "GET" });
-
-        setVentas(datos.content ?? []);
-        setTotalPages(datos.totalPages ?? 0);
-      } catch {
-        toast.error("Error al obtener las ventas");
-      } finally {
-        setLoading(false);
-      }
-    },
-    [tipo],
+  const url = useMemo(
+    () => `${endpoint}?page=${page}&size=${size}`,
+    [endpoint, page, size],
   );
 
-  useEffect(() => {
-    fetchVentas(page, size);
-  }, [page, size, fetchVentas]);
+  const { data: ventas, loading, totalPages, refresh } = usePaginatedFetch<Venta, VentaPageDTO>({
+    url,
+    extractData: (res) => ({
+      content: res.content ?? [],
+      totalPages: res.totalPages ?? 0,
+    }),
+    onError: () => toast.error("Error al obtener las ventas"),
+  });
 
   useEffect(() => {
     setPage(0);
@@ -122,7 +111,7 @@ export default function useVentasManager(
       );
       toast.success("Pago registrado");
       cerrarModalPago();
-      fetchVentas(page, size);
+      refresh();
     } catch {
       toast.error("Error en el pago");
     }
@@ -137,7 +126,7 @@ export default function useVentasManager(
           await apiRequest(`ventas/${ventaId}/cancelar`, null, { method: "PATCH" });
           toast.success("Venta cancelada");
           setModalConfirmacion({ visible: false, mensaje: "", onConfirmar: null });
-          fetchVentas(page, size);
+          refresh();
         } catch {
           toast.error("Error al cancelar");
         }
