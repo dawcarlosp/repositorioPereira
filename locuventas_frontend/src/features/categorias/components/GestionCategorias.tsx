@@ -7,7 +7,7 @@ export default function GestionCategorias() {
   const {
     categorias, loading,
     formNombre, setFormNombre,
-    showForm,
+    showForm, editando,
     modal, setModal,
     abrirNuevo, abrirEditar, cerrarForm,
     handleSubmit, pedirConfirmacionEliminar,
