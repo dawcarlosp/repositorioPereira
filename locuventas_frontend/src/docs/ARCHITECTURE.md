@@ -47,7 +47,6 @@ src/
 │   │   ├── BuscadorInput.tsx
 │   │   ├── DataTable.tsx
 │   │   ├── DropdownContainer.tsx
-│   │   ├── Enlace.tsx
 │   │   ├── Error.tsx
 │   │   ├── FAB.tsx
 │   │   ├── FormDialog.tsx
@@ -223,7 +222,7 @@ evitar saltos visuales durante la carga.
 |---------------------------|------------------------------------------|
 | `SkeletonProductoCard`    | `ProductoCard` (features/productos/)     |
 | `SkeletonTarjetaVendedor` | `TarjetaVendedor` (features/auth/)       |
-| `SkeletonVentaCard`       | `VentaCard` (inline en ContenedorVentas) |
+| `SkeletonVentaCard`       | `VentaCard` (`features/ventas/components/SkeletonVentaCard.tsx`) |
 
 ---
 

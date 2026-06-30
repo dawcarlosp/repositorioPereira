@@ -451,7 +451,7 @@ del contenido que va a aparecer, en lugar de un spinner o texto.
 ```
 src/components/common/SkeletonProductoCard.tsx
 src/components/common/SkeletonTarjetaVendedor.tsx
-src/features/ventas/components/ContenedorVentas.tsx   (SkeletonVentaCard inline)
+src/features/ventas/components/SkeletonVentaCard.tsx
 ```
 
 ### Cómo funciona
